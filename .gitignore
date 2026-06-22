@@ -1,1 +1,14 @@
 Private/
+
+# Dependencies
+node_modules/
+api/node_modules/
+
+# Local Azure Functions secrets (SMTP credentials)
+api/local.settings.json
+
+# SWA CLI
+.swa/
+
+# Claude Code local (personal) settings
+.claude/settings.local.json

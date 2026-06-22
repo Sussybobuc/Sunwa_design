@@ -1,0 +1,184 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================================
+   BASE
+   ============================================================ */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-bg font-sans text-base text-text antialiased;
+  }
+
+  h1, h2, h3, h4 {
+    @apply font-semibold leading-tight text-text;
+  }
+
+  /* Visible focus ring for keyboard users on every interactive element */
+  a:focus-visible,
+  button:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible,
+  [tabindex]:focus-visible,
+  summary:focus-visible {
+    @apply outline-none ring-2 ring-primary ring-offset-2 ring-offset-bg rounded-sm;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+/* ============================================================
+   COMPONENTS
+   ============================================================ */
+@layer components {
+  /* Layout container */
+  .container-x {
+    @apply mx-auto w-full max-w-container px-4 md:px-6;
+  }
+
+  .section {
+    @apply py-12 md:py-16;
+  }
+
+  .section-title {
+    @apply text-2xl md:text-3xl font-semibold text-text;
+  }
+
+  .section-sub {
+    @apply mt-3 text-md text-text-muted;
+  }
+
+  .eyebrow {
+    @apply text-sm uppercase tracking-[1.5px] font-medium;
+  }
+
+  /* Buttons */
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-md px-5 py-3 text-md font-medium leading-none transition duration-normal;
+  }
+
+  .btn-primary {
+    @apply btn bg-primary text-white hover:bg-primary-dark;
+  }
+
+  .btn-ghost {
+    @apply btn border border-white/30 text-white hover:border-white;
+  }
+
+  .btn-white {
+    @apply btn bg-white text-primary hover:bg-primary-light;
+  }
+
+  .btn-outline {
+    @apply btn border border-border text-text hover:border-primary hover:text-primary;
+  }
+
+  /* Cards */
+  .card {
+    @apply rounded-lg border border-border bg-bg p-5 transition duration-normal;
+  }
+
+  .service-card {
+    @apply card hover:-translate-y-0.5 hover:shadow-md;
+  }
+
+  .icon-box {
+    @apply flex h-10 w-10 items-center justify-center rounded-md bg-primary-light text-primary;
+  }
+
+  .project-card {
+    @apply cursor-pointer overflow-hidden rounded-lg border border-border bg-bg transition duration-normal hover:-translate-y-0.5 hover:shadow-md;
+  }
+
+  .project-tag {
+    @apply absolute left-3 top-3 rounded-full bg-bg-dark/80 px-3 py-1 text-xs font-medium text-white backdrop-blur;
+  }
+
+  /* Trust / commitment tick item */
+  .tick-item {
+    @apply flex items-start gap-3 text-md text-text;
+  }
+
+  /* Process step number */
+  .step-num {
+    @apply flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary-light text-md font-semibold text-primary;
+  }
+
+  /* Nav links */
+  .nav-link {
+    @apply rounded-sm px-1 py-2 text-md text-text-muted transition duration-fast hover:text-primary;
+  }
+
+  .nav-link--active {
+    @apply text-primary font-medium;
+  }
+
+  /* Filter tabs */
+  .filter-tab {
+    @apply rounded-full border border-border px-4 py-2 text-base text-text-muted transition duration-fast hover:border-primary hover:text-primary;
+  }
+
+  .filter-tab--active {
+    @apply border-primary bg-primary text-white hover:text-white;
+  }
+
+  /* Form fields */
+  .field-label {
+    @apply mb-1.5 block text-base font-medium text-text;
+  }
+
+  .field-input {
+    @apply w-full rounded-md border border-border bg-bg px-4 py-3 text-md text-text transition duration-fast placeholder:text-text-light focus:border-primary;
+  }
+
+  .field-error {
+    @apply mt-1 hidden text-sm text-primary-dark;
+  }
+
+  /* Floating action buttons */
+  .float-btn {
+    @apply flex h-12 w-12 items-center justify-center rounded-full text-white shadow-md transition duration-fast hover:scale-105;
+  }
+
+  /* Stat chip on hero */
+  .stat-chip {
+    @apply rounded-lg border border-white/15 bg-white/10 px-4 py-3 backdrop-blur;
+  }
+}
+
+/* ============================================================
+   SCROLL FADE-IN
+   ============================================================ */
+@layer utilities {
+  .fade-in {
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+
+  .fade-in.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fade-in {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .animate-pulse {
+    animation: none;
+  }
+}

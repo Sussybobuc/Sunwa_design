@@ -1,0 +1,12 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "FUNCTIONS_WORKER_RUNTIME": "node",
+    "AzureWebJobsStorage": "",
+    "SMTP_HOST": "smtp.gmail.com",
+    "SMTP_PORT": "465",
+    "SMTP_USER": "your-gmail-address@gmail.com",
+    "SMTP_PASS": "your-16-char-gmail-app-password",
+    "TO_EMAIL": "Sunwa.design@gmail.com"
+  }
+}

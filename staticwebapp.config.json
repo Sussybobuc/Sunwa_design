@@ -1,0 +1,24 @@
+{
+  "routes": [
+    { "route": "/du-an", "rewrite": "/du-an.html" },
+    { "route": "/dich-vu", "rewrite": "/dich-vu.html" },
+    { "route": "/bao-gia", "rewrite": "/bao-gia.html" },
+    { "route": "/lien-he", "rewrite": "/lien-he.html" }
+  ],
+  "navigationFallback": {
+    "rewrite": "/index.html",
+    "exclude": ["/css/*", "/js/*", "/assets/*", "/api/*", "/*.{png,jpg,jpeg,svg,ico,webp,xml,txt,json}"]
+  },
+  "globalHeaders": {
+    "X-Content-Type-Options": "nosniff",
+    "X-Frame-Options": "DENY",
+    "Referrer-Policy": "strict-origin-when-cross-origin"
+  },
+  "mimeTypes": {
+    ".json": "application/json",
+    ".webmanifest": "application/manifest+json"
+  },
+  "platform": {
+    "apiRuntime": "node:20"
+  }
+}

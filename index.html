@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Sunwa Design — thi công nhà phố, biệt thự, nhà cấp 4 và cải tạo sửa chữa tại Đà Nẵng. Báo giá minh bạch, bảo hành 5 năm, đúng tiến độ cam kết.">
+  <meta property="og:title" content="Trang chủ | CÔNG TY TNHH MTV Thiết kế và Xây dựng Sunwa">
+  <meta property="og:description" content="Kiến tạo tổ ấm — Vững bền cùng thời gian. Thi công nhà dân dụng trọn gói tại Đà Nẵng.">
+  <meta property="og:image" content="/assets/og-image.jpg">
+  <meta property="og:type" content="website">
+  <meta name="theme-color" content="#B8520A">
+  <!-- TODO: cập nhật domain thật khi deploy -->
+  <link rel="canonical" href="https://sunwadesign.vn/">
+  <title>Kiến tạo tổ ấm — Vững bền cùng thời gian | Sunwa Design Đà Nẵng</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+  <script src="/js/main.js" defer></script>
+</head>
+<body>
+  <!-- ============ NAVBAR ============ -->
+  <header class="sticky top-0 z-[100] h-nav border-b border-border bg-bg">
+    <div class="container-x flex h-nav items-center justify-between">
+      <a href="/" class="flex items-center gap-2" data-page="index" aria-label="Sunwa Design — Trang chủ">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#B8520A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M9 21v-6h6v6"/>
+        </svg>
+        <span class="text-lg font-semibold text-text">Sunwa Design</span>
+      </a>
+
+      <button data-nav-toggle class="flex h-10 w-10 items-center justify-center rounded-md text-text md:hidden"
+              aria-label="Mở menu" aria-expanded="false" aria-controls="nav-menu">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+          <path d="M3 6h18M3 12h18M3 18h18"/>
+        </svg>
+      </button>
+
+      <nav id="nav-menu" class="absolute left-0 right-0 top-nav hidden flex-col gap-1 border-b border-border bg-bg p-4 shadow-md md:static md:flex md:flex-row md:items-center md:gap-6 md:border-0 md:p-0 md:shadow-none">
+        <a href="/dich-vu" class="nav-link" data-page="dich-vu">Dịch vụ</a>
+        <a href="/du-an" class="nav-link" data-page="du-an">Dự án</a>
+        <a href="/#quy-trinh" class="nav-link">Quy trình</a>
+        <a href="/lien-he" class="nav-link" data-page="lien-he">Liên hệ</a>
+        <a href="/bao-gia" class="btn-primary md:ml-2" data-page="bao-gia">Báo giá ngay</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <!-- ============ HERO ============ -->
+    <section class="relative flex min-h-[420px] items-center bg-bg-dark bg-cover bg-center md:min-h-[520px]"
+             style="background-image: linear-gradient(0deg, rgba(10,7,3,0.88) 0%, rgba(10,7,3,0.25) 70%), url('https://source.unsplash.com/1600x900/?vietnam,house,construction');">
+      <div class="container-x relative py-16">
+        <div class="max-w-2xl">
+          <p class="eyebrow text-[#E8A060]">Thi công nhà dân dụng tại Đà Nẵng</p>
+          <h1 class="mt-4 text-2xl font-semibold text-white md:text-hero">Kiến tạo tổ ấm —<br>Vững bền cùng thời gian</h1>
+          <p class="mt-4 max-w-xl text-md text-white/80">Chuyên thi công nhà phố, biệt thự, nhà cấp 4 và cải tạo sửa chữa từ năm 2008.</p>
+          <div class="mt-8 flex flex-col gap-3 sm:flex-row">
+            <a href="/bao-gia" class="btn-primary">Nhận báo giá miễn phí</a>
+            <a href="/du-an" class="btn-ghost">Xem công trình</a>
+          </div>
+        </div>
+
+        <div class="absolute right-0 top-8 hidden flex-col gap-3 md:flex">
+          <div class="stat-chip text-white">
+            <span class="block text-2xl font-semibold">350+</span>
+            <span class="text-sm text-white/70">Công trình hoàn thành</span>
+          </div>
+          <div class="stat-chip text-white">
+            <span class="block text-2xl font-semibold">15+</span>
+            <span class="text-sm text-white/70">Năm kinh nghiệm</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ TRUST BAR ============ -->
+    <section class="border-y border-border bg-bg-secondary">
+      <div class="container-x grid grid-cols-2 gap-4 py-6 md:grid-cols-4">
+        <div class="tick-item"><span class="text-success">✅</span> Bảo hành 5 năm</div>
+        <div class="tick-item"><span class="text-success">✅</span> Đúng tiến độ cam kết</div>
+        <div class="tick-item"><span class="text-success">✅</span> Báo giá minh bạch</div>
+        <div class="tick-item"><span class="text-success">✅</span> Đăng ký kinh doanh hợp pháp</div>
+      </div>
+    </section>
+
+    <!-- ============ DỊCH VỤ ============ -->
+    <section class="section">
+      <div class="container-x">
+        <div class="max-w-2xl fade-in">
+          <h2 class="section-title">Chúng tôi làm được gì cho bạn</h2>
+          <p class="section-sub">Từ thiết kế đến bàn giao — một đầu mối, toàn bộ quy trình.</p>
+        </div>
+        <div class="mt-8 grid grid-cols-2 gap-4 lg:grid-cols-4">
+          <article class="service-card fade-in">
+            <div class="icon-box">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>
+            </div>
+            <h3 class="mt-4 text-lg font-medium">Thi công trọn gói</h3>
+            <p class="mt-2 text-base text-text-muted">Xin phép, thiết kế, thi công thô đến hoàn thiện nội thất.</p>
+          </article>
+          <article class="service-card fade-in">
+            <div class="icon-box">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="1"/><path d="M9 7h2M13 7h2M9 11h2M13 11h2M9 15h2M13 15h2"/></svg>
+            </div>
+            <h3 class="mt-4 text-lg font-medium">Thi công phần thô</h3>
+            <p class="mt-2 text-base text-text-muted">Móng, kết cấu, tường, mái — chắc từ nền móng.</p>
+          </article>
+          <article class="service-card fade-in">
+            <div class="icon-box">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.7 6.3a4 4 0 0 0-5 5L3 18l3 3 6.7-6.7a4 4 0 0 0 5-5l-2.5 2.5-2-2 2.5-2.5Z"/></svg>
+            </div>
+            <h3 class="mt-4 text-lg font-medium">Cải tạo nhà ở</h3>
+            <p class="mt-2 text-base text-text-muted">Nâng tầng, cơi nới, sửa chữa theo yêu cầu.</p>
+          </article>
+          <article class="service-card fade-in">
+            <div class="icon-box">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17 17 3l4 4L7 21l-4 0 0-4Z"/><path d="M14.5 5.5 18.5 9.5M7 13l2 2M10 10l2 2"/></svg>
+            </div>
+            <h3 class="mt-4 text-lg font-medium">Thiết kế kiến trúc</h3>
+            <p class="mt-2 text-base text-text-muted">Nhà phố, biệt thự, nhà vườn — phong cách hiện đại.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ DỰ ÁN TIÊU BIỂU ============ -->
+    <section class="section">
+      <div class="container-x">
+        <div class="max-w-2xl fade-in">
+          <h2 class="section-title">Công trình thực tế</h2>
+          <p class="section-sub">Mỗi công trình là một câu chuyện — từ bản vẽ đến ngôi nhà hoàn chỉnh.</p>
+        </div>
+        <div id="projects-preview" class="mt-8 grid grid-cols-1 gap-5 lg:grid-cols-3"></div>
+        <div class="mt-8 text-center">
+          <a href="/du-an" class="btn-outline">Xem tất cả 7 dự án</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ QUY TRÌNH ============ -->
+    <section id="quy-trinh" class="section bg-bg-secondary">
+      <div class="container-x">
+        <div class="max-w-2xl fade-in">
+          <h2 class="section-title">Từ yêu cầu đến bàn giao</h2>
+          <p class="section-sub">7 bước rõ ràng — khách hàng biết chính xác chúng tôi đang làm gì.</p>
+        </div>
+        <ol class="mt-8 max-w-3xl space-y-0">
+          <li class="fade-in flex gap-4 border-l-2 border-dashed border-border pb-6 pl-0 last:border-transparent last:pb-0">
+            <span class="step-num -ml-4 bg-bg-secondary">1</span>
+            <div class="-mt-0.5"><h3 class="text-md font-medium">Tiếp nhận yêu cầu</h3><p class="mt-1 text-base text-text-muted">Tư vấn miễn phí qua hotline hoặc tại văn phòng.</p></div>
+          </li>
+          <li class="fade-in flex gap-4 border-l-2 border-dashed border-border pb-6 pl-0">
+            <span class="step-num -ml-4 bg-bg-secondary">2</span>
+            <div class="-mt-0.5"><h3 class="text-md font-medium">Khảo sát hiện trạng</h3><p class="mt-1 text-base text-text-muted">Đội kỹ thuật trực tiếp đo đạc và đánh giá mặt bằng.</p></div>
+          </li>
+          <li class="fade-in flex gap-4 border-l-2 border-dashed border-border pb-6 pl-0">
+            <span class="step-num -ml-4 bg-bg-secondary">3</span>
+            <div class="-mt-0.5"><h3 class="text-md font-medium">Báo giá chi tiết</h3><p class="mt-1 text-base text-text-muted">Dự toán đầy đủ vật tư, nhân công, thời gian.</p></div>
+          </li>
+          <li class="fade-in flex gap-4 border-l-2 border-dashed border-border pb-6 pl-0">
+            <span class="step-num -ml-4 bg-bg-secondary">4</span>
+            <div class="-mt-0.5"><h3 class="text-md font-medium">Ký hợp đồng</h3><p class="mt-1 text-base text-text-muted">Cam kết pháp lý rõ ràng, thanh toán theo tiến độ.</p></div>
+          </li>
+          <li class="fade-in flex gap-4 border-l-2 border-dashed border-border pb-6 pl-0">
+            <span class="step-num -ml-4 bg-bg-secondary">5</span>
+            <div class="-mt-0.5"><h3 class="text-md font-medium">Thi công</h3><p class="mt-1 text-base text-text-muted">Cập nhật tiến độ hàng tuần qua Zalo/nhóm riêng.</p></div>
+          </li>
+          <li class="fade-in flex gap-4 border-l-2 border-dashed border-border pb-6 pl-0">
+            <span class="step-num -ml-4 bg-bg-secondary">6</span>
+            <div class="-mt-0.5"><h3 class="text-md font-medium">Nghiệm thu bàn giao</h3><p class="mt-1 text-base text-text-muted">Kiểm tra chi tiết cùng chủ nhà trước khi ký biên bản.</p></div>
+          </li>
+          <li class="fade-in flex gap-4 border-l-2 border-transparent pl-0">
+            <span class="step-num -ml-4 bg-bg-secondary">7</span>
+            <div class="-mt-0.5"><h3 class="text-md font-medium">Bảo hành công trình</h3><p class="mt-1 text-base text-text-muted">Theo dõi bảo hành, hỗ trợ sau bàn giao dài hạn.</p></div>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- ============ CAM KẾT ============ -->
+    <section class="section">
+      <div class="container-x">
+        <h2 class="section-title fade-in">Lý do khách hàng tin tưởng</h2>
+        <div class="mt-8 grid grid-cols-2 gap-4 lg:grid-cols-3">
+          <div class="tick-item fade-in"><span class="text-success">✅</span> Báo giá minh bạch, không phát sinh chi phí</div>
+          <div class="tick-item fade-in"><span class="text-success">✅</span> Đúng tiến độ cam kết trong hợp đồng</div>
+          <div class="tick-item fade-in"><span class="text-success">✅</span> Vật tư đúng chủng loại, có hóa đơn chứng từ</div>
+          <div class="tick-item fade-in"><span class="text-success">✅</span> Bảo hành kết cấu 5 năm, hoàn thiện 1 năm</div>
+          <div class="tick-item fade-in"><span class="text-success">✅</span> Đội ngũ công nhân lành nghề, có bảo hiểm lao động</div>
+          <div class="tick-item fade-in"><span class="text-success">✅</span> Thanh toán theo tiến độ, không ứng trước nhiều</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ TESTIMONIALS ============ -->
+    <section class="section bg-bg-secondary">
+      <div class="container-x">
+        <h2 class="section-title fade-in">Khách hàng nói gì</h2>
+        <div class="mt-8 grid grid-cols-1 gap-5 md:grid-cols-2">
+          <figure class="card fade-in">
+            <div class="flex gap-1 text-[#FBBF24]" aria-label="5 trên 5 sao">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 2 3 6.5 7 .6-5.3 4.6 1.6 6.8L12 17l-6.9 3.5 1.6-6.8L1.4 9.1l7-.6L12 2Z"/></svg>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 2 3 6.5 7 .6-5.3 4.6 1.6 6.8L12 17l-6.9 3.5 1.6-6.8L1.4 9.1l7-.6L12 2Z"/></svg>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 2 3 6.5 7 .6-5.3 4.6 1.6 6.8L12 17l-6.9 3.5 1.6-6.8L1.4 9.1l7-.6L12 2Z"/></svg>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 2 3 6.5 7 .6-5.3 4.6 1.6 6.8L12 17l-6.9 3.5 1.6-6.8L1.4 9.1l7-.6L12 2Z"/></svg>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 2 3 6.5 7 .6-5.3 4.6 1.6 6.8L12 17l-6.9 3.5 1.6-6.8L1.4 9.1l7-.6L12 2Z"/></svg>
+            </div>
+            <blockquote class="mt-3 text-md leading-relaxed text-text">"Công trình hoàn thành đúng thời gian, chất lượng vượt mong đợi. Đội ngũ làm việc chuyên nghiệp, sạch sẽ."</blockquote>
+            <figcaption class="mt-4 flex items-center gap-3">
+              <span class="flex h-10 w-10 items-center justify-center rounded-full bg-primary-light font-semibold text-primary">TM</span>
+              <span><span class="block font-medium">Anh Tuấn Minh</span><span class="text-sm text-text-muted">Nhà phố Sơn Trà · 2024</span></span>
+            </figcaption>
+          </figure>
+          <figure class="card fade-in">
+            <div class="flex gap-1 text-[#FBBF24]" aria-label="5 trên 5 sao">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 2 3 6.5 7 .6-5.3 4.6 1.6 6.8L12 17l-6.9 3.5 1.6-6.8L1.4 9.1l7-.6L12 2Z"/></svg>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 2 3 6.5 7 .6-5.3 4.6 1.6 6.8L12 17l-6.9 3.5 1.6-6.8L1.4 9.1l7-.6L12 2Z"/></svg>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 2 3 6.5 7 .6-5.3 4.6 1.6 6.8L12 17l-6.9 3.5 1.6-6.8L1.4 9.1l7-.6L12 2Z"/></svg>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 2 3 6.5 7 .6-5.3 4.6 1.6 6.8L12 17l-6.9 3.5 1.6-6.8L1.4 9.1l7-.6L12 2Z"/></svg>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 2 3 6.5 7 .6-5.3 4.6 1.6 6.8L12 17l-6.9 3.5 1.6-6.8L1.4 9.1l7-.6L12 2Z"/></svg>
+            </div>
+            <blockquote class="mt-3 text-md leading-relaxed text-text">"Đội ngũ tư vấn tận tâm, giải thích rõ từng khoản chi phí. Tôi hoàn toàn yên tâm trong suốt quá trình thi công."</blockquote>
+            <figcaption class="mt-4 flex items-center gap-3">
+              <span class="flex h-10 w-10 items-center justify-center rounded-full bg-primary-light font-semibold text-primary">PL</span>
+              <span><span class="block font-medium">Chị Phương Lan</span><span class="text-sm text-text-muted">Biệt thự Ngũ Hành Sơn · 2023</span></span>
+            </figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ CTA BANNER ============ -->
+    <section class="bg-primary">
+      <div class="container-x flex flex-col items-center gap-4 py-12 text-center md:py-16">
+        <h2 class="text-2xl font-semibold text-white md:text-3xl">Bắt đầu dự án của bạn hôm nay</h2>
+        <p class="text-md text-white/85">Tư vấn miễn phí — Báo giá trong 24 giờ.</p>
+        <a href="/lien-he" class="btn-white mt-2">Liên hệ ngay</a>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="border-t border-border bg-bg-dark text-white/80">
+    <div class="container-x grid grid-cols-1 gap-8 py-12 md:grid-cols-3">
+      <div>
+        <div class="flex items-center gap-2">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#E8A060" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>
+          <span class="text-lg font-semibold text-white">Sunwa Design</span>
+        </div>
+        <p class="mt-3 max-w-xs text-base text-white/70">CÔNG TY TNHH MTV Thiết kế và Xây dựng Sunwa — kiến tạo tổ ấm bền vững cùng thời gian tại Đà Nẵng.</p>
+        <div class="mt-4 flex gap-3">
+          <a href="https://facebook.com" aria-label="Facebook" class="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 hover:bg-white/20">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13 22v-8h3l1-4h-4V8c0-1 .3-1.7 1.8-1.7H17V2.8C16.6 2.7 15.4 2.6 14 2.6 11.2 2.6 9.3 4.3 9.3 7.5V10H6v4h3.3v8H13Z"/></svg>
+          </a>
+          <a href="https://youtube.com" aria-label="YouTube" class="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 hover:bg-white/20">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M23 12s0-3.2-.4-4.7a2.5 2.5 0 0 0-1.7-1.8C19.3 5 12 5 12 5s-7.3 0-8.9.5A2.5 2.5 0 0 0 1.4 7.3C1 8.8 1 12 1 12s0 3.2.4 4.7a2.5 2.5 0 0 0 1.7 1.8C4.7 19 12 19 12 19s7.3 0 8.9-.5a2.5 2.5 0 0 0 1.7-1.8C23 15.2 23 12 23 12ZM10 15V9l5 3-5 3Z"/></svg>
+          </a>
+          <a href="https://zalo.me/0916557558" aria-label="Zalo" class="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-xs font-semibold hover:bg-white/20">Zalo</a>
+        </div>
+      </div>
+      <div>
+        <h3 class="text-md font-semibold text-white">Liên kết nhanh</h3>
+        <ul class="mt-3 space-y-2 text-base">
+          <li><a href="/dich-vu" class="hover:text-white">Dịch vụ</a></li>
+          <li><a href="/du-an" class="hover:text-white">Dự án</a></li>
+          <li><a href="/#quy-trinh" class="hover:text-white">Quy trình</a></li>
+          <li><a href="/bao-gia" class="hover:text-white">Báo giá</a></li>
+          <li><a href="/lien-he" class="hover:text-white">Liên hệ</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="text-md font-semibold text-white">Thông tin liên hệ</h3>
+        <ul class="mt-3 space-y-2 text-base">
+          <li>35 Bình Thái 3, P. Cẩm Lệ, TP. Đà Nẵng</li>
+          <li>Hotline: <a href="tel:0916557558" class="hover:text-white">0916 557 558</a></li>
+          <li>Email: <a href="mailto:Sunwa.design@gmail.com" class="hover:text-white">Sunwa.design@gmail.com</a></li>
+          <li>Giờ làm việc: 7:30 – 17:30 (T2–T7)</li>
+        </ul>
+      </div>
+    </div>
+    <div class="border-t border-border-dark">
+      <div class="container-x py-4 text-xs text-white/50">© 2026 CÔNG TY TNHH MTV Thiết kế và Xây dựng Sunwa. Hotline: 0916 557 558.</div>
+    </div>
+  </footer>
+
+  <!-- ============ FLOATING BUTTONS ============ -->
+  <div class="float-cta fixed bottom-6 right-6 z-[200] flex flex-col gap-2.5">
+    <a href="https://zalo.me/0916557558" class="float-btn" style="background:#0068FF;" aria-label="Chat Zalo">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.5 8.5 0 0 1-12.2 7.6L3 21l1.9-5.8A8.5 8.5 0 1 1 21 11.5Z"/></svg>
+    </a>
+    <a href="tel:0916557558" class="float-btn animate-pulse" style="background:#22A06B;" aria-label="Gọi hotline">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3-8.7A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2Z"/></svg>
+    </a>
+  </div>
+</body>
+</html>

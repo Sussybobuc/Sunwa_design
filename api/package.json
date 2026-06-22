@@ -1,0 +1,10 @@
+{
+  "name": "sunwa-design-api",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Azure Functions API cho website Sunwa Design — xử lý form báo giá / liên hệ",
+  "main": "submit/index.js",
+  "dependencies": {
+    "nodemailer": "^6.9.16"
+  }
+}
