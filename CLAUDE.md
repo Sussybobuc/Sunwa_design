@@ -71,6 +71,14 @@ Payload: `{ name, phone, email, type, area, address, message, consent }`. The `t
 `TYPE_LABELS` in `lib/mailer.js` (`nha-pho`, `biet-thu`, `nha-cap-4`, `cai-tao`, `thiet-ke`). When
 changing form fields, update **both** the HTML form, the JS in `main.js`, and `lib/mailer.js` together.
 
+### Media — the `Materials/` folder
+Real photos/videos for the site live in `Materials/`, served publicly at `/materials/...` (static
+route in `server.js`, 30-day cache). To keep the site light, **every upload must follow the
+weight-control checklist in [`Materials/README.md`](Materials/README.md)** (WebP/AVIF, set
+`width`/`height`, `loading="lazy"`, `<picture>`+`srcset` for responsive, `preload="none"`+`poster`
+for video). The hero "Giấy chứng nhận bảo hiểm" button opens `Materials/Insurance.webp` in the
+shared lightbox modal.
+
 ## Design tokens
 
 All brand styling flows through `tailwind.config.js` `theme.extend` — change tokens there, not by

@@ -67,7 +67,7 @@
 
   /* Buttons */
   .btn {
-    @apply inline-flex items-center justify-center gap-2 rounded-md px-5 py-3 text-md font-medium leading-none transition duration-normal;
+    @apply inline-flex items-center justify-center gap-2 rounded-md px-5 py-3 text-md font-medium leading-none transition duration-normal active:scale-[0.98];
   }
 
   .btn-primary {
@@ -194,5 +194,72 @@
 
   .animate-pulse {
     animation: none;
+  }
+}
+
+/* ============================================================
+   MOBILE NAV ANIMATED OPEN/CLOSE (below md)
+   JS toggles .is-open trên #nav-menu
+   ============================================================ */
+@media (max-width: 767px) {
+  #nav-menu {
+    opacity: 0;
+    transform: translateY(-8px);
+    pointer-events: none;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+  }
+
+  #nav-menu.is-open {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+}
+
+/* Chuyển đổi icon hamburger / X */
+[data-nav-toggle] svg {
+  transition: transform 0.2s ease;
+}
+
+/* ============================================================
+   MODAL CONTENT ANIMATION (fade + scale-in)
+   ============================================================ */
+/* Trạng thái đóng/mở dựa trên .is-open (KHÔNG dùng .flex/.hidden trong selector —
+   tên utility của Tailwind trong selector raw làm scanner sinh ra rule rác). */
+#project-modal [data-modal-content] {
+  opacity: 0;
+  transform: scale(0.96);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+#project-modal.is-open [data-modal-content] {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* ============================================================
+   REDUCED MOTION — vô hiệu hoá tất cả animation mới thêm
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  #nav-menu {
+    transition: none;
+  }
+
+  .fade-in {
+    transition-delay: 0ms;
+  }
+
+  [data-nav-toggle] svg {
+    transition: none;
+  }
+
+  #project-modal [data-modal-content] {
+    transition: none;
+    opacity: 1;
+    transform: none;
+  }
+
+  .btn {
+    transform: none;
   }
 }

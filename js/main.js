@@ -140,21 +140,29 @@ function initNavToggle() {
   const menu = document.getElementById('nav-menu');
   if (!toggle || !menu) return;
 
+  const ICON_HAMBURGER = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg>`;
+  const ICON_X = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>`;
+
+  // Gỡ hidden — CSS media query kiểm soát hiển thị trên mobile
+  menu.classList.remove('hidden');
+
   const close = () => {
-    menu.classList.add('hidden');
+    menu.classList.remove('is-open');
     toggle.setAttribute('aria-expanded', 'false');
+    toggle.innerHTML = ICON_HAMBURGER;
   };
   const open = () => {
-    menu.classList.remove('hidden');
+    menu.classList.add('is-open');
     toggle.setAttribute('aria-expanded', 'true');
+    toggle.innerHTML = ICON_X;
   };
 
   toggle.addEventListener('click', (e) => {
     e.stopPropagation();
-    if (menu.classList.contains('hidden')) {
-      open();
-    } else {
+    if (menu.classList.contains('is-open')) {
       close();
+    } else {
+      open();
     }
   });
 
@@ -163,7 +171,7 @@ function initNavToggle() {
 
   // Đóng khi click ra ngoài
   document.addEventListener('click', (e) => {
-    if (!menu.classList.contains('hidden') &&
+    if (menu.classList.contains('is-open') &&
         !menu.contains(e.target) &&
         !toggle.contains(e.target)) {
       close();
@@ -300,16 +308,45 @@ function openModal(project) {
   lastFocused = document.activeElement;
   modalEl.classList.remove('hidden');
   modalEl.classList.add('flex');
+  void modalEl.offsetWidth; // reflow để transition fade+scale chạy từ trạng thái đóng
+  modalEl.classList.add('is-open');
   document.body.style.overflow = 'hidden';
   modalEl.querySelector('[data-modal-close]').focus();
 }
 
 function closeModal() {
   if (!modalEl) return;
+  modalEl.classList.remove('is-open');
   modalEl.classList.add('hidden');
   modalEl.classList.remove('flex');
   document.body.style.overflow = '';
   if (lastFocused && typeof lastFocused.focus === 'function') lastFocused.focus();
+}
+
+function openImageModal(src, alt, caption) {
+  if (!modalEl) buildModal();
+  const body = modalEl.querySelector('[data-modal-body]');
+  body.innerHTML = `
+    <div class="p-3">
+      <img src="${src}" alt="${escapeHtml(alt)}" loading="lazy" decoding="async"
+           class="mx-auto max-h-[80vh] w-auto rounded-md object-contain">
+      ${caption ? `<p class="mt-3 text-center text-base text-text-muted">${escapeHtml(caption)}</p>` : ''}
+    </div>`;
+  lastFocused = document.activeElement;
+  modalEl.classList.remove('hidden');
+  modalEl.classList.add('flex');
+  void modalEl.offsetWidth; // reflow để transition fade+scale chạy từ trạng thái đóng
+  modalEl.classList.add('is-open');
+  document.body.style.overflow = 'hidden';
+  modalEl.querySelector('[data-modal-close]').focus();
+}
+
+function initInsuranceModal() {
+  const btn = document.querySelector('[data-insurance]');
+  if (!btn) return;
+  btn.addEventListener('click', () =>
+    openImageModal('/materials/Insurance.webp', 'Giấy chứng nhận bảo hiểm', 'Giấy chứng nhận bảo hiểm'));
+  // Esc đã được initModal() xử lý chung (cùng modalEl) — không cần listener trùng ở đây.
 }
 
 function initModal() {
@@ -483,6 +520,17 @@ function initScrollReveal() {
     (entries) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
+          // Stagger cascade: tính index trong số .fade-in anh em cùng cha
+          const siblings = Array.from(entry.target.parentElement.querySelectorAll('.fade-in'));
+          const i = siblings.indexOf(entry.target);
+          if (i > 0) {
+            entry.target.style.transitionDelay = Math.min(i, 6) * 70 + 'ms';
+            // Xoá delay sau khi reveal xong để không dính vào transition sau này
+            entry.target.addEventListener('transitionend', function clear() {
+              entry.target.style.transitionDelay = '';
+              entry.target.removeEventListener('transitionend', clear);
+            });
+          }
           entry.target.classList.add('visible');
           observer.unobserve(entry.target);
         }
@@ -495,7 +543,7 @@ function initScrollReveal() {
 }
 
 /* ============================================================
-   9. ACTIVE NAV LINK HIGHLIGHT
+   11. ACTIVE NAV LINK HIGHLIGHT
    ============================================================ */
 function initActiveNav() {
   let path = window.location.pathname.replace(/\/$/, '');
@@ -514,14 +562,43 @@ function initActiveNav() {
 }
 
 /* ============================================================
+   10. HERO ENTRANCE ON LOAD
+   ============================================================ */
+function initHeroReveal() {
+  const els = document.querySelectorAll('[data-hero-reveal]');
+  if (!els.length) return;
+
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    // Không có hiệu ứng — đảm bảo hiển thị bình thường
+    els.forEach((el) => el.classList.add('visible'));
+    return;
+  }
+
+  els.forEach((el) => el.classList.add('fade-in'));
+  requestAnimationFrame(() => {
+    els.forEach((el, i) => {
+      el.style.transitionDelay = i * 90 + 'ms';
+      el.classList.add('visible');
+      // Xoá delay sau khi vào xong để không ảnh hưởng transition về sau
+      el.addEventListener('transitionend', function clear() {
+        el.style.transitionDelay = '';
+        el.removeEventListener('transitionend', clear);
+      });
+    });
+  });
+}
+
+/* ============================================================
    INIT
    ============================================================ */
 document.addEventListener('DOMContentLoaded', () => {
   initNavToggle();
+  initHeroReveal();
   renderProjects(); // phải chạy trước initModal / initScrollReveal
   initSmoothScroll();
   initFilter();
   initModal();
+  initInsuranceModal();
   initForms();
   initCalculator();
   initScrollReveal();

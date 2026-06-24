@@ -26,6 +26,7 @@ app.post('/api/submit', async (req, res) => {
 app.use('/css', express.static(path.join(__dirname, 'css')));
 app.use('/js', express.static(path.join(__dirname, 'js')));
 app.use('/assets', express.static(path.join(__dirname, 'assets')));
+app.use('/materials', express.static(path.join(__dirname, 'Materials'), { maxAge: '30d' }));
 
 // Pretty URLs + their /<file>.html forms.
 const PAGES = {
