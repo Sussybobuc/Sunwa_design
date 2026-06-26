@@ -67,7 +67,7 @@
 
   /* Buttons */
   .btn {
-    @apply inline-flex items-center justify-center gap-2 rounded-md px-5 py-3 text-md font-medium leading-none transition duration-normal active:scale-[0.98];
+    @apply inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md px-6 py-3 text-md font-medium leading-none transition duration-normal active:scale-[0.98];
   }
 
   .btn-primary {
@@ -110,6 +110,11 @@
   /* Trust / commitment tick item */
   .tick-item {
     @apply flex items-start gap-3 text-md text-text;
+  }
+
+  /* Clean checklist box (replaces ✅ tick rows in dich-vu cards) — small, centered */
+  .feature-chip {
+    @apply flex items-center justify-center rounded-md border border-border bg-bg-secondary px-3 py-2 text-center text-sm text-text-muted transition duration-fast;
   }
 
   /* Process step number */
@@ -242,7 +247,8 @@
   .fade-in {
     opacity: 0;
     transform: translateY(16px);
-    transition: opacity 0.5s ease, transform 0.5s ease;
+    /* ease-out (fast start, soft landing) — smoother than plain ease */
+    transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
   .fade-in.visible {
@@ -264,21 +270,54 @@
 }
 
 /* ============================================================
-   MOBILE NAV ANIMATED OPEN/CLOSE (below md)
-   JS toggles .is-open trên #nav-menu
+   MOBILE NAV = DRAWER TRƯỢT RA TỪ TRÁI (below md)
+   JS toggles .is-open trên #nav-menu + .nav-backdrop (chèn bằng JS).
+   Chỉ dùng selector tên tuỳ chỉnh (#nav-menu / .nav-backdrop / .is-open)
+   — KHÔNG dùng tên utility Tailwind trong selector raw (tránh rule rác).
    ============================================================ */
 @media (max-width: 767px) {
   #nav-menu {
-    opacity: 0;
-    transform: translateY(-8px);
-    pointer-events: none;
-    transition: opacity 0.2s ease, transform 0.2s ease;
+    position: fixed;
+    top: 64px;            /* ngay dưới header sticky (h-nav) */
+    left: 0;
+    right: 0;             /* full-width trên điện thoại nhỏ */
+    bottom: 0;
+    height: auto;
+    transform: translateX(-100%);
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    overflow-y: auto;
+    z-index: 95;
+    border: 0;
   }
 
   #nav-menu.is-open {
+    transform: translateX(0);
+  }
+
+  /* Lớp phủ mờ — chèn bằng JS; ẩn mặc định */
+  .nav-backdrop {
+    position: fixed;
+    inset: 64px 0 0 0;
+    background: rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0s linear 0.3s;
+    z-index: 90;
+  }
+}
+
+/* Mobile lớn / tablet (≥480px): drawer cố định bề rộng + dim hiển thị */
+@media (min-width: 480px) and (max-width: 767px) {
+  #nav-menu {
+    right: auto;
+    width: min(78vw, 320px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  }
+
+  .nav-backdrop.is-open {
     opacity: 1;
-    transform: translateY(0);
-    pointer-events: auto;
+    visibility: visible;
+    transition: opacity 0.3s ease;
   }
 }
 
@@ -330,6 +369,10 @@
   }
 
   .nav-dropdown-chevron {
+    transition: none;
+  }
+
+  .nav-backdrop {
     transition: none;
   }
 

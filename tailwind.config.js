@@ -52,8 +52,8 @@ module.exports = {
         lg: '0 8px 24px rgba(0,0,0,0.12)',
       },
       transitionDuration: {
-        fast: '150ms',
-        normal: '250ms',
+        fast: '200ms',
+        normal: '300ms',
       },
       maxWidth: {
         container: '1140px',

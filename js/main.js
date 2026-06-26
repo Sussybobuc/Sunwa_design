@@ -168,13 +168,22 @@ function initNavToggle() {
   // Gỡ hidden — CSS media query kiểm soát hiển thị trên mobile
   menu.classList.remove('hidden');
 
+  // Lớp phủ mờ (dim) — chèn một lần; bấm vào để đóng drawer
+  const backdrop = document.createElement('div');
+  backdrop.className = 'nav-backdrop';
+  document.body.appendChild(backdrop);
+
   const close = () => {
     menu.classList.remove('is-open');
+    backdrop.classList.remove('is-open');
+    document.body.style.overflow = '';
     toggle.setAttribute('aria-expanded', 'false');
     toggle.innerHTML = ICON_HAMBURGER;
   };
   const open = () => {
     menu.classList.add('is-open');
+    backdrop.classList.add('is-open');
+    document.body.style.overflow = 'hidden'; // khoá cuộn nền khi drawer mở
     toggle.setAttribute('aria-expanded', 'true');
     toggle.innerHTML = ICON_X;
   };
@@ -188,21 +197,21 @@ function initNavToggle() {
     }
   });
 
-  // Đóng khi click một link trong menu (nút dropdown toggle KHÔNG đóng menu — nó mở accordion)
-  menu.querySelectorAll('a').forEach((a) => a.addEventListener('click', close));
+  // Bấm vào lớp phủ mờ → đóng
+  backdrop.addEventListener('click', close);
 
-  // Đóng khi click ra ngoài
-  document.addEventListener('click', (e) => {
-    if (menu.classList.contains('is-open') &&
-        !menu.contains(e.target) &&
-        !toggle.contains(e.target)) {
-      close();
-    }
-  });
+  // Đóng khi click một link trong menu (nút dropdown toggle là <button> → KHÔNG đóng, để mở accordion)
+  menu.querySelectorAll('a').forEach((a) => a.addEventListener('click', close));
 
   // Đóng khi nhấn Esc
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') close();
+  });
+
+  // Reset khi chuyển sang desktop (xoá trạng thái drawer/dim/khoá cuộn)
+  const mqDesktop = window.matchMedia('(min-width: 768px)');
+  mqDesktop.addEventListener('change', (e) => {
+    if (e.matches) close();
   });
 }
 
@@ -596,7 +605,7 @@ function initScrollReveal() {
           const siblings = Array.from(entry.target.parentElement.querySelectorAll('.fade-in'));
           const i = siblings.indexOf(entry.target);
           if (i > 0) {
-            entry.target.style.transitionDelay = Math.min(i, 6) * 70 + 'ms';
+            entry.target.style.transitionDelay = Math.min(i, 6) * 90 + 'ms';
             // Xoá delay sau khi reveal xong để không dính vào transition sau này
             entry.target.addEventListener('transitionend', function clear() {
               entry.target.style.transitionDelay = '';

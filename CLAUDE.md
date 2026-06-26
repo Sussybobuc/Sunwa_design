@@ -56,6 +56,16 @@ Each subsection links to a placeholder page (e.g. `/chat-luong/quan-ly-thiet-ke`
 routes are registered in `server.js` `PAGES`. All 13 HTML files (5 main + 8 subsection) carry
 identical navbar markup — apply changes to all of them.
 
+### Mobile nav — left slide-out drawer
+Below `md` (768px) the navbar (`#nav-menu`) is a **drawer that slides in from the left** (sits below
+the 64px sticky header so the header's hamburger/X stays the close button). **<480px:** full-width,
+**no dim**. **480–767px:** ~300px drawer with a **dim backdrop** over the rest of the page. The
+backdrop `<div class="nav-backdrop">` is **injected by `initNavToggle()`** (`js/main.js`) — not in the
+HTML; open/close toggles `.is-open` on both `#nav-menu` and the backdrop, locks page scroll
+(`body.style.overflow`), and resets when crossing to desktop. Closes via X / backdrop-tap / Esc /
+link-click. Styles live in `css/tailwind.css` `@media (max-width:767px)` keyed on `#nav-menu` /
+`.nav-backdrop` (custom selectors only — never Tailwind utility names in raw CSS).
+
 ### Client logic — `js/main.js` (single file, no modules/bundler)
 `'use strict'`, IIFE-style `initX()` functions wired up on `DOMContentLoaded`. Key pieces:
 - `PROJECTS` — hardcoded array of 7 sample projects (each has a `query` of Unsplash keywords used to
