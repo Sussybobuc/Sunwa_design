@@ -283,6 +283,12 @@
     right: 0;             /* full-width trên điện thoại nhỏ */
     bottom: 0;
     height: auto;
+    display: flex;            /* cột thực sự — mỗi mục một dòng (không còn dựa vào md:flex) */
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.25rem;
+    padding: 0.75rem;
+    background-color: #fff;   /* drawer đục, không nhìn xuyên nội dung phía sau */
     transform: translateX(-100%);
     transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     overflow-y: auto;
@@ -292,6 +298,28 @@
 
   #nav-menu.is-open {
     transform: translateX(0);
+  }
+
+  /* Mỗi mục một dòng, padding đều, vùng chạm rộng */
+  #nav-menu .nav-link {
+    width: 100%;
+    padding: 0.875rem 1rem;
+    border-radius: 0.5rem;
+  }
+
+  #nav-menu .nav-link:hover {
+    background-color: #F8F6F3;   /* bg-secondary */
+  }
+
+  /* Hàng dropdown (Chất lượng / Pháp lý): đẩy chevron sang phải */
+  #nav-menu [data-dropdown-toggle] {
+    justify-content: space-between;
+  }
+
+  /* Nút "Báo giá ngay" trải đầy chiều ngang trong drawer */
+  #nav-menu .btn-primary {
+    width: 100%;
+    margin-top: 0.5rem;
   }
 
   /* Lớp phủ mờ — chèn bằng JS; ẩn mặc định */
