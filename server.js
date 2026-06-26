@@ -22,10 +22,19 @@ app.post('/api/submit', async (req, res) => {
   res.status(status).json(body);
 });
 
+// Health check (for Azure monitoring / uptime probes).
+app.get('/healthz', (req, res) => res.json({ ok: true }));
+
+// SEO files at the site root (can't live in a static subdir).
+app.get('/robots.txt', (req, res) => res.sendFile(path.join(__dirname, 'robots.txt')));
+app.get('/sitemap.xml', (req, res) => res.sendFile(path.join(__dirname, 'sitemap.xml')));
+
 // Static asset directories (only these dirs are public — not the repo root).
+// /css and /js are intentionally uncached: filenames aren't content-hashed, so a long
+// cache would serve stale styles/scripts after a deploy.
 app.use('/css', express.static(path.join(__dirname, 'css')));
 app.use('/js', express.static(path.join(__dirname, 'js')));
-app.use('/assets', express.static(path.join(__dirname, 'assets')));
+app.use('/assets', express.static(path.join(__dirname, 'assets'), { maxAge: '30d' }));
 app.use('/materials', express.static(path.join(__dirname, 'Materials'), { maxAge: '30d' }));
 
 // Pretty URLs + their /<file>.html forms.
@@ -53,9 +62,9 @@ Object.entries(PAGES).forEach(([route, file]) => {
   app.get('/' + file + '.html', send);
 });
 
-// 404 fallback — serve index.html (mirrors SWA navigationFallback).
+// Real 404 for unknown paths (pretty URLs are explicit routes above).
 app.use((req, res) => {
-  res.status(200).sendFile(path.join(__dirname, 'index.html'));
+  res.status(404).sendFile(path.join(__dirname, '404.html'));
 });
 
 const PORT = process.env.PORT || 3000;
