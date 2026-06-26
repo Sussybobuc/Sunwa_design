@@ -126,6 +126,16 @@
     @apply text-primary font-medium;
   }
 
+  /* Dropdown panel (visuals via @apply — class names never collide with Tailwind utilities) */
+  .nav-dropdown-panel {
+    @apply rounded-lg border border-border bg-bg p-2 shadow-lg;
+  }
+
+  /* Dropdown row links */
+  .nav-dropdown-item {
+    @apply block rounded-md px-3 py-2 text-md text-text-muted transition hover:bg-bg-secondary hover:text-primary;
+  }
+
   /* Filter tabs */
   .filter-tab {
     @apply min-h-[44px] rounded-full border border-border px-4 py-2.5 text-base text-text-muted transition duration-fast hover:border-primary hover:text-primary;
@@ -167,6 +177,62 @@
   .mobile-cta-seg {
     @apply flex flex-1 min-h-[52px] items-center justify-center gap-2 text-sm font-medium text-text;
   }
+}
+
+/* ============================================================
+   NAV DROPDOWN — POSITIONING / SHOW-HIDE
+   Chỉ dùng class tên tuỳ chỉnh (.nav-dropdown*) — KHÔNG dùng
+   tên utility Tailwind trong selector raw (gây ra rule rác).
+   ============================================================ */
+
+/* Desktop (≥ 768px): panel hiển thị tuyệt đối bên dưới trigger */
+@media (min-width: 768px) {
+  .nav-dropdown {
+    position: relative;
+  }
+
+  .nav-dropdown-panel {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    min-width: 240px;
+    z-index: 60;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-6px);
+    transition: opacity 0.18s ease, transform 0.18s ease, visibility 0s linear 0.18s;
+  }
+
+  /* Flush với trigger — không có gap để hover không bị drop */
+  .nav-dropdown:hover > .nav-dropdown-panel,
+  .nav-dropdown:focus-within > .nav-dropdown-panel,
+  .nav-dropdown.is-open > .nav-dropdown-panel {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+    transition: opacity 0.18s ease, transform 0.18s ease, visibility 0s linear 0s;
+  }
+}
+
+/* Mobile (< 768px): accordion in-flow */
+@media (max-width: 767px) {
+  .nav-dropdown-panel {
+    display: none;
+    padding-left: 0.75rem;
+  }
+
+  .nav-dropdown.is-open > .nav-dropdown-panel {
+    display: block;
+  }
+}
+
+/* Chevron xoay khi mở */
+.nav-dropdown-chevron {
+  transition: transform 0.2s ease;
+}
+
+.nav-dropdown.is-open .nav-dropdown-chevron {
+  transform: rotate(180deg);
 }
 
 /* ============================================================
@@ -257,6 +323,14 @@
     transition: none;
     opacity: 1;
     transform: none;
+  }
+
+  .nav-dropdown-panel {
+    transition: none;
+  }
+
+  .nav-dropdown-chevron {
+    transition: none;
   }
 
   .btn {

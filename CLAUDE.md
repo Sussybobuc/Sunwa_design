@@ -43,6 +43,19 @@ duplicated in every page** — there is no templating/include system, so shared-
 be applied to all five files. Pretty URLs (`/du-an` → `du-an.html`) are routes registered in
 `server.js` (the `PAGES` map), not real files.
 
+### Navbar dropdowns — Chất lượng & Pháp lý
+The navbar has two dropdown items: **"Chất lượng"** (5 subsections) and **"Pháp lý"** (3 subsections).
+Each is a `<li class="nav-dropdown">` wrapper containing a `<button data-dropdown-trigger>` and a
+`<ul class="nav-dropdown__menu">` of `<a>` links. Desktop: panel opens on hover (CSS) and on click
+(JS). Mobile: click-only toggle. JS wired in `initNavDropdowns()` in `js/main.js`; subsection data
+(labels + URL slugs) lives in `SECTION_MENUS`. CSS classes `.nav-dropdown`, `.nav-dropdown__menu`,
+`.nav-dropdown__item` are in `css/tailwind.css` `@layer components`.
+
+Each subsection links to a placeholder page (e.g. `/chat-luong/quan-ly-thiet-ke`) showing
+"Nội dung đang được cập nhật". The 8 HTML files live in `chat-luong/` and `phap-ly/` subdirs;
+routes are registered in `server.js` `PAGES`. All 13 HTML files (5 main + 8 subsection) carry
+identical navbar markup — apply changes to all of them.
+
 ### Client logic — `js/main.js` (single file, no modules/bundler)
 `'use strict'`, IIFE-style `initX()` functions wired up on `DOMContentLoaded`. Key pieces:
 - `PROJECTS` — hardcoded array of 7 sample projects (each has a `query` of Unsplash keywords used to
