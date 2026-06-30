@@ -643,6 +643,64 @@ function initActiveNav() {
 }
 
 /* ============================================================
+   9. COUNT-UP STATS ("Con số biết nói")
+   Đếm 0 → data-target khi section vào viewport, chạy 1 lần.
+   ============================================================ */
+function initCountUp() {
+  const els = document.querySelectorAll('[data-countup]');
+  if (!els.length) return;
+
+  const setFinal = (el) =>
+    (el.textContent = el.dataset.target + (el.dataset.suffix || ''));
+
+  // Không hỗ trợ IO hoặc người dùng tắt animation → hiện luôn số cuối
+  if (
+    !('IntersectionObserver' in window) ||
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  ) {
+    els.forEach(setFinal);
+    return;
+  }
+
+  const DURATION = 1800; // ms
+  const easeOutCubic = (t) => 1 - Math.pow(1 - t, 3);
+
+  const animate = (el) => {
+    const target = parseInt(el.dataset.target, 10) || 0;
+    const suffix = el.dataset.suffix || '';
+    const start = performance.now();
+
+    const tick = (now) => {
+      const t = Math.min((now - start) / DURATION, 1);
+      const value = Math.round(easeOutCubic(t) * target);
+      el.textContent = value + suffix;
+      if (t < 1) {
+        requestAnimationFrame(tick);
+      } else {
+        el.textContent = target + suffix; // chốt giá trị chính xác
+      }
+    };
+
+    el.textContent = '0' + suffix; // reset trước khi đếm
+    requestAnimationFrame(tick);
+  };
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          animate(entry.target);
+          observer.unobserve(entry.target); // chạy 1 lần
+        }
+      });
+    },
+    { threshold: 0.4 }
+  );
+
+  els.forEach((el) => observer.observe(el));
+}
+
+/* ============================================================
    10. HERO ENTRANCE ON LOAD
    ============================================================ */
 function initHeroReveal() {
@@ -684,5 +742,6 @@ document.addEventListener('DOMContentLoaded', () => {
   initForms();
   initCalculator();
   initScrollReveal();
+  initCountUp();
   initActiveNav();
 });

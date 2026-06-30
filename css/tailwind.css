@@ -50,7 +50,7 @@
   }
 
   .section {
-    @apply py-12 md:py-16;
+    @apply py-8 md:py-16;
   }
 
   .section-title {
@@ -168,9 +168,27 @@
     @apply flex h-12 w-12 items-center justify-center rounded-full text-white shadow-md transition duration-fast hover:scale-105;
   }
 
-  /* Stat chip on hero */
-  .stat-chip {
-    @apply rounded-lg border border-white/15 bg-white/10 px-4 py-3 backdrop-blur;
+  /* Achievements — stat cards ("Con số biết nói") */
+  .stat-card {
+    @apply flex min-w-0 flex-col items-center justify-center rounded-lg border border-border bg-bg px-3 py-6 text-center;
+  }
+
+  .stat-num {
+    @apply text-3xl font-semibold leading-none text-primary md:text-hero;
+  }
+
+  .stat-label {
+    @apply mt-2 text-sm text-text-muted md:text-base;
+  }
+
+  /* Trust bar — desktop row item (icon + short label) */
+  .trust-item {
+    @apply flex items-center justify-center gap-2 rounded-lg border border-border bg-bg px-4 py-3 text-center text-base font-semibold text-text transition duration-fast hover:text-primary;
+  }
+
+  /* Trust bar — mobile ticker pill (icon + label) */
+  .trust-pill {
+    @apply inline-flex shrink-0 items-center gap-2 whitespace-nowrap text-base font-medium text-text-muted;
   }
 
   /* Mobile sticky CTA bar */
@@ -406,5 +424,73 @@
 
   .btn {
     transform: none;
+  }
+}
+
+/* ============================================================
+   TRUST TICKER (marquee mobile) — selector tên tuỳ chỉnh,
+   KHÔNG dùng tên utility Tailwind trong selector raw.
+   Bộ item được nhân đôi trong HTML; mỗi pill có margin-right
+   bằng nhau nên translateX(-50%) khớp đúng một bộ → lặp liền mạch.
+   ============================================================ */
+.trust-ticker {
+  overflow: hidden;
+  padding: 1.1rem 1rem;
+}
+
+.trust-ticker__track {
+  display: flex;
+  width: max-content;
+  animation: trust-scroll 22s linear infinite;
+}
+
+.trust-ticker__track > .trust-pill {
+  margin-right: 2.5rem;
+}
+
+/* Tạm dừng khi chạm/giữ */
+.trust-ticker:hover .trust-ticker__track,
+.trust-ticker:active .trust-ticker__track {
+  animation-play-state: paused;
+}
+
+@keyframes trust-scroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+/* ============================================================
+   MOBILE DENSITY — reveal nhanh hơn + scroll-snap nhẹ (<768px)
+   ============================================================ */
+@media (max-width: 767px) {
+  /* Reveal nhanh, cảm giác "lướt" thay vì chậm rãi như desktop */
+  .fade-in {
+    transition-duration: 0.35s;
+  }
+
+  /* Snap nhẹ giữa các section — proximity nên không "kẹt" scroll;
+     scroll-padding-top chừa chỗ cho header dính 64px. */
+  html {
+    scroll-snap-type: y proximity;
+    scroll-padding-top: 64px;
+  }
+
+  main > section {
+    scroll-snap-align: start;
+  }
+}
+
+/* ============================================================
+   REDUCED MOTION cho ticker + scroll-snap mới thêm
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  .trust-ticker__track {
+    animation: none;
+    flex-wrap: wrap;
+    width: auto;
+  }
+
+  html {
+    scroll-snap-type: none;
   }
 }
