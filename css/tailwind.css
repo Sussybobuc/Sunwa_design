@@ -460,37 +460,22 @@
 }
 
 /* ============================================================
-   MOBILE DENSITY — reveal nhanh hơn + scroll-snap nhẹ (<768px)
+   MOBILE DENSITY — reveal nhanh hơn (<768px)
    ============================================================ */
 @media (max-width: 767px) {
   /* Reveal nhanh, cảm giác "lướt" thay vì chậm rãi như desktop */
   .fade-in {
     transition-duration: 0.35s;
   }
-
-  /* Snap nhẹ giữa các section — proximity nên không "kẹt" scroll;
-     scroll-padding-top chừa chỗ cho header dính 64px. */
-  html {
-    scroll-snap-type: y proximity;
-    scroll-padding-top: 64px;
-  }
-
-  main > section {
-    scroll-snap-align: start;
-  }
 }
 
 /* ============================================================
-   REDUCED MOTION cho ticker + scroll-snap mới thêm
+   REDUCED MOTION cho ticker mới thêm
    ============================================================ */
 @media (prefers-reduced-motion: reduce) {
   .trust-ticker__track {
     animation: none;
     flex-wrap: wrap;
     width: auto;
-  }
-
-  html {
-    scroll-snap-type: none;
   }
 }
