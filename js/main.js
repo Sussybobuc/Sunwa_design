@@ -701,6 +701,115 @@ function initCountUp() {
 }
 
 /* ============================================================
+   9b. TESTIMONIAL CAROUSEL (trượt vô hạn bằng transform)
+   Mỗi thẻ hiện 3s → glide sang thẻ kế; tới bản sao thẻ đầu thì
+   nhảy về thẻ đầu thật (không animation) ⇒ lặp tới mãi, không lùi.
+   ============================================================ */
+function initTestimonialCarousel() {
+  const root = document.querySelector('[data-testi]');
+  if (!root) return;
+
+  const track = root.querySelector('.testi-track');
+  if (!track) return;
+
+  // Người dùng tắt animation → CSS xếp chồng tất cả thẻ, không chạy
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  const realCount = track.children.length;
+  if (realCount < 2) return;
+
+  const DWELL = 5500; // mỗi thẻ hiện ~5.5s
+  const GLIDE = 700; // khớp transition trong CSS
+
+  // Nhân bản thẻ đầu, thêm vào cuối để lặp liền mạch
+  const clone = track.firstElementChild.cloneNode(true);
+  clone.setAttribute('aria-hidden', 'true');
+  // Bỏ .fade-in: bản sao sinh ra sau initScrollReveal nên không bao giờ
+  // nhận .visible → nếu giữ lại sẽ ở opacity:0 (thẻ trắng khi lặp).
+  clone.classList.remove('fade-in');
+  track.appendChild(clone);
+
+  let index = 0;
+  let timer = null;
+  let hovered = false;
+  let visible = false;
+
+  const place = (i, animate) => {
+    track.style.transition = animate ? '' : 'none';
+    track.style.transform = 'translateX(' + -i * 100 + '%)';
+  };
+
+  const step = () => {
+    index += 1;
+    place(index, true);
+
+    if (index === realCount) {
+      // Vừa glide tới bản sao thẻ đầu → reset về thẻ đầu thật (không animation)
+      window.setTimeout(() => {
+        place(0, false);
+        index = 0;
+        void track.offsetWidth; // ép reflow để bỏ qua transition khi reset
+        track.style.transition = '';
+        schedule();
+      }, GLIDE);
+    } else {
+      schedule();
+    }
+  };
+
+  function schedule() {
+    timer = window.setTimeout(step, DWELL);
+  }
+
+  const start = () => {
+    if (!timer) schedule();
+  };
+  const stop = () => {
+    window.clearTimeout(timer);
+    timer = null;
+  };
+  const sync = () => {
+    if (visible && !hovered) start();
+    else stop();
+  };
+
+  // Tạm dừng khi người dùng đang xem/tương tác
+  track.addEventListener('mouseenter', () => {
+    hovered = true;
+    sync();
+  });
+  track.addEventListener('mouseleave', () => {
+    hovered = false;
+    sync();
+  });
+  track.addEventListener('touchstart', () => {
+    hovered = true;
+    sync();
+  }, { passive: true });
+  track.addEventListener('touchend', () => {
+    hovered = false;
+    sync();
+  }, { passive: true });
+
+  // Chỉ chạy khi section trong khung nhìn (tiết kiệm tài nguyên)
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          visible = e.isIntersecting;
+          sync();
+        });
+      },
+      { threshold: 0.2 }
+    );
+    io.observe(root);
+  } else {
+    visible = true;
+    sync();
+  }
+}
+
+/* ============================================================
    10. HERO ENTRANCE ON LOAD
    ============================================================ */
 function initHeroReveal() {
@@ -743,5 +852,6 @@ document.addEventListener('DOMContentLoaded', () => {
   initCalculator();
   initScrollReveal();
   initCountUp();
+  initTestimonialCarousel();
   initActiveNav();
 });

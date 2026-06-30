@@ -107,9 +107,17 @@
     @apply absolute left-3 top-3 rounded-full bg-bg-dark/80 px-3 py-1 text-xs font-medium text-white backdrop-blur;
   }
 
-  /* Trust / commitment tick item */
-  .tick-item {
-    @apply flex items-start gap-3 text-md text-text;
+  /* Commitment list — minimal accent items ("Lý do khách hàng tin tưởng") */
+  .commit-item {
+    @apply border-l-2 border-b border-l-primary border-b-border pb-5 pl-4;
+  }
+
+  .commit-item__title {
+    @apply text-md font-semibold text-text;
+  }
+
+  .commit-item__detail {
+    @apply mt-1 text-base text-text-muted;
   }
 
   /* Clean checklist box (replaces ✅ tick rows in dich-vu cards) — small, centered */
@@ -428,6 +436,20 @@
 }
 
 /* ============================================================
+   COMMIT LIST — bỏ gạch dưới ở hàng cuối (tránh đường kẻ cụt).
+   Chỉ dùng selector tên tuỳ chỉnh (.commit-grid / .commit-item).
+   ============================================================ */
+.commit-item:last-child {
+  border-bottom: 0;            /* 1 cột (<480px) */
+}
+
+@media (min-width: 480px) {
+  .commit-grid .commit-item:nth-last-child(2) {
+    border-bottom: 0;          /* 2 cột: ô áp chót cùng hàng cuối */
+  }
+}
+
+/* ============================================================
    TRUST TICKER (marquee mobile) — selector tên tuỳ chỉnh,
    KHÔNG dùng tên utility Tailwind trong selector raw.
    Bộ item được nhân đôi trong HTML; mỗi pill có margin-right
@@ -477,5 +499,47 @@
     animation: none;
     flex-wrap: wrap;
     width: auto;
+  }
+}
+
+/* ============================================================
+   TESTIMONIAL CAROUSEL — trượt vô hạn bằng transform (mọi cỡ).
+   .testi-viewport cắt khung; .testi-track dịch translateX; JS nhân
+   bản thẻ đầu để lặp liền mạch (initTestimonialCarousel).
+   Chỉ dùng selector tên tuỳ chỉnh — KHÔNG dùng tên utility Tailwind.
+   ============================================================ */
+.testi-viewport {
+  overflow: hidden;                  /* cắt còn đúng 1 thẻ */
+}
+
+.testi-track {
+  display: flex;
+  transition: transform 0.7s cubic-bezier(0.65, 0, 0.35, 1);  /* glide mượt (ease-in-out) */
+  will-change: transform;
+}
+
+.testi-track > .card {
+  flex: 0 0 100%;                    /* 1 thẻ mỗi khung nhìn */
+  padding: 1.75rem;                  /* hộp lớn hơn .card mặc định (p-5) */
+}
+
+/* Desktop: hộp rộng rãi hơn */
+@media (min-width: 768px) {
+  .testi-track > .card {
+    padding: 2.5rem 3rem;
+  }
+}
+
+/* Reduced motion: không chuyển động — xếp chồng để không ẩn thẻ nào */
+@media (prefers-reduced-motion: reduce) {
+  .testi-track {
+    flex-direction: column;
+    gap: 1.25rem;
+    transition: none;
+    transform: none;
+  }
+
+  .testi-track > .card {
+    flex-basis: auto;
   }
 }
