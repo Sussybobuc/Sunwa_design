@@ -15,7 +15,8 @@
   <meta name="twitter:title" content="Dịch vụ | CÔNG TY TNHH MTV Thiết kế và Xây dựng Sunwa">
   <meta name="twitter:description" content="Từ thiết kế đến bàn giao — dịch vụ thi công nhà dân dụng trọn gói tại Đà Nẵng.">
   <meta name="twitter:image" content="/assets/og-image.jpg">
-  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="/assets/favicon.png?v=2" type="image/png" sizes="48x48">
+  <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png?v=2">
   <title>Dịch vụ thi công &amp; thiết kế | Sunwa Design Đà Nẵng</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -29,7 +30,7 @@
   <header class="sticky top-0 z-[100] h-nav border-b border-border bg-bg">
     <div class="container-x flex h-nav items-center justify-between">
       <a href="/" class="flex items-center gap-2" data-page="index" aria-label="Sunwa Design — Trang chủ">
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#B8520A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M9 21v-6h6v6"/></svg>
+        <img src="/materials/Logo.webp" alt="Sunwa Design" width="36" height="36" class="h-9 w-9" decoding="async">
         <span class="text-lg font-semibold text-text">Sunwa Design</span>
       </a>
       <button data-nav-toggle class="flex h-11 w-11 items-center justify-center rounded-md text-text md:hidden" aria-label="Mở menu" aria-expanded="false" aria-controls="nav-menu">
@@ -76,95 +77,116 @@
       </div>
     </section>
 
-    <!-- ============ SERVICES ============ -->
-    <section class="section">
-      <div class="container-x space-y-5">
+    <!-- ============ SERVICE SUB-NAV (dính, cuộn ngang trên mobile) ============ -->
+    <nav class="svc-nav" data-svc-nav aria-label="Danh mục dịch vụ">
+      <div class="container-x svc-nav__inner">
+        <a href="#dv-tron-goi" class="svc-nav__link" data-svc-link><span class="svc-nav__num">01</span><span>Thi công trọn gói</span></a>
+        <a href="#dv-phan-tho" class="svc-nav__link" data-svc-link><span class="svc-nav__num">02</span><span>Thi công phần thô</span></a>
+        <a href="#dv-cai-tao" class="svc-nav__link" data-svc-link><span class="svc-nav__num">03</span><span>Cải tạo nhà ở</span></a>
+        <a href="#dv-thiet-ke" class="svc-nav__link" data-svc-link><span class="svc-nav__num">04</span><span>Thiết kế kiến trúc</span></a>
+      </div>
+    </nav>
 
-        <!-- 1. Thi công trọn gói -->
-        <article class="card fade-in">
-          <div class="flex items-start gap-4">
-            <div class="icon-box shrink-0"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg></div>
-            <div>
-              <h2 class="text-xl font-semibold">Thi công trọn gói</h2>
-              <p class="mt-1 text-base text-text-muted">Một hợp đồng duy nhất — Sunwa lo toàn bộ từ giấy phép đến chiếc chìa khóa bàn giao.</p>
-            </div>
+    <!-- ============ SERVICES — dải lớn xen kẽ ảnh trái/phải ============ -->
+
+    <!-- 1. Thi công trọn gói — ảnh trái -->
+    <section id="dv-tron-goi" class="svc-block section">
+      <div class="container-x grid items-center gap-8 md:grid-cols-2 md:gap-12">
+        <img src="/materials/Button1.webp?v=2" alt="Thi công trọn gói" width="800" height="600"
+             class="svc-block__img fade-in" decoding="async">
+        <div class="fade-in">
+          <span class="svc-block__num">01</span>
+          <p class="eyebrow mt-3 text-primary">Trọn gói</p>
+          <h2 class="mt-2 text-2xl font-semibold md:text-3xl">Thi công trọn gói</h2>
+          <p class="section-sub max-w-prose">Một hợp đồng duy nhất — Sunwa lo toàn bộ từ giấy phép đến chiếc chìa khóa bàn giao.</p>
+          <ul class="mt-5 grid grid-cols-1 gap-x-6 gap-y-2.5 sm:grid-cols-2">
+            <li class="svc-check"><svg class="svc-check__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5L20 7"/></svg>Xin phép xây dựng</li>
+            <li class="svc-check"><svg class="svc-check__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5L20 7"/></svg>Thiết kế kiến trúc</li>
+            <li class="svc-check"><svg class="svc-check__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5L20 7"/></svg>Thi công phần thô</li>
+            <li class="svc-check"><svg class="svc-check__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5L20 7"/></svg>Lắp đặt hệ thống điện nước (MEP)</li>
+            <li class="svc-check"><svg class="svc-check__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5L20 7"/></svg>Hoàn thiện nội thất</li>
+            <li class="svc-check"><svg class="svc-check__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5L20 7"/></svg>Dọn dẹp &amp; bàn giao</li>
+          </ul>
+          <div class="mt-6 flex flex-wrap gap-3">
+            <a href="/bao-gia" class="btn-primary">Nhận báo giá</a>
+            <a href="/du-an" class="btn-outline">Xem dự án</a>
           </div>
-          <details class="mt-4 border-t border-border pt-4">
-            <summary class="flex cursor-pointer list-none items-center justify-between text-md font-medium text-primary">Hạng mục bao gồm<span aria-hidden="true">+</span></summary>
-            <ul class="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
-              <li class="feature-chip fade-in">Xin phép xây dựng</li>
-              <li class="feature-chip fade-in">Thiết kế kiến trúc</li>
-              <li class="feature-chip fade-in">Thi công phần thô</li>
-              <li class="feature-chip fade-in">Lắp đặt hệ thống điện nước (MEP)</li>
-              <li class="feature-chip fade-in">Hoàn thiện nội thất</li>
-              <li class="feature-chip fade-in">Dọn dẹp &amp; bàn giao</li>
-            </ul>
-          </details>
-        </article>
+        </div>
+      </div>
+    </section>
 
-        <!-- 2. Thi công phần thô -->
-        <article class="card fade-in">
-          <div class="flex items-start gap-4">
-            <div class="icon-box shrink-0"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="1"/><path d="M9 7h2M13 7h2M9 11h2M13 11h2M9 15h2M13 15h2"/></svg></div>
-            <div>
-              <h2 class="text-xl font-semibold">Thi công phần thô</h2>
-              <p class="mt-1 text-base text-text-muted">Chắc từ nền móng — kết cấu đạt chuẩn, vật tư đúng chủng loại, có nghiệm thu từng giai đoạn.</p>
-            </div>
+    <!-- 2. Thi công phần thô — ảnh phải -->
+    <section id="dv-phan-tho" class="svc-block section bg-bg-secondary">
+      <div class="container-x grid items-center gap-8 md:grid-cols-2 md:gap-12">
+        <img src="/materials/Button2.webp?v=2" alt="Thi công phần thô" width="800" height="600"
+             class="svc-block__img fade-in md:order-2" loading="lazy" decoding="async">
+        <div class="fade-in">
+          <span class="svc-block__num">02</span>
+          <p class="eyebrow mt-3 text-primary">Phần thô</p>
+          <h2 class="mt-2 text-2xl font-semibold md:text-3xl">Thi công phần thô</h2>
+          <p class="section-sub max-w-prose">Chắc từ nền móng — kết cấu đạt chuẩn, vật tư đúng chủng loại, có nghiệm thu từng giai đoạn.</p>
+          <ul class="mt-5 grid grid-cols-1 gap-x-6 gap-y-2.5 sm:grid-cols-2">
+            <li class="svc-check"><svg class="svc-check__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5L20 7"/></svg>Khảo sát địa chất</li>
+            <li class="svc-check"><svg class="svc-check__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5L20 7"/></svg>Thi công móng</li>
+            <li class="svc-check"><svg class="svc-check__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5L20 7"/></svg>Dầm sàn kết cấu</li>
+            <li class="svc-check"><svg class="svc-check__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5L20 7"/></svg>Xây tường</li>
+            <li class="svc-check"><svg class="svc-check__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5L20 7"/></svg>Đổ mái</li>
+          </ul>
+          <div class="mt-6 flex flex-wrap gap-3">
+            <a href="/bao-gia" class="btn-primary">Nhận báo giá</a>
+            <a href="/du-an" class="btn-outline">Xem dự án</a>
           </div>
-          <details class="mt-4 border-t border-border pt-4">
-            <summary class="flex cursor-pointer list-none items-center justify-between text-md font-medium text-primary">Hạng mục bao gồm<span aria-hidden="true">+</span></summary>
-            <ul class="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
-              <li class="feature-chip fade-in">Khảo sát địa chất</li>
-              <li class="feature-chip fade-in">Thi công móng</li>
-              <li class="feature-chip fade-in">Dầm sàn kết cấu</li>
-              <li class="feature-chip fade-in">Xây tường</li>
-              <li class="feature-chip fade-in">Đổ mái</li>
-            </ul>
-          </details>
-        </article>
+        </div>
+      </div>
+    </section>
 
-        <!-- 3. Cải tạo nhà ở -->
-        <article class="card fade-in">
-          <div class="flex items-start gap-4">
-            <div class="icon-box shrink-0"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.7 6.3a4 4 0 0 0-5 5L3 18l3 3 6.7-6.7a4 4 0 0 0 5-5l-2.5 2.5-2-2 2.5-2.5Z"/></svg></div>
-            <div>
-              <h2 class="text-xl font-semibold">Cải tạo nhà ở</h2>
-              <p class="mt-1 text-base text-text-muted">Làm mới không gian sống mà không cần xây lại từ đầu — tối ưu chi phí, giữ giá trị căn nhà.</p>
-            </div>
+    <!-- 3. Cải tạo nhà ở — ảnh trái -->
+    <section id="dv-cai-tao" class="svc-block section">
+      <div class="container-x grid items-center gap-8 md:grid-cols-2 md:gap-12">
+        <img src="/materials/Button3.webp?v=2" alt="Cải tạo nhà ở" width="800" height="600"
+             class="svc-block__img fade-in" loading="lazy" decoding="async">
+        <div class="fade-in">
+          <span class="svc-block__num">03</span>
+          <p class="eyebrow mt-3 text-primary">Cải tạo</p>
+          <h2 class="mt-2 text-2xl font-semibold md:text-3xl">Cải tạo nhà ở</h2>
+          <p class="section-sub max-w-prose">Làm mới không gian sống mà không cần xây lại từ đầu — tối ưu chi phí, giữ giá trị căn nhà.</p>
+          <ul class="mt-5 grid grid-cols-1 gap-x-6 gap-y-2.5 sm:grid-cols-2">
+            <li class="svc-check"><svg class="svc-check__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5L20 7"/></svg>Nâng tầng</li>
+            <li class="svc-check"><svg class="svc-check__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5L20 7"/></svg>Cơi nới diện tích</li>
+            <li class="svc-check"><svg class="svc-check__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5L20 7"/></svg>Sửa chữa thấm dột</li>
+            <li class="svc-check"><svg class="svc-check__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5L20 7"/></svg>Thay kết cấu cũ</li>
+            <li class="svc-check"><svg class="svc-check__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5L20 7"/></svg>Làm mới mặt tiền</li>
+          </ul>
+          <div class="mt-6 flex flex-wrap gap-3">
+            <a href="/bao-gia" class="btn-primary">Nhận báo giá</a>
+            <a href="/du-an" class="btn-outline">Xem dự án</a>
           </div>
-          <details class="mt-4 border-t border-border pt-4">
-            <summary class="flex cursor-pointer list-none items-center justify-between text-md font-medium text-primary">Hạng mục bao gồm<span aria-hidden="true">+</span></summary>
-            <ul class="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
-              <li class="feature-chip fade-in">Nâng tầng</li>
-              <li class="feature-chip fade-in">Cơi nới diện tích</li>
-              <li class="feature-chip fade-in">Sửa chữa thấm dột</li>
-              <li class="feature-chip fade-in">Thay kết cấu cũ</li>
-              <li class="feature-chip fade-in">Làm mới mặt tiền</li>
-            </ul>
-          </details>
-        </article>
+        </div>
+      </div>
+    </section>
 
-        <!-- 4. Thiết kế kiến trúc -->
-        <article class="card fade-in">
-          <div class="flex items-start gap-4">
-            <div class="icon-box shrink-0"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17 17 3l4 4L7 21l-4 0 0-4Z"/><path d="M14.5 5.5 18.5 9.5M7 13l2 2M10 10l2 2"/></svg></div>
-            <div>
-              <h2 class="text-xl font-semibold">Thiết kế kiến trúc</h2>
-              <p class="mt-1 text-base text-text-muted">Bản vẽ đẹp, công năng tối ưu, kèm hồ sơ xin phép — sẵn sàng cho thi công.</p>
-            </div>
+    <!-- 4. Thiết kế kiến trúc — ảnh phải -->
+    <section id="dv-thiet-ke" class="svc-block section bg-bg-secondary">
+      <div class="container-x grid items-center gap-8 md:grid-cols-2 md:gap-12">
+        <img src="/materials/Button4.webp?v=2" alt="Thiết kế kiến trúc" width="800" height="600"
+             class="svc-block__img fade-in md:order-2" loading="lazy" decoding="async">
+        <div class="fade-in">
+          <span class="svc-block__num">04</span>
+          <p class="eyebrow mt-3 text-primary">Thiết kế</p>
+          <h2 class="mt-2 text-2xl font-semibold md:text-3xl">Thiết kế kiến trúc</h2>
+          <p class="section-sub max-w-prose">Bản vẽ đẹp, công năng tối ưu, kèm hồ sơ xin phép — sẵn sàng cho thi công.</p>
+          <ul class="mt-5 grid grid-cols-1 gap-x-6 gap-y-2.5 sm:grid-cols-2">
+            <li class="svc-check"><svg class="svc-check__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5L20 7"/></svg>Phong cách hiện đại</li>
+            <li class="svc-check"><svg class="svc-check__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5L20 7"/></svg>Nhà phố</li>
+            <li class="svc-check"><svg class="svc-check__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5L20 7"/></svg>Biệt thự</li>
+            <li class="svc-check"><svg class="svc-check__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5L20 7"/></svg>Nhà vườn</li>
+            <li class="svc-check"><svg class="svc-check__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5L20 7"/></svg>Kèm hồ sơ xin phép</li>
+          </ul>
+          <div class="mt-6 flex flex-wrap gap-3">
+            <a href="/bao-gia" class="btn-primary">Nhận báo giá</a>
+            <a href="/du-an" class="btn-outline">Xem dự án</a>
           </div>
-          <details class="mt-4 border-t border-border pt-4">
-            <summary class="flex cursor-pointer list-none items-center justify-between text-md font-medium text-primary">Hạng mục bao gồm<span aria-hidden="true">+</span></summary>
-            <ul class="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
-              <li class="feature-chip fade-in">Phong cách hiện đại</li>
-              <li class="feature-chip fade-in">Nhà phố</li>
-              <li class="feature-chip fade-in">Biệt thự</li>
-              <li class="feature-chip fade-in">Nhà vườn</li>
-              <li class="feature-chip fade-in">Kèm hồ sơ xin phép</li>
-            </ul>
-          </details>
-        </article>
-
+        </div>
       </div>
     </section>
 

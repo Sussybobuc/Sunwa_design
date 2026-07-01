@@ -155,6 +155,43 @@
     @apply flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary-light text-md font-semibold text-primary;
   }
 
+  /* Services page (dich-vu) — sticky pill sub-nav + large zigzag service bands */
+  .svc-nav {
+    @apply sticky top-nav z-40 border-b border-border bg-bg;
+  }
+  .svc-nav__inner {
+    @apply flex gap-2 overflow-x-auto py-3
+           md:relative md:grid md:grid-cols-4 md:gap-0 md:overflow-visible md:py-0 md:divide-x md:divide-border;
+  }
+  .svc-nav__link {
+    @apply flex items-center gap-2 whitespace-nowrap rounded-full border border-border px-4 py-2 text-sm font-medium text-text-muted transition duration-fast hover:border-primary hover:text-primary
+           md:justify-center md:rounded-none md:border-0 md:py-4;
+  }
+  .svc-nav__num {
+    @apply hidden text-base font-bold text-primary/40 md:inline;
+  }
+  .svc-nav__link--active {
+    @apply border-primary bg-primary-light text-primary md:border-transparent md:bg-transparent;
+  }
+  .svc-nav__link--active .svc-nav__num {
+    @apply text-primary;
+  }
+  .svc-nav__indicator {
+    @apply pointer-events-none absolute bottom-0 left-0 hidden h-[3px] w-0 rounded bg-primary transition-all duration-normal md:block;
+  }
+  .svc-block__img {
+    @apply w-full rounded-xl border border-border object-cover shadow-sm;
+  }
+  .svc-block__num {
+    @apply block text-5xl font-bold leading-none text-primary/20 md:text-6xl;
+  }
+  .svc-check {
+    @apply flex items-start gap-2 text-base text-text;
+  }
+  .svc-check__icon {
+    @apply mt-0.5 h-5 w-5 shrink-0 text-primary;
+  }
+
   /* Nav links */
   .nav-link {
     @apply rounded-sm px-1 py-3 md:py-2 text-md text-text-muted transition duration-fast hover:text-primary;
@@ -174,13 +211,21 @@
     @apply block rounded-md px-3 py-2 text-md text-text-muted transition hover:bg-bg-secondary hover:text-primary;
   }
 
-  /* Filter tabs */
-  .filter-tab {
-    @apply min-h-[44px] rounded-full border border-border px-4 py-2.5 text-base text-text-muted transition duration-fast hover:border-primary hover:text-primary;
+  /* Filter tabs — mobile: pills; desktop (md+): dải tab chia đều + gạch chân trượt */
+  .filter-bar {
+    @apply flex flex-wrap gap-2
+           md:relative md:grid md:grid-cols-5 md:gap-0 md:divide-x md:divide-border md:border-b md:border-border;
   }
-
+  .filter-tab {
+    @apply min-h-[44px] rounded-full border border-border px-4 py-2.5 text-base text-text-muted transition duration-fast hover:border-primary hover:text-primary
+           md:min-h-0 md:rounded-none md:border-0 md:py-3.5;
+  }
   .filter-tab--active {
-    @apply border-primary bg-primary text-white hover:text-white;
+    @apply border-primary bg-primary text-white hover:text-white
+           md:border-transparent md:bg-transparent md:font-medium md:text-primary md:hover:text-primary;
+  }
+  .filter-bar__indicator {
+    @apply pointer-events-none absolute bottom-0 left-0 hidden h-[3px] w-0 rounded bg-primary transition-all duration-normal md:block;
   }
 
   /* Form fields */
@@ -487,6 +532,12 @@
 
 .svc-photo__body {
   z-index: 1;            /* nội dung nằm trên scrim ::after */
+}
+
+/* Dich-vu zigzag bands — chừa khoảng cho 2 thanh dính (header 64px + sub-nav ~56px)
+   khi nhảy tới anchor. Selector tên tuỳ chỉnh (không dùng tên utility Tailwind). */
+.svc-block {
+  scroll-margin-top: 7.5rem;
 }
 
 /* ============================================================

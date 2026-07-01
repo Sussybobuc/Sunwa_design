@@ -270,12 +270,36 @@ function initFilter() {
   const gridEl = document.getElementById('projects-grid');
   if (!tabs.length || gridEl === null) return;
 
+  // Gạch chân trượt (chỉ hiện ở desktop qua CSS md:block)
+  const bar = document.querySelector('[data-filter-bar]');
+  let indicator = null;
+  let activeTab =
+    document.querySelector('.filter-tab--active') || tabs[0];
+  const moveIndicator = (tab) => {
+    if (!indicator || !tab) return;
+    indicator.style.width = tab.offsetWidth + 'px';
+    indicator.style.transform = 'translateX(' + tab.offsetLeft + 'px)';
+  };
+  if (bar) {
+    indicator = document.createElement('span');
+    indicator.className = 'filter-bar__indicator';
+    bar.appendChild(indicator);
+    moveIndicator(activeTab);
+    window.addEventListener('resize', () => moveIndicator(activeTab));
+    // Font web tải xong có thể đổi bề rộng tab → đặt lại vị trí
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(() => moveIndicator(activeTab));
+    }
+  }
+
   tabs.forEach((tab) => {
     tab.addEventListener('click', () => {
       const filter = tab.getAttribute('data-filter');
 
       tabs.forEach((t) => t.classList.remove('filter-tab--active'));
       tab.classList.add('filter-tab--active');
+      activeTab = tab;
+      moveIndicator(tab);
 
       gridEl.querySelectorAll('.project-card').forEach((card) => {
         const match = filter === 'all' || card.getAttribute('data-type') === filter;
@@ -837,6 +861,74 @@ function initHeroReveal() {
 }
 
 /* ============================================================
+   11. SERVICE SUB-NAV SCROLL-SPY (trang Dịch vụ)
+   Tô sáng pill tương ứng dải dịch vụ đang trong khung nhìn.
+   No-op nếu trang không có [data-svc-nav].
+   ============================================================ */
+function initServiceNav() {
+  const nav = document.querySelector('[data-svc-nav]');
+  if (!nav) return;
+
+  const links = Array.from(nav.querySelectorAll('[data-svc-link]'));
+  // Ghép id dải -> pill qua hash trong href
+  const linkById = new Map();
+  const sections = [];
+  links.forEach((link) => {
+    const id = link.getAttribute('href').slice(1);
+    const section = document.getElementById(id);
+    if (section) {
+      linkById.set(id, link);
+      sections.push(section);
+    }
+  });
+  if (!sections.length) return;
+
+  // Thanh gạch chân trượt (chỉ hiện ở desktop qua CSS md:block)
+  const inner = nav.querySelector('.svc-nav__inner');
+  const indicator = document.createElement('span');
+  indicator.className = 'svc-nav__indicator';
+  if (inner) inner.appendChild(indicator);
+
+  let activeLink = null;
+  const moveIndicator = (link) => {
+    if (!link) return;
+    indicator.style.width = link.offsetWidth + 'px';
+    indicator.style.transform = 'translateX(' + link.offsetLeft + 'px)';
+  };
+
+  const setActive = (id) => {
+    links.forEach((l) => l.classList.remove('svc-nav__link--active'));
+    const active = linkById.get(id);
+    if (active) {
+      active.classList.add('svc-nav__link--active');
+      activeLink = active;
+      moveIndicator(active);
+    }
+  };
+
+  // Đặt lại vị trí gạch chân khi đổi kích thước (bề rộng tab thay đổi / đổi breakpoint)
+  window.addEventListener('resize', () => moveIndicator(activeLink));
+
+  if (!('IntersectionObserver' in window)) {
+    setActive(sections[0].id);
+    return;
+  }
+
+  // rootMargin trừ hao 2 thanh dính (header + sub-nav) ở trên,
+  // và đẩy biên dưới lên để "phần đang đọc" quyết định pill active.
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) setActive(entry.target.id);
+      });
+    },
+    { rootMargin: '-40% 0px -55% 0px', threshold: 0 }
+  );
+  sections.forEach((s) => observer.observe(s));
+  setActive(sections[0].id);
+}
+
+/* ============================================================
    INIT
    ============================================================ */
 document.addEventListener('DOMContentLoaded', () => {
@@ -854,4 +946,5 @@ document.addEventListener('DOMContentLoaded', () => {
   initCountUp();
   initTestimonialCarousel();
   initActiveNav();
+  initServiceNav();
 });
