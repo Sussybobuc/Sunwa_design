@@ -21,7 +21,7 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/style.css">
   <script src="/js/main.js" defer></script>
 </head>
@@ -31,7 +31,7 @@
     <div class="container-x flex h-nav items-center justify-between">
       <a href="/" class="flex items-center gap-2" data-page="index" aria-label="Sunwa Design — Trang chủ">
         <img src="/materials/Logo.webp" alt="Sunwa Design" width="36" height="36" class="h-9 w-9" decoding="async">
-        <span class="text-lg font-semibold text-text">Sunwa Design</span>
+        <span class="text-lg font-semibold text-text">SUNWA Design &amp; Build</span>
       </a>
       <button data-nav-toggle class="flex h-11 w-11 items-center justify-center rounded-md text-text md:hidden" aria-label="Mở menu" aria-expanded="false" aria-controls="nav-menu">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
@@ -69,33 +69,58 @@
 
   <main>
     <!-- ============ PAGE HEADER ============ -->
-    <section class="section bg-bg-secondary">
-      <div class="container-x">
-        <p class="eyebrow text-primary">Dịch vụ</p>
-        <h1 class="mt-3 text-3xl font-semibold">Chúng tôi làm được gì cho bạn</h1>
-        <p class="section-sub max-w-2xl">Từ thiết kế đến bàn giao — một đầu mối, toàn bộ quy trình. Bấm vào từng dịch vụ để xem chi tiết hạng mục.</p>
+    <section class="page-hero">
+      <div class="container-x py-12">
+        <p class="eyebrow inline-flex items-center gap-2 text-[#E8A060]"><span class="h-px w-8 bg-[#E8A060]"></span>Dịch vụ</p>
+        <h1 class="mt-4 text-3xl font-bold leading-tight tracking-tight text-white md:text-4xl">Chúng tôi làm được gì cho bạn</h1>
+        <p class="mt-4 max-w-2xl text-md text-white/80">Từ thiết kế đến bàn giao — một đầu mối, toàn bộ quy trình. Bấm vào từng dịch vụ để xem chi tiết hạng mục.</p>
       </div>
     </section>
 
     <!-- ============ SERVICE SUB-NAV (dính, cuộn ngang trên mobile) ============ -->
     <nav class="svc-nav" data-svc-nav aria-label="Danh mục dịch vụ">
       <div class="container-x svc-nav__inner">
-        <a href="#dv-tron-goi" class="svc-nav__link" data-svc-link><span class="svc-nav__num">01</span><span>Thi công trọn gói</span></a>
-        <a href="#dv-phan-tho" class="svc-nav__link" data-svc-link><span class="svc-nav__num">02</span><span>Thi công phần thô</span></a>
-        <a href="#dv-cai-tao" class="svc-nav__link" data-svc-link><span class="svc-nav__num">03</span><span>Cải tạo nhà ở</span></a>
-        <a href="#dv-thiet-ke" class="svc-nav__link" data-svc-link><span class="svc-nav__num">04</span><span>Thiết kế kiến trúc</span></a>
+        <a href="#dv-thiet-ke" class="svc-nav__link" data-svc-link><span class="svc-nav__num">01</span><span>Thiết kế kiến trúc</span></a>
+        <a href="#dv-tron-goi" class="svc-nav__link" data-svc-link><span class="svc-nav__num">02</span><span>Thi công trọn gói</span></a>
+        <a href="#dv-phan-tho" class="svc-nav__link" data-svc-link><span class="svc-nav__num">03</span><span>Thi công phần thô</span></a>
+        <a href="#dv-cai-tao" class="svc-nav__link" data-svc-link><span class="svc-nav__num">04</span><span>Cải tạo nhà ở</span></a>
       </div>
     </nav>
 
     <!-- ============ SERVICES — dải lớn xen kẽ ảnh trái/phải ============ -->
 
-    <!-- 1. Thi công trọn gói — ảnh trái -->
-    <section id="dv-tron-goi" class="svc-block section">
+    <!-- 1. Thiết kế kiến trúc — ảnh trái -->
+    <section id="dv-thiet-ke" class="svc-block section">
       <div class="container-x grid items-center gap-8 md:grid-cols-2 md:gap-12">
-        <img src="/materials/Button1.webp?v=2" alt="Thi công trọn gói" width="800" height="600"
+        <img src="/materials/Button4.webp?v=2" alt="Thiết kế kiến trúc" width="800" height="600"
              class="svc-block__img fade-in" decoding="async">
         <div class="fade-in">
           <span class="svc-block__num">01</span>
+          <p class="eyebrow mt-3 text-primary">Thiết kế</p>
+          <h2 class="mt-2 text-2xl font-semibold md:text-3xl">Thiết kế kiến trúc</h2>
+          <p class="section-sub max-w-prose">Bản vẽ đẹp, công năng tối ưu, kèm hồ sơ xin phép — sẵn sàng cho thi công.</p>
+          <ul class="mt-5 grid grid-cols-1 gap-x-6 gap-y-2.5 sm:grid-cols-2">
+            <li class="svc-check"><svg class="svc-check__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5L20 7"/></svg>Phong cách hiện đại</li>
+            <li class="svc-check"><svg class="svc-check__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5L20 7"/></svg>Nhà phố</li>
+            <li class="svc-check"><svg class="svc-check__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5L20 7"/></svg>Biệt thự</li>
+            <li class="svc-check"><svg class="svc-check__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5L20 7"/></svg>Nhà vườn</li>
+            <li class="svc-check"><svg class="svc-check__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5L20 7"/></svg>Kèm hồ sơ xin phép</li>
+          </ul>
+          <div class="mt-6 flex flex-wrap gap-3">
+            <a href="/bao-gia" class="btn-primary">Nhận báo giá</a>
+            <a href="/du-an" class="btn-outline">Xem dự án</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. Thi công trọn gói — ảnh phải -->
+    <section id="dv-tron-goi" class="svc-block section bg-bg-secondary">
+      <div class="container-x grid items-center gap-8 md:grid-cols-2 md:gap-12">
+        <img src="/materials/Button1.webp?v=2" alt="Thi công trọn gói" width="800" height="600"
+             class="svc-block__img fade-in md:order-2" loading="lazy" decoding="async">
+        <div class="fade-in">
+          <span class="svc-block__num">02</span>
           <p class="eyebrow mt-3 text-primary">Trọn gói</p>
           <h2 class="mt-2 text-2xl font-semibold md:text-3xl">Thi công trọn gói</h2>
           <p class="section-sub max-w-prose">Một hợp đồng duy nhất — Sunwa lo toàn bộ từ giấy phép đến chiếc chìa khóa bàn giao.</p>
@@ -115,13 +140,13 @@
       </div>
     </section>
 
-    <!-- 2. Thi công phần thô — ảnh phải -->
-    <section id="dv-phan-tho" class="svc-block section bg-bg-secondary">
+    <!-- 3. Thi công phần thô — ảnh trái -->
+    <section id="dv-phan-tho" class="svc-block section">
       <div class="container-x grid items-center gap-8 md:grid-cols-2 md:gap-12">
         <img src="/materials/Button2.webp?v=2" alt="Thi công phần thô" width="800" height="600"
-             class="svc-block__img fade-in md:order-2" loading="lazy" decoding="async">
+             class="svc-block__img fade-in" loading="lazy" decoding="async">
         <div class="fade-in">
-          <span class="svc-block__num">02</span>
+          <span class="svc-block__num">03</span>
           <p class="eyebrow mt-3 text-primary">Phần thô</p>
           <h2 class="mt-2 text-2xl font-semibold md:text-3xl">Thi công phần thô</h2>
           <p class="section-sub max-w-prose">Chắc từ nền móng — kết cấu đạt chuẩn, vật tư đúng chủng loại, có nghiệm thu từng giai đoạn.</p>
@@ -140,13 +165,13 @@
       </div>
     </section>
 
-    <!-- 3. Cải tạo nhà ở — ảnh trái -->
-    <section id="dv-cai-tao" class="svc-block section">
+    <!-- 4. Cải tạo nhà ở — ảnh phải -->
+    <section id="dv-cai-tao" class="svc-block section bg-bg-secondary">
       <div class="container-x grid items-center gap-8 md:grid-cols-2 md:gap-12">
         <img src="/materials/Button3.webp?v=2" alt="Cải tạo nhà ở" width="800" height="600"
-             class="svc-block__img fade-in" loading="lazy" decoding="async">
+             class="svc-block__img fade-in md:order-2" loading="lazy" decoding="async">
         <div class="fade-in">
-          <span class="svc-block__num">03</span>
+          <span class="svc-block__num">04</span>
           <p class="eyebrow mt-3 text-primary">Cải tạo</p>
           <h2 class="mt-2 text-2xl font-semibold md:text-3xl">Cải tạo nhà ở</h2>
           <p class="section-sub max-w-prose">Làm mới không gian sống mà không cần xây lại từ đầu — tối ưu chi phí, giữ giá trị căn nhà.</p>
@@ -165,37 +190,18 @@
       </div>
     </section>
 
-    <!-- 4. Thiết kế kiến trúc — ảnh phải -->
-    <section id="dv-thiet-ke" class="svc-block section bg-bg-secondary">
-      <div class="container-x grid items-center gap-8 md:grid-cols-2 md:gap-12">
-        <img src="/materials/Button4.webp?v=2" alt="Thiết kế kiến trúc" width="800" height="600"
-             class="svc-block__img fade-in md:order-2" loading="lazy" decoding="async">
-        <div class="fade-in">
-          <span class="svc-block__num">04</span>
-          <p class="eyebrow mt-3 text-primary">Thiết kế</p>
-          <h2 class="mt-2 text-2xl font-semibold md:text-3xl">Thiết kế kiến trúc</h2>
-          <p class="section-sub max-w-prose">Bản vẽ đẹp, công năng tối ưu, kèm hồ sơ xin phép — sẵn sàng cho thi công.</p>
-          <ul class="mt-5 grid grid-cols-1 gap-x-6 gap-y-2.5 sm:grid-cols-2">
-            <li class="svc-check"><svg class="svc-check__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5L20 7"/></svg>Phong cách hiện đại</li>
-            <li class="svc-check"><svg class="svc-check__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5L20 7"/></svg>Nhà phố</li>
-            <li class="svc-check"><svg class="svc-check__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5L20 7"/></svg>Biệt thự</li>
-            <li class="svc-check"><svg class="svc-check__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5L20 7"/></svg>Nhà vườn</li>
-            <li class="svc-check"><svg class="svc-check__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5L20 7"/></svg>Kèm hồ sơ xin phép</li>
-          </ul>
-          <div class="mt-6 flex flex-wrap gap-3">
-            <a href="/bao-gia" class="btn-primary">Nhận báo giá</a>
-            <a href="/du-an" class="btn-outline">Xem dự án</a>
-          </div>
-        </div>
-      </div>
-    </section>
-
     <!-- ============ CTA BANNER ============ -->
-    <section class="bg-primary">
-      <div class="container-x flex flex-col items-center gap-4 py-12 text-center md:py-16">
-        <h2 class="text-2xl font-semibold text-white md:text-3xl">Chưa chắc dịch vụ nào phù hợp?</h2>
-        <p class="text-md text-white/85">Gọi hotline hoặc gửi yêu cầu — chúng tôi tư vấn miễn phí.</p>
-        <a href="/bao-gia" class="btn-white mt-2">Nhận tư vấn &amp; báo giá</a>
+    <section class="cta-banner">
+      <div class="container-x relative py-14 text-center md:py-20">
+        <h2 class="text-2xl font-bold text-white md:text-4xl">Chưa chắc dịch vụ nào phù hợp?</h2>
+        <p class="mx-auto mt-3 max-w-xl text-md text-white/80">Gọi hotline hoặc gửi yêu cầu — chúng tôi tư vấn miễn phí.</p>
+        <div class="mt-7 flex flex-col items-center justify-center gap-3 sm:flex-row">
+          <a href="/bao-gia" class="btn-primary">Nhận tư vấn &amp; báo giá</a>
+          <a href="tel:0916557558" class="btn-ghost inline-flex items-center gap-2">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3-8.7A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2Z"/></svg>
+            Gọi hotline
+          </a>
+        </div>
       </div>
     </section>
   </main>
@@ -206,7 +212,7 @@
       <div>
         <div class="flex items-center gap-2">
           <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#E8A060" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>
-          <span class="text-lg font-semibold text-white">Sunwa Design</span>
+          <span class="text-lg font-semibold text-white">SUNWA Design &amp; Build</span>
         </div>
         <p class="mt-3 max-w-xs text-base text-white/70">CÔNG TY TNHH MTV Thiết kế và Xây dựng Sunwa — kiến tạo tổ ấm bền vững cùng thời gian tại Đà Nẵng.</p>
         <div class="mt-4 flex gap-3">
@@ -230,7 +236,6 @@
           <li>35 Bình Thái 3, P. Cẩm Lệ, TP. Đà Nẵng</li>
           <li>Hotline: <a href="tel:0916557558" class="hover:text-white">0916 557 558</a></li>
           <li>Email: <a href="mailto:Sunwa.design@gmail.com" class="hover:text-white">Sunwa.design@gmail.com</a></li>
-          <li>Giờ làm việc: 7:30 – 17:30 (T2–T7)</li>
         </ul>
       </div>
     </div>

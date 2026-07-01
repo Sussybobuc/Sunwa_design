@@ -99,6 +99,41 @@
     @apply flex h-10 w-10 items-center justify-center rounded-md bg-primary-light text-primary;
   }
 
+  /* Trang Liên hệ — thẻ kênh liên lạc (bấm gọi/Zalo/email/bản đồ) + panel form/bản đồ */
+  .contact-channel {
+    @apply flex items-center gap-3 rounded-xl border border-border bg-bg p-5
+           transition duration-normal hover:-translate-y-0.5 hover:border-primary hover:shadow-md;
+  }
+  .contact-channel__text {
+    @apply min-w-0 flex-1;
+  }
+  .contact-channel__label {
+    @apply block text-sm font-medium text-text-muted;
+  }
+  .contact-channel__value {
+    @apply mt-0.5 block break-words text-base font-semibold text-primary;
+  }
+  /* CTA banner — dải tối + quầng sáng cam, "đóng khung" trang cùng .page-hero */
+  .cta-banner {
+    @apply relative overflow-hidden bg-bg-dark;
+    background-image:
+      radial-gradient(70% 130% at 50% 50%, rgba(184,82,10,0.40) 0%, rgba(184,82,10,0) 62%),
+      linear-gradient(160deg, #140D05 0%, #1A1208 100%);
+  }
+
+  /* Page header band — dải hero gradient dùng chung cho mọi trang (trừ trang chủ) */
+  .page-hero {
+    @apply relative flex min-h-[240px] items-center bg-bg-dark md:min-h-[300px];
+    background-image: linear-gradient(120deg, rgba(10,7,3,0.92) 0%, rgba(10,7,3,0.72) 45%, rgba(184,82,10,0.55) 100%);
+  }
+
+  .contact-panel {
+    @apply rounded-2xl border border-border bg-bg shadow-md;
+  }
+  .contact-panel .field-input {
+    @apply rounded-lg bg-bg-secondary hover:border-primary/50 focus:bg-bg;
+  }
+
   /* Service cards với ảnh nền (trang chủ) — ảnh full-bleed + scrim tối + chữ trắng */
   .svc-photo {
     @apply relative flex min-h-[240px] overflow-hidden rounded-lg border border-border transition duration-normal hover:-translate-y-0.5 hover:shadow-md sm:min-h-[260px];
@@ -209,23 +244,6 @@
   /* Dropdown row links */
   .nav-dropdown-item {
     @apply block rounded-md px-3 py-2 text-md text-text-muted transition hover:bg-bg-secondary hover:text-primary;
-  }
-
-  /* Filter tabs — mobile: pills; desktop (md+): dải tab chia đều + gạch chân trượt */
-  .filter-bar {
-    @apply flex flex-wrap gap-2
-           md:relative md:grid md:grid-cols-5 md:gap-0 md:divide-x md:divide-border md:border-b md:border-border;
-  }
-  .filter-tab {
-    @apply min-h-[44px] rounded-full border border-border px-4 py-2.5 text-base text-text-muted transition duration-fast hover:border-primary hover:text-primary
-           md:min-h-0 md:rounded-none md:border-0 md:py-3.5;
-  }
-  .filter-tab--active {
-    @apply border-primary bg-primary text-white hover:text-white
-           md:border-transparent md:bg-transparent md:font-medium md:text-primary md:hover:text-primary;
-  }
-  .filter-bar__indicator {
-    @apply pointer-events-none absolute bottom-0 left-0 hidden h-[3px] w-0 rounded bg-primary transition-all duration-normal md:block;
   }
 
   /* Form fields */

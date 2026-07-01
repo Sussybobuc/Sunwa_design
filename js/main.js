@@ -405,7 +405,7 @@ function initInsuranceModal() {
   const btn = document.querySelector('[data-insurance]');
   if (!btn) return;
   btn.addEventListener('click', () =>
-    openImageModal('/materials/Insurance.webp', 'Giấy chứng nhận bảo hiểm', 'Giấy chứng nhận bảo hiểm'));
+    openImageModal('/materials/Insurance.webp', 'Giấy Chứng nhận Bảo hành', 'Giấy Chứng nhận Bảo hành'));
   // Esc đã được initModal() xử lý chung (cùng modalEl) — không cần listener trùng ở đây.
 }
 
