@@ -629,7 +629,7 @@ function initScrollReveal() {
           const siblings = Array.from(entry.target.parentElement.querySelectorAll('.fade-in'));
           const i = siblings.indexOf(entry.target);
           if (i > 0) {
-            entry.target.style.transitionDelay = Math.min(i, 6) * 90 + 'ms';
+            entry.target.style.transitionDelay = Math.min(i, 6) * 120 + 'ms';
             // Xoá delay sau khi reveal xong để không dính vào transition sau này
             entry.target.addEventListener('transitionend', function clear() {
               entry.target.style.transitionDelay = '';
@@ -849,7 +849,7 @@ function initHeroReveal() {
   els.forEach((el) => el.classList.add('fade-in'));
   requestAnimationFrame(() => {
     els.forEach((el, i) => {
-      el.style.transitionDelay = i * 90 + 'ms';
+      el.style.transitionDelay = i * 120 + 'ms';
       el.classList.add('visible');
       // Xoá delay sau khi vào xong để không ảnh hưởng transition về sau
       el.addEventListener('transitionend', function clear() {

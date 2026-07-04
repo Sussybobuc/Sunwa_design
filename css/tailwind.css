@@ -360,9 +360,9 @@
 @layer utilities {
   .fade-in {
     opacity: 0;
-    transform: translateY(16px);
+    transform: translateY(24px);
     /* ease-out (fast start, soft landing) — smoother than plain ease */
-    transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1), transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
   .fade-in.visible {
@@ -609,9 +609,9 @@
    MOBILE DENSITY — reveal nhanh hơn (<768px)
    ============================================================ */
 @media (max-width: 767px) {
-  /* Reveal nhanh, cảm giác "lướt" thay vì chậm rãi như desktop */
+  /* Reveal mượt, gần với desktop (không còn "lướt" nhanh như trước) */
   .fade-in {
-    transition-duration: 0.35s;
+    transition-duration: 0.7s;
   }
 }
 
