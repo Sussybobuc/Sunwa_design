@@ -616,6 +616,24 @@
 }
 
 /* ============================================================
+   DỊCH VỤ (mobile) — thẻ "swoosh" bay lên + phóng to
+   Chỉ áp cho 4 thẻ .svc-photo (chỉ có ở index.html); IntersectionObserver
+   trong initScrollReveal thêm .visible + stagger 120ms như thường.
+   Tắt cho người dùng bật reduced-motion (rơi về .fade-in mặc định).
+   ============================================================ */
+@media (max-width: 767px) and (prefers-reduced-motion: no-preference) {
+  .svc-photo.fade-in {
+    transform: translateY(40px) scale(0.8);
+    /* easeOutBack — vọt nhẹ qua đích rồi lún về ("pop" khi tiếp đất) */
+    transition: opacity 0.6s cubic-bezier(0.34, 1.56, 0.64, 1),
+                transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .svc-photo.fade-in.visible {
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ============================================================
    REDUCED MOTION cho ticker mới thêm
    ============================================================ */
 @media (prefers-reduced-motion: reduce) {
