@@ -27,22 +27,27 @@ npm start                   # node server.js — phục vụ web + API tại htt
 > Mở thẳng `index.html` bằng `file://` sẽ hỏng (pretty URL, đường dẫn asset, form).
 > Luôn chạy qua `npm start`.
 
-## Cấu hình email (Gmail SMTP)
+## Cấu hình email (Gmail OAuth2)
 
-Form gửi về `TO_EMAIL` qua nodemailer. Cần **App Password** của Gmail (bật 2FA →
-tạo app password 16 ký tự). Local: đặt biến môi trường trong session trước khi `npm start`.
-Production: **Azure Portal → App Service → Configuration → Application settings**:
+Form gửi về `TO_EMAIL` qua nodemailer. **Ưu tiên OAuth2** (Google đang khai tử app password):
+cần client ID, client secret và refresh token của Gmail. Local: đặt biến môi trường trong
+session trước khi `npm start`. Production: **Azure Portal → App Service → Configuration →
+Application settings**:
 
 | Key | Ví dụ |
 |-----|-------|
-| `SMTP_USER` | `your-gmail@gmail.com` |
-| `SMTP_PASS` | app password 16 ký tự |
+| `SMTP_USER` | `your-gmail@gmail.com` (địa chỉ gửi) |
+| `OAUTH_CLIENT_ID` | `…apps.googleusercontent.com` |
+| `OAUTH_CLIENT_SECRET` | client secret |
+| `OAUTH_REFRESH_TOKEN` | refresh token của tài khoản gửi |
 | `TO_EMAIL`  | `Sunwa.design@gmail.com` |
 | `SMTP_HOST` | `smtp.gmail.com` (mặc định) |
 | `SMTP_PORT` | `465` (mặc định) |
 
-Khi chưa cấu hình SMTP, `/api/submit` trả về 500 với thông báo "chưa được cấu hình";
-phần còn lại của site vẫn chạy bình thường.
+Server dùng OAuth2 khi có đủ 3 biến `OAUTH_*`; nếu không thì fallback sang `SMTP_PASS`
+(app password 16 ký tự). Khi chưa cấu hình gì, `/api/submit` trả về 500 với thông báo
+"chưa được cấu hình"; phần còn lại của site vẫn chạy bình thường. Xem cách lấy OAuth
+credentials trong `docs/run-and-deploy.md` mục **2.3**.
 
 ## Deploy
 
@@ -54,4 +59,5 @@ SMTP trong Application settings. Xem chi tiết trong `docs/run-and-deploy.md`.
 - Cập nhật domain thật trong các thẻ `<link rel="canonical">` và OG image.
 - Thay ảnh Unsplash (`source.unsplash.com`) bằng ảnh công trình thật trong `/assets/`.
 - Xác nhận **số GPKD** thật cho footer (hiện đang dùng tạm hotline).
-- Cấu hình SMTP app password trong App Service → Application settings.
+- Cấu hình Gmail OAuth2 (`OAUTH_CLIENT_ID` / `OAUTH_CLIENT_SECRET` / `OAUTH_REFRESH_TOKEN`)
+  trong App Service → Application settings.

@@ -81,13 +81,17 @@ link-click. Styles live in `css/tailwind.css` `@media (max-width:767px)` keyed o
 `handleSubmit(data)` returns `{ status, body }`:
 1. Re-validates server-side (name required, VN phone regex, `consent === 'yes'`) — the server is
    authoritative; never trust client validation alone.
-2. Sends email via **nodemailer + Gmail SMTP**, reading config from env vars:
-   `SMTP_USER`, `SMTP_PASS`, `TO_EMAIL`, `SMTP_HOST` (default `smtp.gmail.com`), `SMTP_PORT` (465).
+2. Sends email via **nodemailer + Gmail**, reading config from env vars. **Auth is OAuth2-first:**
+   if `OAUTH_CLIENT_ID` + `OAUTH_CLIENT_SECRET` + `OAUTH_REFRESH_TOKEN` are all set it uses an
+   OAuth2 transport (`type: 'OAuth2'`, `user: SMTP_USER`); otherwise it falls back to password auth
+   via `SMTP_PASS` (Gmail App Password). Also reads `SMTP_USER` (sending address, required),
+   `TO_EMAIL`, `SMTP_HOST` (default `smtp.gmail.com`), `SMTP_PORT` (465).
 3. Returns JSON `{ ok: true }` or `{ ok: false, error }` (Vietnamese error strings).
 
-Locally, set the SMTP env vars in your shell before `npm start` (or leave them unset — the route
+Locally, set the mail env vars in your shell before `npm start` (or leave them unset — the route
 returns a 500 "chưa được cấu hình" message). In Azure they are set under the App Service's
-**Application settings**. Requires a **Gmail App Password** (2FA on).
+**Application settings**. Preferred: **Gmail OAuth2** (client ID/secret + refresh token), since
+Google is deprecating App Passwords. See `docs/run-and-deploy.md` §2.3 for how to obtain them.
 
 ### The `/api/submit` contract (shared FE ⇄ BE)
 Payload: `{ name, phone, email, type, area, address, message, consent }`. The `type` field maps to
@@ -114,12 +118,14 @@ defined in `css/tailwind.css` under `@layer components`; `prefers-reduced-motion
 
 Deploys to **Azure App Service** (Linux, Node 20 LTS). Create a Web App, then wire it to GitHub via
 **Deployment Center → GitHub** so pushes to `main` build (`npm install` + `npm run build:css`) and
-restart the app (`npm start`). Set the SMTP secrets under **App Service → Configuration → Application
-settings** (`SMTP_USER`, `SMTP_PASS`, `TO_EMAIL`, `SMTP_HOST`, `SMTP_PORT`). Full runbook in
-`docs/run-and-deploy.md`.
+restart the app (`npm start`). Set the mail secrets under **App Service → Configuration → Application
+settings** — OAuth2 preferred (`SMTP_USER`, `OAUTH_CLIENT_ID`, `OAUTH_CLIENT_SECRET`,
+`OAUTH_REFRESH_TOKEN`, `TO_EMAIL`, `SMTP_HOST`, `SMTP_PORT`); `SMTP_PASS` is the App Password
+fallback. Full runbook in `docs/run-and-deploy.md`.
 
 ## Known TODOs before go-live
 - Replace `source.unsplash.com` placeholder images with real project photos.
 - Set the real canonical/OG domain (currently placeholder `https://sunwadesign.vn/...`).
 - Fill in the real GPKD (business registration) number in the footer.
-- Configure SMTP App Password in App Service → Configuration → Application settings.
+- Configure Gmail OAuth2 (`OAUTH_CLIENT_ID` / `OAUTH_CLIENT_SECRET` / `OAUTH_REFRESH_TOKEN`) in
+  App Service → Configuration → Application settings.

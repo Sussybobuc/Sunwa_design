@@ -43,15 +43,20 @@ npm run watch:css
 The form POSTs to `/api/submit`. Without SMTP credentials the endpoint returns a 500
 "Hệ thống gửi email chưa được cấu hình" message — the rest of the site still works.
 
-To send real email locally, set the SMTP env vars in the **same** PowerShell session
-before `npm start` (see **2.3** for how to get a Gmail App Password):
+To send real email locally, set the mail env vars in the **same** PowerShell session
+before `npm start`. **OAuth2 (Gmail) is the preferred method** — Google is phasing out app
+passwords (see **2.3** for how to get the OAuth credentials):
 ```powershell
-$env:SMTP_USER = "you@gmail.com"
-$env:SMTP_PASS = "your-16-char-app-password"
-$env:TO_EMAIL  = "Sunwa.design@gmail.com"   # optional; this is the default
+$env:SMTP_USER           = "you@gmail.com"    # the sending Gmail address
+$env:OAUTH_CLIENT_ID     = "…apps.googleusercontent.com"
+$env:OAUTH_CLIENT_SECRET = "…"
+$env:OAUTH_REFRESH_TOKEN = "…"
+$env:TO_EMAIL            = "Sunwa.design@gmail.com"   # optional; this is the default
 npm start
 ```
-Submit the quote form → you should get a success message and an email in the inbox.
+The server uses OAuth2 when `OAUTH_CLIENT_ID` / `OAUTH_CLIENT_SECRET` / `OAUTH_REFRESH_TOKEN`
+are all set; otherwise it falls back to password auth via `SMTP_PASS` (a 16-char Gmail App
+Password). Submit the quote form → you should get a success message and an email in the inbox.
 These env vars only live for that terminal session — never commit secrets.
 
 ---
@@ -61,7 +66,8 @@ These env vars only live for that terminal session — never commit secrets.
 ### 2.1 Prerequisites
 - An **Azure account**.
 - A **GitHub repository** with this code pushed (Deployment Center pulls from GitHub).
-- A **Gmail App Password** for the form email (see **2.3**).
+- **Gmail OAuth2 credentials** for the form email — client ID, client secret, refresh token
+  (see **2.3**). (An App Password still works as a fallback, but Google is deprecating them.)
 
 ### 2.2 Create the Web App and connect GitHub
 1. **Push the code to GitHub** (if not already):
@@ -90,26 +96,46 @@ These env vars only live for that terminal session — never commit secrets.
 4. Configure the form's SMTP secrets — see **2.3 / app settings** below.
 
 ### 2.3 Configure the form email (App Service application settings)
-The server reads SMTP config from environment variables. Set them on the deployed app:
+The server reads mail config from environment variables. It uses **OAuth2** when the three
+`OAUTH_*` values are present, and falls back to `SMTP_PASS` (App Password) otherwise. Set them
+on the deployed app:
 
 - Web App → **Settings → Configuration → Application settings → New application setting**:
 
   | Name | Value |
   |------|-------|
-  | `SMTP_USER` | your Gmail address, e.g. `you@gmail.com` |
-  | `SMTP_PASS` | the 16-char Gmail App Password (see below) |
+  | `SMTP_USER` | the sending Gmail address, e.g. `you@gmail.com` |
+  | `OAUTH_CLIENT_ID` | Google Cloud OAuth client ID (ends `…apps.googleusercontent.com`) |
+  | `OAUTH_CLIENT_SECRET` | OAuth client secret |
+  | `OAUTH_REFRESH_TOKEN` | refresh token for the sending account |
   | `TO_EMAIL`  | where leads should arrive, e.g. `Sunwa.design@gmail.com` |
   | `SMTP_HOST` | `smtp.gmail.com` |
   | `SMTP_PORT` | `465` |
 
+  These names must match **exactly** — the server reads `OAUTH_CLIENT_ID`,
+  `OAUTH_CLIENT_SECRET`, `OAUTH_REFRESH_TOKEN` (in `lib/mailer.js`).
+
 - **Save** (this restarts the app so it picks up the new settings). Never commit these.
 
-**Get a Gmail App Password:**
-1. The Google account needs **2-Step Verification ON** (Google Account → Security).
-2. Go to **Security → App passwords**, create one (name it "Sunwa site").
-3. Copy the **16-character** password → use it as `SMTP_PASS`. Use the account's address
-   as `SMTP_USER`.
+**Get Gmail OAuth2 credentials:**
+1. In [Google Cloud Console](https://console.cloud.google.com) → **APIs & Services**, enable
+   the **Gmail API**, then create an **OAuth 2.0 Client ID** (type: *Web application* or
+   *Desktop*). Note the **client ID** and **client secret**.
+2. Using the [OAuth Playground](https://developers.google.com/oauthplayground) (gear icon →
+   *Use your own OAuth credentials* → paste client ID/secret), authorize the scope
+   `https://mail.google.com/` with the **sending Gmail account**, then exchange for a
+   **refresh token**.
+3. Set `SMTP_USER` to that account's address and the three `OAUTH_*` values above.
 
+**Verify without sending** (App Service → *SSH* console, where the app settings are in `env`):
+```bash
+node -e "const nm=require('nodemailer');nm.createTransport({host:process.env.SMTP_HOST||'smtp.gmail.com',port:Number(process.env.SMTP_PORT||465),secure:Number(process.env.SMTP_PORT||465)===465,auth:{type:'OAuth2',user:process.env.SMTP_USER,clientId:process.env.OAUTH_CLIENT_ID,clientSecret:process.env.OAUTH_CLIENT_SECRET,refreshToken:process.env.OAUTH_REFRESH_TOKEN}}).verify().then(()=>console.log('OAuth OK')).catch(e=>console.error('FAIL:',e.message))"
+```
+`OAuth OK` = the token exchange + SMTP login succeeded.
+
+> **Fallback:** to use an App Password instead, set `SMTP_PASS` (16-char, from Google Account →
+> Security → App passwords; requires 2-Step Verification) and omit the `OAUTH_*` vars.
+>
 > Gmail SMTP from a cloud host can occasionally be rate-limited or blocked. If delivery is
 > flaky, switch to a transactional provider (SendGrid/Mailgun) later.
 
