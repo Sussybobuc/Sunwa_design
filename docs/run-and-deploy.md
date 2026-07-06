@@ -112,8 +112,10 @@ on the deployed app:
   | `SMTP_HOST` | `smtp.gmail.com` |
   | `SMTP_PORT` | `465` |
 
-  These names must match **exactly** — the server reads `OAUTH_CLIENT_ID`,
-  `OAUTH_CLIENT_SECRET`, `OAUTH_REFRESH_TOKEN` (in `lib/mailer.js`).
+  The server also accepts the `GMAIL_*` aliases for these — `GMAIL_USER`, `GMAIL_CLIENT_ID`,
+  `GMAIL_CLIENT_SECRET`, `GMAIL_REFRESH_TOKEN` work in place of `SMTP_USER` / `OAUTH_CLIENT_ID` /
+  `OAUTH_CLIENT_SECRET` / `OAUTH_REFRESH_TOKEN` (see the `|| process.env.GMAIL_*` fallbacks in
+  `lib/mailer.js`). Use one set or the other; names must otherwise match exactly.
 
 - **Save** (this restarts the app so it picks up the new settings). Never commit these.
 
