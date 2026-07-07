@@ -43,18 +43,18 @@ duplicated in every page** — there is no templating/include system, so shared-
 be applied to all five files. Pretty URLs (`/du-an` → `du-an.html`) are routes registered in
 `server.js` (the `PAGES` map), not real files.
 
-### Navbar dropdowns — Chất lượng & Pháp lý
-The navbar has two dropdown items: **"Chất lượng"** (5 subsections) and **"Pháp lý"** (3 subsections).
-Each is a `<li class="nav-dropdown">` wrapper containing a `<button data-dropdown-trigger>` and a
-`<ul class="nav-dropdown__menu">` of `<a>` links. Desktop: panel opens on hover (CSS) and on click
-(JS). Mobile: click-only toggle. JS wired in `initNavDropdowns()` in `js/main.js`; subsection data
-(labels + URL slugs) lives in `SECTION_MENUS`. CSS classes `.nav-dropdown`, `.nav-dropdown__menu`,
-`.nav-dropdown__item` are in `css/tailwind.css` `@layer components`.
+### Navbar section links — Quản lý chất lượng & Hệ thống pháp lý
+The navbar has two plain nav links (`<a class="nav-link">`): **"Quản lý chất lượng"**
+(`/quan-ly-chat-luong`) and **"Hệ thống pháp lý"** (`/he-thong-phap-ly`), sitting between "Dự án" and
+"Liên hệ". No dropdown/JS — each points to a single placeholder landing page (`quan-ly-chat-luong.html`
+/ `he-thong-phap-ly.html`) showing "Nội dung đang được cập nhật". Routes are in `server.js` `PAGES`.
 
-Each subsection links to a placeholder page (e.g. `/chat-luong/quan-ly-thiet-ke`) showing
-"Nội dung đang được cập nhật". The 8 HTML files live in `chat-luong/` and `phap-ly/` subdirs;
-routes are registered in `server.js` `PAGES`. All 13 HTML files (5 main + 8 subsection) carry
-identical navbar markup — apply changes to all of them.
+> History: these used to be hover/click **dropdowns** (5 + 3 subsection pages, `SECTION_MENUS` +
+> `initSectionDropdowns()` in `js/main.js`, `.nav-dropdown*` CSS). That was removed — the 8 subpages,
+> the JS, and the CSS are all gone. Don't reintroduce `nav-dropdown` markup/classes.
+
+There are **7 HTML files with identical navbar markup** (5 main + the 2 landing pages) — apply any
+shared-navbar change to all of them.
 
 ### Mobile nav — left slide-out drawer
 Below `md` (768px) the navbar (`#nav-menu`) is a **drawer that slides in from the left** (sits below

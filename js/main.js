@@ -97,28 +97,6 @@ const PROJECTS = [
   },
 ];
 
-/* Dữ liệu dropdown menu — tiêu đề + các mục con (label + href) */
-const SECTION_MENUS = {
-  'chat-luong': {
-    title: 'Quản lý chất lượng Sản Phẩm',
-    items: [
-      { label: 'Quản lý Thiết kế',     href: '/quan-ly-thiet-ke' },
-      { label: 'Quản lý thi công',      href: '/quan-ly-thi-cong' },
-      { label: 'Quy trình bảo dưỡng',  href: '/quy-trinh-bao-duong' },
-      { label: 'Quy trình chống thấm', href: '/quy-trinh-chong-tham' },
-      { label: 'Quy trình Bảo hành',   href: '/quy-trinh-bao-hanh' },
-    ],
-  },
-  'phap-ly': {
-    title: 'Hệ thống pháp lý Liên quan Dự án Nhà ở',
-    items: [
-      { label: 'Quy định cấp phép',              href: '/quy-dinh-cap-phep' },
-      { label: 'Quy định quản lý Quy hoạch',     href: '/quy-dinh-quan-ly-quy-hoach' },
-      { label: 'Quy định hoàn công',              href: '/quy-dinh-hoan-cong' },
-    ],
-  },
-};
-
 /* Đơn giá tham khảo (VNĐ/m²) cho calculator */
 const PRICE_PER_M2 = {
   'nha-pho': { min: 5500000, max: 8000000 },
@@ -407,53 +385,6 @@ function initInsuranceModal() {
   btn.addEventListener('click', () =>
     openImageModal('/materials/Insurance.webp', 'Giấy Chứng nhận Bảo hành', 'Giấy Chứng nhận Bảo hành'));
   // Esc đã được initModal() xử lý chung (cùng modalEl) — không cần listener trùng ở đây.
-}
-
-function initSectionDropdowns() {
-  const dropdowns = document.querySelectorAll('[data-dropdown]');
-  if (!dropdowns.length) return;
-
-  // Inject panel rows từ SECTION_MENUS vào mỗi [data-dropdown-panel]
-  dropdowns.forEach((wrapper) => {
-    const key = wrapper.getAttribute('data-dropdown');
-    const section = SECTION_MENUS[key];
-    const panel = wrapper.querySelector('[data-dropdown-panel]');
-    if (!section || !panel) return;
-    panel.innerHTML = section.items
-      .map((item) => `<a class="nav-dropdown-item" role="menuitem" href="${item.href}">${escapeHtml(item.label)}</a>`)
-      .join('');
-  });
-
-  const closeAll = () => {
-    dropdowns.forEach((d) => {
-      d.classList.remove('is-open');
-      const btn = d.querySelector('[data-dropdown-toggle]');
-      if (btn) btn.setAttribute('aria-expanded', 'false');
-    });
-  };
-
-  // Click-toggle trên từng nút trigger
-  dropdowns.forEach((wrapper) => {
-    const btn = wrapper.querySelector('[data-dropdown-toggle]');
-    if (!btn) return;
-    btn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const isOpen = wrapper.classList.contains('is-open');
-      closeAll(); // đóng dropdown khác trước
-      if (!isOpen) {
-        wrapper.classList.add('is-open');
-        btn.setAttribute('aria-expanded', 'true');
-      }
-    });
-  });
-
-  // Đóng khi click ra ngoài bất kỳ dropdown nào
-  document.addEventListener('click', closeAll);
-
-  // Đóng khi nhấn Esc
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') closeAll();
-  });
 }
 
 function initModal() {
@@ -939,7 +870,6 @@ document.addEventListener('DOMContentLoaded', () => {
   initFilter();
   initModal();
   initInsuranceModal();
-  initSectionDropdowns();
   initForms();
   initCalculator();
   initScrollReveal();

@@ -27,10 +27,50 @@ cache. Drop new media here; follow the checklist below so pages stay fast and li
   ```
 
 ## Before you add a video
-- Prefer **short clips**, **MP4 (H.264)**, reasonably compressed.
+
+### Heavy videos (≈100 MB+) — DON'T self-host them here
+The site runs on **Azure App Service Free tier**. Serving a 100 MB+ MP4 from `/materials` will be slow,
+burn the tier's bandwidth, and can't adapt quality to the viewer's connection. **Host big videos on
+YouTube or Vimeo** and embed them. Upload the file there, then embed with a **lightweight click-to-load
+facade** — show only a poster image + play button; the heavy player iframe loads *after* the user clicks,
+so the page stays fast and nothing downloads until someone actually watches.
+
+```html
+<!-- Facade: poster loads instantly; clicking swaps in the YouTube/Vimeo iframe -->
+<div class="video-embed" data-video-embed
+     data-src="https://www.youtube-nocookie.com/embed/VIDEO_ID?autoplay=1"
+     style="position:relative;aspect-ratio:16/9;max-width:100%;cursor:pointer">
+  <img src="/materials/clip-poster.webp" alt="Xem video giới thiệu"
+       width="1280" height="720" loading="lazy" decoding="async"
+       style="width:100%;height:100%;object-fit:cover">
+  <button type="button" aria-label="Phát video"
+          style="position:absolute;inset:0;margin:auto;width:68px;height:48px;border:0;border-radius:12px;background:rgba(0,0,0,.6);color:#fff;font-size:22px">▶</button>
+</div>
+<script>
+  document.querySelectorAll('[data-video-embed]').forEach(function (box) {
+    box.addEventListener('click', function () {
+      var f = document.createElement('iframe');
+      f.src = box.dataset.src;
+      f.title = 'Video';
+      f.allow = 'accelerated-motion; autoplay; encrypted-media; picture-in-picture';
+      f.allowFullscreen = true;
+      f.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;border:0';
+      box.innerHTML = '';
+      box.appendChild(f);
+    }, { once: true });
+  });
+</script>
+```
+- Use `youtube-nocookie.com` (privacy) or Vimeo's `player.vimeo.com/video/ID` embed URL.
+- For a real page we'd move that inline `<script>` into a small init in `js/main.js` and the styles into
+  `css/tailwind.css` (custom class names only — never Tailwind utility names in raw CSS) rather than
+  inline. Ask before wiring it in so it stays consistent with the rest of the site.
+
+### Short clips only — self-hosting is OK if the file is small
+- Prefer **short clips**, **MP4 (H.264)**, hard-compressed (lower bitrate/resolution).
 - Use **`preload="none"`** and a lightweight **`poster`** image so the video only downloads when the
   user plays it.
-- **Don't autoplay** heavy video on mobile.
+- **Don't autoplay** video on mobile.
   ```html
   <video controls preload="none" poster="/materials/clip-poster.webp" width="1280" height="720">
     <source src="/materials/clip.mp4" type="video/mp4">

@@ -44,16 +44,9 @@ const PAGES = {
   '/dich-vu': 'dich-vu',
   '/bao-gia': 'bao-gia',
   '/lien-he': 'lien-he',
-  // Chất lượng subsection pages (placeholder)
-  '/quan-ly-thiet-ke': 'quan-ly-thiet-ke',
-  '/quan-ly-thi-cong': 'quan-ly-thi-cong',
-  '/quy-trinh-bao-duong': 'quy-trinh-bao-duong',
-  '/quy-trinh-chong-tham': 'quy-trinh-chong-tham',
-  '/quy-trinh-bao-hanh': 'quy-trinh-bao-hanh',
-  // Pháp lý subsection pages (placeholder)
-  '/quy-dinh-cap-phep': 'quy-dinh-cap-phep',
-  '/quy-dinh-quan-ly-quy-hoach': 'quy-dinh-quan-ly-quy-hoach',
-  '/quy-dinh-hoan-cong': 'quy-dinh-hoan-cong',
+  // Section landing pages (placeholder)
+  '/quan-ly-chat-luong': 'quan-ly-chat-luong',
+  '/he-thong-phap-ly': 'he-thong-phap-ly',
 };
 
 Object.entries(PAGES).forEach(([route, file]) => {
