@@ -8,6 +8,7 @@ const path = require('path');
 const express = require('express');
 const rateLimit = require('express-rate-limit');
 const { handleSubmit } = require('./lib/mailer');
+const portal = require('./lib/portal');
 
 const app = express();
 
@@ -41,6 +42,22 @@ app.post('/api/submit', submitLimiter, async (req, res) => {
   res.status(status).json(body);
 });
 
+// Client portal (tra cứu hồ sơ) — see lib/portal.js. Login gets its own, stricter limiter.
+const loginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 10,
+  standardHeaders: 'draft-7',
+  legacyHeaders: false,
+  message: {
+    ok: false,
+    error: 'Bạn đã thử đăng nhập quá nhiều lần. Vui lòng thử lại sau ít phút.',
+  },
+});
+app.post('/api/tra-cuu/login', loginLimiter, portal.handleLogin);
+app.get('/api/tra-cuu/me', portal.handleMe);
+app.post('/api/tra-cuu/logout', portal.handleLogout);
+app.get('/ho-so/:code/*', portal.handleFile);
+
 // Health check (for Azure monitoring / uptime probes).
 app.get('/healthz', (req, res) => res.json({ ok: true }));
 
@@ -63,6 +80,7 @@ const PAGES = {
   '/dich-vu': 'dich-vu',
   '/bao-gia': 'bao-gia',
   '/lien-he': 'lien-he',
+  '/bao-hanh': 'bao-hanh',
   // Section landing pages (placeholder)
   '/quan-ly-chat-luong': 'quan-ly-chat-luong',
   '/he-thong-phap-ly': 'he-thong-phap-ly',

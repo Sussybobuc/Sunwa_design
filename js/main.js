@@ -382,9 +382,219 @@ function openImageModal(src, alt, caption) {
 function initInsuranceModal() {
   const btn = document.querySelector('[data-insurance]');
   if (!btn) return;
-  btn.addEventListener('click', () =>
-    openImageModal('/materials/Insurance.webp', 'Giấy Chứng nhận Bảo hành', 'Giấy Chứng nhận Bảo hành'));
+  const show = () =>
+    openImageModal('/materials/Insurance.webp', 'Giấy Chứng nhận Bảo hành', 'Giấy Chứng nhận Bảo hành');
+  btn.addEventListener('click', show);
+  // Trên /bao-hanh phần tử là <img role="button"> — hỗ trợ bàn phím.
+  btn.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); show(); }
+  });
   // Esc đã được initModal() xử lý chung (cùng modalEl) — không cần listener trùng ở đây.
+}
+
+/* ==========================================================================
+   TABS — /bao-hanh (Giấy chứng nhận | Tra cứu hồ sơ)
+   ========================================================================== */
+function initTabs() {
+  const bar = document.querySelector('.tab-bar');
+  if (!bar) return;
+  const buttons = Array.from(bar.querySelectorAll('[data-tab]'));
+
+  const activate = (name) => {
+    buttons.forEach((btn) => {
+      const on = btn.getAttribute('data-tab') === name;
+      btn.classList.toggle('is-active', on);
+      btn.setAttribute('aria-selected', on ? 'true' : 'false');
+      const panel = document.getElementById('tab-' + btn.getAttribute('data-tab'));
+      if (panel) panel.classList.toggle('hidden', !on);
+    });
+  };
+
+  buttons.forEach((btn) =>
+    btn.addEventListener('click', () => activate(btn.getAttribute('data-tab'))));
+
+  // Cho phép link thẳng tới tab tra cứu: /bao-hanh#tra-cuu
+  if (location.hash === '#tra-cuu') activate('tra-cuu');
+}
+
+/* ==========================================================================
+   TRA CỨU HỒ SƠ — client portal (login + dashboard) on /bao-hanh
+   ========================================================================== */
+const WARRANTY_TIERS = [
+  { key: 'ketCau', label: 'Kết cấu' },
+  { key: 'chongTham', label: 'Chống thấm' },
+  { key: 'hoanThien', label: 'Hoàn thiện' },
+];
+
+function fmtDateVN(iso) {
+  const d = new Date(iso + 'T00:00:00');
+  return isNaN(d) ? '' : d.toLocaleDateString('vi-VN');
+}
+
+// "còn 2 năm 3 tháng" / "còn 25 ngày" / null nếu đã hết hạn
+function remainingLabel(end, now) {
+  const ms = end - now;
+  if (ms <= 0) return null;
+  const days = Math.ceil(ms / 86400000);
+  if (days < 60) return 'còn ' + days + ' ngày';
+  let months = (end.getFullYear() - now.getFullYear()) * 12 + (end.getMonth() - now.getMonth());
+  if (end.getDate() < now.getDate()) months -= 1;
+  const y = Math.floor(months / 12);
+  const m = months % 12;
+  if (y < 1) return 'còn ' + m + ' tháng';
+  return 'còn ' + y + ' năm' + (m ? ' ' + m + ' tháng' : '');
+}
+
+function warrantyMetersHtml(handoverIso, warranty) {
+  const start = new Date(handoverIso + 'T00:00:00');
+  const now = new Date();
+  const rows = WARRANTY_TIERS.map(({ key, label }) => {
+    const years = Number(warranty[key]) || 0;
+    if (!years) return '';
+    const end = new Date(start);
+    end.setFullYear(end.getFullYear() + years);
+    const remain = remainingLabel(end, now);
+    const pctLeft = remain
+      ? Math.max(0, Math.min(100, Math.round(((end - now) / (end - start)) * 100)))
+      : 0;
+    const status = remain
+      ? escapeHtml(remain)
+      : 'Đã hết hạn ' + fmtDateVN(end.toISOString().slice(0, 10));
+    return `
+      <div class="wr-row${remain ? '' : ' is-expired'}">
+        <div class="flex items-baseline justify-between gap-3">
+          <span class="text-base font-medium">${label} <span class="font-normal text-text-muted">(${years} năm)</span></span>
+          <span class="text-base text-text-muted">${status}</span>
+        </div>
+        <div class="wr-track" role="img" aria-label="${label}: ${status}">
+          <span class="wr-fill" style="width:${remain ? pctLeft : 100}%"></span>
+        </div>
+      </div>`;
+  });
+  return rows.join('');
+}
+
+function traCuuDashHtml(data) {
+  const docs = (data.docs || []).length
+    ? '<ul class="mt-4 space-y-2.5">' + data.docs.map((d) => `
+        <li>
+          <a href="${escapeHtml(d.url)}" target="_blank" rel="noopener" class="group inline-flex items-center gap-2.5 text-base font-medium text-primary hover:text-primary-dark">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
+            <span class="group-hover:underline">${escapeHtml(d.label)}</span>
+          </a>
+        </li>`).join('') + '</ul>'
+    : '<p class="mt-4 text-base text-text-muted">Chưa có tài liệu.</p>';
+
+  const logs = (data.logs || []).length
+    ? '<ol class="mt-4 space-y-5">' + data.logs.slice().reverse().map((l) => `
+        <li class="border-l-2 border-primary-light pl-4">
+          <p class="text-sm font-medium text-text-muted">${l.date ? fmtDateVN(l.date) : ''}</p>
+          <p class="mt-1 text-base">${escapeHtml(l.text)}</p>
+          ${(l.photos || []).length ? `
+          <div class="mt-2.5 flex flex-wrap gap-2">
+            ${l.photos.map((p) => `
+              <img src="${escapeHtml(p)}" alt="Ảnh nhật ký ${l.date ? fmtDateVN(l.date) : ''}" width="96" height="72"
+                   loading="lazy" decoding="async" data-log-photo data-caption="${escapeHtml(l.text)}"
+                   class="h-[72px] w-24 cursor-zoom-in rounded-sm border border-border object-cover">`).join('')}
+          </div>` : ''}
+        </li>`).join('') + '</ol>'
+    : '<p class="mt-4 text-base text-text-muted">Chưa có nhật ký thi công.</p>';
+
+  const warranty = data.handover
+    ? `<p class="text-base text-text-muted">Bàn giao ngày <strong class="font-medium text-text">${fmtDateVN(data.handover)}</strong></p>
+       <div class="mt-4 space-y-4">${warrantyMetersHtml(data.handover, data.warranty || {})}</div>`
+    : '<p class="text-base text-text-muted">Công trình đang thi công — thời hạn bảo hành sẽ được kích hoạt khi bàn giao.</p>';
+
+  return `
+    <div class="card p-6">
+      <div class="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <h2 class="text-xl font-semibold">${escapeHtml(data.name)}</h2>
+          <p class="mt-1 text-base text-text-muted">${escapeHtml(data.project)}</p>
+          <p class="mt-1 text-sm text-text-muted">Mã hợp đồng: <strong class="font-medium text-text">${escapeHtml(data.code)}</strong></p>
+        </div>
+        <button type="button" data-tra-cuu-logout class="btn-outline">Đăng xuất</button>
+      </div>
+    </div>
+    <div class="mt-5 grid grid-cols-1 gap-5 lg:grid-cols-2">
+      <div class="card p-6">
+        <h3 class="text-md font-semibold">Hồ sơ &amp; tài liệu</h3>
+        ${docs}
+      </div>
+      <div class="card p-6">
+        <h3 class="text-md font-semibold">Thời hạn bảo hành</h3>
+        <div class="mt-2">${warranty}</div>
+      </div>
+    </div>
+    <div class="card mt-5 p-6">
+      <h3 class="text-md font-semibold">Nhật ký thi công</h3>
+      ${logs}
+    </div>`;
+}
+
+function initTraCuu() {
+  const form = document.querySelector('[data-tra-cuu-form]');
+  const loginBox = document.querySelector('[data-tra-cuu-login]');
+  const dash = document.querySelector('[data-tra-cuu-dash]');
+  if (!form || !loginBox || !dash) return;
+
+  const errorEl = form.querySelector('[data-tra-cuu-error]');
+  const submitBtn = form.querySelector('button[type="submit"]');
+
+  const showError = (msg) => {
+    errorEl.textContent = msg;
+    errorEl.classList.remove('hidden');
+  };
+
+  const showDash = (data) => {
+    dash.innerHTML = traCuuDashHtml(data);
+    loginBox.classList.add('hidden');
+    dash.classList.remove('hidden');
+    dash.querySelector('[data-tra-cuu-logout]').addEventListener('click', async () => {
+      try { await fetch('/api/tra-cuu/logout', { method: 'POST' }); } catch { /* cookie hết hạn cũng được */ }
+      dash.classList.add('hidden');
+      dash.innerHTML = '';
+      loginBox.classList.remove('hidden');
+      form.reset();
+    });
+    dash.querySelectorAll('[data-log-photo]').forEach((img) => {
+      img.addEventListener('click', () =>
+        openImageModal(img.getAttribute('src'), img.getAttribute('alt'), img.getAttribute('data-caption')));
+    });
+  };
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    errorEl.classList.add('hidden');
+    const code = form.code.value.trim().toUpperCase();
+    const phone = form.phone.value.trim();
+    if (!code) return showError('Vui lòng nhập mã hợp đồng.');
+    if (!PHONE_REGEX.test(phone)) return showError('Số điện thoại không hợp lệ.');
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Đang tra cứu…';
+    try {
+      const res = await fetch('/api/tra-cuu/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code, phone }),
+      });
+      const json = await res.json().catch(() => ({}));
+      if (res.ok && json.ok) showDash(json);
+      else showError(json.error || 'Không tra cứu được. Vui lòng thử lại.');
+    } catch {
+      showError('Không kết nối được máy chủ. Vui lòng thử lại.');
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Tra cứu';
+    }
+  });
+
+  // Phiên còn hạn (cookie 24h) → vào thẳng dashboard, khỏi đăng nhập lại.
+  fetch('/api/tra-cuu/me')
+    .then((r) => (r.ok ? r.json() : null))
+    .then((json) => { if (json && json.ok) showDash(json); })
+    .catch(() => {});
 }
 
 function initModal() {
@@ -870,6 +1080,8 @@ document.addEventListener('DOMContentLoaded', () => {
   initFilter();
   initModal();
   initInsuranceModal();
+  initTabs();
+  initTraCuu();
   initForms();
   initCalculator();
   initScrollReveal();

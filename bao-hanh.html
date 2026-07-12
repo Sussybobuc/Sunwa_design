@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Bảo hành Sunwa Design Đà Nẵng — xem giấy chứng nhận bảo hành và tra cứu hồ sơ công trình: hợp đồng, thiết kế, nhật ký thi công, thời hạn bảo hành.">
+  <meta property="og:title" content="Bảo hành &amp; Tra cứu hồ sơ | CÔNG TY TNHH MTV Thiết kế và Xây dựng Sunwa">
+  <meta property="og:description" content="Giấy chứng nhận bảo hành và tra cứu hồ sơ công trình cho khách hàng Sunwa Design.">
+  <meta property="og:image" content="/assets/og-image.jpg">
+  <meta property="og:type" content="website">
+  <meta name="theme-color" content="#B8520A">
+  <link rel="canonical" href="https://sunwadesign.vn/bao-hanh">
+  <meta property="og:url" content="https://sunwadesign.vn/bao-hanh">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Bảo hành &amp; Tra cứu hồ sơ | CÔNG TY TNHH MTV Thiết kế và Xây dựng Sunwa">
+  <meta name="twitter:description" content="Giấy chứng nhận bảo hành và tra cứu hồ sơ công trình cho khách hàng Sunwa Design.">
+  <meta name="twitter:image" content="/assets/og-image.jpg">
+  <link rel="icon" href="/assets/favicon.png?v=2" type="image/png" sizes="48x48">
+  <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png?v=2">
+  <title>Bảo hành &amp; Tra cứu hồ sơ | Sunwa Design Đà Nẵng</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+  <script src="/js/main.js" defer></script>
+</head>
+<body class="pb-[68px] md:pb-0">
+  <!-- ============ NAVBAR ============ -->
+  <header class="sticky top-0 z-[100] h-nav border-b border-border bg-bg">
+    <div class="container-x flex h-nav items-center justify-between">
+      <a href="/" class="flex items-center gap-2" data-page="index" aria-label="Sunwa Design — Trang chủ">
+        <img src="/materials/Logo.webp" alt="Sunwa Design" width="36" height="36" class="h-9 w-9" decoding="async">
+        <span class="text-lg font-semibold text-text">SUNWA Design &amp; Build</span>
+      </a>
+      <button data-nav-toggle class="flex h-11 w-11 items-center justify-center rounded-md text-text md:hidden" aria-label="Mở menu" aria-expanded="false" aria-controls="nav-menu">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+      </button>
+      <nav id="nav-menu" class="absolute left-0 right-0 top-nav hidden flex-col gap-1 border-b border-border bg-bg p-4 shadow-md md:static md:flex md:flex-row md:items-center md:gap-6 md:border-0 md:p-0 md:shadow-none">
+        <a href="/dich-vu" class="nav-link" data-page="dich-vu">Dịch vụ</a>
+        <a href="/du-an" class="nav-link" data-page="du-an">Dự án</a>
+        <a href="/quan-ly-chat-luong" class="nav-link" data-page="quan-ly-chat-luong">Quản lý chất lượng</a>
+        <a href="/he-thong-phap-ly" class="nav-link" data-page="he-thong-phap-ly">Hệ thống pháp lý</a>
+        <a href="/lien-he" class="nav-link" data-page="lien-he">Liên hệ</a>
+        <a href="/bao-gia" class="btn-primary md:ml-2" data-page="bao-gia">Báo giá ngay</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="page-hero">
+      <div class="container-x py-12">
+        <p class="eyebrow inline-flex items-center gap-2 text-[#E8A060]"><span class="h-px w-8 bg-[#E8A060]"></span>Bảo hành</p>
+        <h1 class="mt-4 text-3xl font-bold leading-tight tracking-tight text-white md:text-4xl">Bảo hành &amp; Tra cứu hồ sơ</h1>
+        <p class="mt-4 max-w-2xl text-md text-white/80">Xem giấy chứng nhận bảo hành của Sunwa và tra cứu hồ sơ công trình của bạn: hợp đồng, thiết kế, nhật ký thi công và thời hạn bảo hành.</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container-x">
+        <!-- Tabs -->
+        <div class="tab-bar" role="tablist" aria-label="Bảo hành">
+          <button type="button" class="tab-btn is-active" id="tab-btn-chung-nhan" data-tab="chung-nhan" role="tab" aria-selected="true" aria-controls="tab-chung-nhan">Giấy chứng nhận</button>
+          <button type="button" class="tab-btn" id="tab-btn-tra-cuu" data-tab="tra-cuu" role="tab" aria-selected="false" aria-controls="tab-tra-cuu">Tra cứu hồ sơ</button>
+        </div>
+
+        <!-- Tab 1: certificate -->
+        <div id="tab-chung-nhan" class="tab-panel" role="tabpanel" aria-labelledby="tab-btn-chung-nhan">
+          <div class="mt-8 max-w-2xl">
+            <img src="/materials/Insurance.webp" alt="Giấy Chứng nhận Bảo hành của Sunwa Design" width="1280" height="896"
+                 loading="lazy" decoding="async" data-insurance role="button" tabindex="0"
+                 class="w-full cursor-zoom-in rounded-lg border border-border shadow-sm">
+            <p class="mt-3 text-base text-text-muted">Nhấn vào ảnh để phóng to. Chế độ bảo hành: <strong class="font-medium text-text">5 năm kết cấu · 3 năm chống thấm · 1 năm hoàn thiện</strong>.</p>
+          </div>
+        </div>
+
+        <!-- Tab 2: client lookup -->
+        <div id="tab-tra-cuu" class="tab-panel hidden" role="tabpanel" aria-labelledby="tab-btn-tra-cuu">
+          <!-- Login card (shown when not logged in) -->
+          <div data-tra-cuu-login class="mt-8 max-w-md">
+            <div class="card p-6">
+              <h2 class="text-lg font-semibold">Tra cứu hồ sơ công trình</h2>
+              <p class="mt-2 text-base text-text-muted">Nhập mã hợp đồng (in trên hợp đồng thi công) và số điện thoại bạn đã đăng ký với Sunwa.</p>
+              <form data-tra-cuu-form class="mt-5 space-y-4" novalidate>
+                <div>
+                  <label for="tc-code" class="mb-1.5 block text-base font-medium">Mã hợp đồng <span class="text-primary">*</span></label>
+                  <input id="tc-code" name="code" type="text" autocomplete="off" autocapitalize="characters" required
+                         class="field-input" placeholder="VD: HD-2026-014">
+                </div>
+                <div>
+                  <label for="tc-phone" class="mb-1.5 block text-base font-medium">Số điện thoại <span class="text-primary">*</span></label>
+                  <input id="tc-phone" name="phone" type="tel" inputmode="numeric" autocomplete="tel" required
+                         class="field-input" placeholder="VD: 0916557558">
+                </div>
+                <p data-tra-cuu-error class="hidden text-base text-[#C2410C]" role="alert"></p>
+                <button type="submit" class="btn-primary w-full">Tra cứu</button>
+              </form>
+              <p class="mt-4 text-sm text-text-muted">Chưa có mã hoặc cần hỗ trợ? Gọi <a href="tel:0916557558" class="font-medium text-primary">0916 557 558</a>.</p>
+            </div>
+          </div>
+
+          <!-- Dashboard (filled by JS after login) -->
+          <div data-tra-cuu-dash class="mt-8 hidden"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="border-t border-border bg-bg-dark text-white/80">
+    <div class="container-x grid grid-cols-1 gap-8 py-12 md:grid-cols-3">
+      <div>
+        <div class="flex items-center gap-2">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#E8A060" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>
+          <span class="text-lg font-semibold text-white">SUNWA Design &amp; Build</span>
+        </div>
+        <p class="mt-3 max-w-xs text-base text-white/70">CÔNG TY TNHH MTV Thiết kế và Xây dựng Sunwa — kiến tạo tổ ấm bền vững cùng thời gian tại Đà Nẵng.</p>
+        <div class="mt-4 flex gap-3">
+          <a href="https://facebook.com" aria-label="Facebook" class="flex h-11 w-11 items-center justify-center rounded-full bg-white/10 hover:bg-white/20"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13 22v-8h3l1-4h-4V8c0-1 .3-1.7 1.8-1.7H17V2.8C16.6 2.7 15.4 2.6 14 2.6 11.2 2.6 9.3 4.3 9.3 7.5V10H6v4h3.3v8H13Z"/></svg></a>
+          <a href="https://youtube.com" aria-label="YouTube" class="flex h-11 w-11 items-center justify-center rounded-full bg-white/10 hover:bg-white/20"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M23 12s0-3.2-.4-4.7a2.5 2.5 0 0 0-1.7-1.8C19.3 5 12 5 12 5s-7.3 0-8.9.5A2.5 2.5 0 0 0 1.4 7.3C1 8.8 1 12 1 12s0 3.2.4 4.7a2.5 2.5 0 0 0 1.7 1.8C4.7 19 12 19 12 19s7.3 0 8.9-.5a2.5 2.5 0 0 0 1.7-1.8C23 15.2 23 12 23 12ZM10 15V9l5 3-5 3Z"/></svg></a>
+          <a href="https://zalo.me/0916557558" aria-label="Zalo" class="flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-xs font-semibold hover:bg-white/20">Zalo</a>
+        </div>
+      </div>
+      <div>
+        <h3 class="text-md font-semibold text-white">Liên kết nhanh</h3>
+        <ul class="mt-3 space-y-2 text-base">
+          <li><a href="/dich-vu" class="hover:text-white">Dịch vụ</a></li>
+          <li><a href="/du-an" class="hover:text-white">Dự án</a></li>
+          <li><a href="/bao-gia" class="hover:text-white">Báo giá</a></li>
+          <li><a href="/lien-he" class="hover:text-white">Liên hệ</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="text-md font-semibold text-white">Thông tin liên hệ</h3>
+        <ul class="mt-3 space-y-2 text-base">
+          <li>35 Bình Thái 3, P. Cẩm Lệ, TP. Đà Nẵng</li>
+          <li>Hotline: <a href="tel:0916557558" class="hover:text-white">0916 557 558</a></li>
+          <li>Email: <a href="mailto:Sunwa.design@gmail.com" class="hover:text-white">Sunwa.design@gmail.com</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="border-t border-border-dark">
+      <div class="container-x py-4 text-xs text-white/50">© 2026 CÔNG TY TNHH MTV Thiết kế và Xây dựng Sunwa. Hotline: 0916 557 558.</div>
+    </div>
+  </footer>
+
+  <!-- ============ FLOATING BUTTONS ============ -->
+  <div class="float-cta fixed bottom-6 right-6 z-[200] hidden flex-col gap-2.5 md:flex">
+    <a href="https://zalo.me/0916557558" class="float-btn" style="background:#0068FF;" aria-label="Chat Zalo"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.5 8.5 0 0 1-12.2 7.6L3 21l1.9-5.8A8.5 8.5 0 1 1 21 11.5Z"/></svg></a>
+    <a href="tel:0916557558" class="float-btn animate-pulse" style="background:#22A06B;" aria-label="Gọi hotline"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3-8.7A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2Z"/></svg></a>
+  </div>
+
+  <!-- ============ MOBILE STICKY CTA BAR ============ -->
+  <nav class="mobile-cta-bar" aria-label="Liên hệ nhanh">
+    <a href="tel:0916557558" class="mobile-cta-seg" aria-label="Gọi ngay 0916 557 558">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3-8.7A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2Z"/></svg>
+      Gọi ngay
+    </a>
+    <a href="https://zalo.me/0916557558" class="mobile-cta-seg border-l border-border" aria-label="Chat Zalo">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.5 8.5 0 0 1-12.2 7.6L3 21l1.9-5.8A8.5 8.5 0 1 1 21 11.5Z"/></svg>
+      Zalo
+    </a>
+    <a href="/bao-gia" class="mobile-cta-seg border-l border-border bg-primary text-white" aria-label="Nhận báo giá">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M16 13H8M16 17H8M10 9H8"/></svg>
+      Báo giá
+    </a>
+  </nav>
+</body>
+</html>

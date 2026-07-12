@@ -12,6 +12,8 @@ Internet → Cloudflare edge (TLS, DDoS) → outbound-only tunnel (cloudflared)
 
 - **No inbound ports are open** on the router. `cloudflared` and Tailscale both connect outbound.
 - Admin access from outside: **Tailscale** (SSH over the tailnet only — never port-forward SSH).
+- **Back up `~/Projects/Sunwa_Design/.env` AND `Private/clients/`** — the only two things not in git
+  (mail/session secrets and client-portal data; see `deploy/client-portal.md`).
 
 ## What's installed where
 

@@ -36,12 +36,12 @@ There is no test suite, linter, or framework build step — Tailwind compilation
 
 ## Architecture
 
-### Pages (5 static HTML files at repo root)
+### Pages (6 static HTML files at repo root)
 `index.html`, `du-an.html` (projects), `dich-vu.html` (services), `bao-gia.html` (quote),
-`lien-he.html` (contact). The navbar, footer, and floating action buttons are **inlined and
-duplicated in every page** — there is no templating/include system, so shared-markup changes must
-be applied to all five files. Pretty URLs (`/du-an` → `du-an.html`) are routes registered in
-`server.js` (the `PAGES` map), not real files.
+`lien-he.html` (contact), `bao-hanh.html` (warranty + client portal). The navbar, footer, and
+floating action buttons are **inlined and duplicated in every page** — there is no
+templating/include system, so shared-markup changes must be applied to all of them. Pretty URLs
+(`/du-an` → `du-an.html`) are routes registered in `server.js` (the `PAGES` map), not real files.
 
 ### Navbar section links — Quản lý chất lượng & Hệ thống pháp lý
 The navbar has two plain nav links (`<a class="nav-link">`): **"Quản lý chất lượng"**
@@ -53,7 +53,7 @@ The navbar has two plain nav links (`<a class="nav-link">`): **"Quản lý chấ
 > `initSectionDropdowns()` in `js/main.js`, `.nav-dropdown*` CSS). That was removed — the 8 subpages,
 > the JS, and the CSS are all gone. Don't reintroduce `nav-dropdown` markup/classes.
 
-There are **7 HTML files with identical navbar markup** (5 main + the 2 landing pages) — apply any
+There are **8 HTML files with identical navbar markup** (6 main + the 2 landing pages) — apply any
 shared-navbar change to all of them.
 
 ### Mobile nav — left slide-out drawer
@@ -92,6 +92,19 @@ Locally, set the mail env vars in your shell before `npm start` (or leave them u
 returns a 500 "chưa được cấu hình" message). In Azure they are set under the App Service's
 **Application settings**. Preferred: **Gmail OAuth2** (client ID/secret + refresh token), since
 Google is deprecating App Passwords. See `docs/run-and-deploy.md` §2.3 for how to obtain them.
+
+### Client portal — `/bao-hanh` + `lib/portal.js`
+The hero "Giấy Chứng nhận Bảo hành" button links to `/bao-hanh`: tab 1 shows the warranty
+certificate (`Materials/Insurance.webp`, zooms via the shared lightbox), tab 2 is a client login
+(**mã hợp đồng + SĐT**) → dashboard with docs, construction logs, and a 3-tier warranty countdown
+(kết cấu 5y · chống thấm 3y · hoàn thiện 1y from `handover`). Backend: `lib/portal.js` — stateless
+HMAC-signed HttpOnly cookie (`SESSION_SECRET` env, 24h), routes `/api/tra-cuu/login|me|logout`
+(login rate-limited 10/15min) and authenticated downloads at `/ho-so/<code>/<file>` (cookie code
+must match URL code; traversal-guarded). **Data lives in git-ignored `Private/clients/`**
+(`clients.json` + one folder per client, mtime-cached — staff edit files directly, no admin UI;
+format doc: `deploy/client-portal.md`). Demo login: `DEMO-001` / `0900000001`. Frontend:
+`initTabs()` + `initTraCuu()` in `js/main.js`; `.tab-*`/`.wr-*` styles in `css/tailwind.css`.
+Never commit client PII; `Private/clients/` + `.env` are the two backup-outside-git items.
 
 ### The `/api/submit` contract (shared FE ⇄ BE)
 Payload: `{ name, phone, email, type, area, address, message, consent }`. The `type` field maps to
