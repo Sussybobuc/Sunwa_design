@@ -313,6 +313,28 @@
     @apply bg-border;
   }
 
+  /* Trang Dự án — media hero trong thẻ dự án. Thẻ luôn hiện ẢNH; có youtubeId thì
+     chồng nút Play (.pmedia-play), bấm mới thay ảnh bằng iframe (.pmedia-frame).
+     Thẻ chưa có ảnh hiện ô "đang cập nhật" (.pmedia-empty). */
+  .pmedia-empty {
+    @apply flex h-full w-full flex-col items-center justify-center gap-2 bg-bg-secondary
+           text-text-light;
+  }
+  .pmedia-empty span {
+    @apply text-sm font-medium;
+  }
+  .pmedia-play {
+    @apply absolute left-1/2 top-1/2 flex h-12 w-16 -translate-x-1/2 -translate-y-1/2
+           items-center justify-center rounded-lg bg-bg-dark/75 text-white backdrop-blur-sm
+           transition duration-fast hover:bg-primary focus-visible:bg-primary;
+  }
+  .pmedia-frame {
+    @apply absolute inset-0 h-full w-full border-0;
+  }
+  .project-card.is-placeholder {
+    @apply cursor-default border-dashed hover:translate-y-0 hover:shadow-none;
+  }
+
   /* Trang Bảo hành — timeline nhật ký thi công (mốc mới nhất trên cùng) */
   .log-list {
     @apply relative ml-1.5 border-l-2 border-primary-light;

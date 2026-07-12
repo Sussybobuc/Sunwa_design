@@ -1,7 +1,14 @@
 'use strict';
 
 /* ============================================================
-   DATA — 7 dự án mẫu
+   DATA — 21 dự án (thẻ nào chưa có dữ liệu sẽ hiện "đang cập nhật")
+   Cách cập nhật một dự án — chỉ cần sửa mảng này, không đụng chỗ khác:
+   - name/type/typeLabel/area/cost/duration/location/year/description: thông tin thẻ + modal.
+     type ∈ 'nha-pho' | 'biet-thu' | 'nha-cap-4' | 'cai-tao' (khớp bộ lọc).
+   - image: ảnh đại diện thật, vd '/materials/du-an/du-an-8.webp' (nén WebP theo
+     Materials/README.md). Bỏ trống → dùng ảnh Unsplash tạm theo `query` (nếu có).
+   - youtubeId: ID video YouTube (phần sau "v=" trong URL). Có ID → thẻ hiện nút Play
+     trên ảnh; NHẤN mới tải trình phát (youtube-nocookie) — không preload gì cả.
    ============================================================ */
 const PROJECTS = [
   {
@@ -15,6 +22,8 @@ const PROJECTS = [
     location: 'Sơn Trà, Đà Nẵng',
     year: 2024,
     query: 'modern,townhouse',
+    image: '',
+    youtubeId: '',
     description: 'Nhà phố 3 tầng phong cách hiện đại tối giản, tối ưu ánh sáng tự nhiên.',
   },
   {
@@ -28,6 +37,8 @@ const PROJECTS = [
     location: 'Ngũ Hành Sơn, Đà Nẵng',
     year: 2023,
     query: 'villa,pool',
+    image: '',
+    youtubeId: '',
     description: 'Biệt thự sân vườn kết hợp hồ bơi, phong cách nhiệt đới hiện đại.',
   },
   {
@@ -41,6 +52,8 @@ const PROJECTS = [
     location: 'Liên Chiểu, Đà Nẵng',
     year: 2024,
     query: 'house,bungalow',
+    image: '',
+    youtubeId: '',
     description: 'Nhà cấp 4 mái thái, thiết kế thông thoáng, phù hợp khí hậu Đà Nẵng.',
   },
   {
@@ -54,6 +67,8 @@ const PROJECTS = [
     location: 'Cẩm Lệ, Đà Nẵng',
     year: 2024,
     query: 'home,renovation',
+    image: '',
+    youtubeId: '',
     description: 'Nâng cấp toàn bộ nội thất và mặt tiền, giữ nguyên kết cấu cũ.',
   },
   {
@@ -67,6 +82,8 @@ const PROJECTS = [
     location: 'Hải Châu, Đà Nẵng',
     year: 2023,
     query: 'building,facade',
+    image: '',
+    youtubeId: '',
     description: 'Nhà phố kết hợp kinh doanh tầng trệt, 3 tầng ở trên, thang máy gia đình.',
   },
   {
@@ -80,6 +97,8 @@ const PROJECTS = [
     location: 'Hòa Xuân, Đà Nẵng',
     year: 2022,
     query: 'mediterranean,villa',
+    image: '',
+    youtubeId: '',
     description: 'Biệt thự đơn lập 2 tầng phong cách Địa Trung Hải, mái ngói đỏ đặc trưng.',
   },
   {
@@ -93,8 +112,25 @@ const PROJECTS = [
     location: 'Hòa Vang, Đà Nẵng',
     year: 2023,
     query: 'garden,house',
+    image: '',
+    youtubeId: '',
     description: 'Nhà vườn mái thái rộng, sân vườn cây xanh, không gian nghỉ dưỡng.',
   },
+  // ---- Ô trống 8–21: điền dần khi có dự án thật ----
+  { id: 8, name: '', type: '', typeLabel: '', area: '', cost: '', duration: '', location: '', year: '', query: '', description: '', image: '', youtubeId: '' },
+  { id: 9, name: '', type: '', typeLabel: '', area: '', cost: '', duration: '', location: '', year: '', query: '', description: '', image: '', youtubeId: '' },
+  { id: 10, name: '', type: '', typeLabel: '', area: '', cost: '', duration: '', location: '', year: '', query: '', description: '', image: '', youtubeId: '' },
+  { id: 11, name: '', type: '', typeLabel: '', area: '', cost: '', duration: '', location: '', year: '', query: '', description: '', image: '', youtubeId: '' },
+  { id: 12, name: '', type: '', typeLabel: '', area: '', cost: '', duration: '', location: '', year: '', query: '', description: '', image: '', youtubeId: '' },
+  { id: 13, name: '', type: '', typeLabel: '', area: '', cost: '', duration: '', location: '', year: '', query: '', description: '', image: '', youtubeId: '' },
+  { id: 14, name: '', type: '', typeLabel: '', area: '', cost: '', duration: '', location: '', year: '', query: '', description: '', image: '', youtubeId: '' },
+  { id: 15, name: '', type: '', typeLabel: '', area: '', cost: '', duration: '', location: '', year: '', query: '', description: '', image: '', youtubeId: '' },
+  { id: 16, name: '', type: '', typeLabel: '', area: '', cost: '', duration: '', location: '', year: '', query: '', description: '', image: '', youtubeId: '' },
+  { id: 17, name: '', type: '', typeLabel: '', area: '', cost: '', duration: '', location: '', year: '', query: '', description: '', image: '', youtubeId: '' },
+  { id: 18, name: '', type: '', typeLabel: '', area: '', cost: '', duration: '', location: '', year: '', query: '', description: '', image: '', youtubeId: '' },
+  { id: 19, name: '', type: '', typeLabel: '', area: '', cost: '', duration: '', location: '', year: '', query: '', description: '', image: '', youtubeId: '' },
+  { id: 20, name: '', type: '', typeLabel: '', area: '', cost: '', duration: '', location: '', year: '', query: '', description: '', image: '', youtubeId: '' },
+  { id: 21, name: '', type: '', typeLabel: '', area: '', cost: '', duration: '', location: '', year: '', query: '', description: '', image: '', youtubeId: '' },
 ];
 
 /* Đơn giá tham khảo (VNĐ/m²) cho calculator */
@@ -212,20 +248,76 @@ function initSmoothScroll() {
 /* ============================================================
    3. RENDER PROJECT CARDS
    ============================================================ */
+/* Khu media (hero) của thẻ dự án: luôn hiển thị ẢNH (image thật > Unsplash tạm >
+   ô trống). Có youtubeId → chồng nút Play; iframe YouTube chỉ tải khi bấm. */
+function projectMediaHtml(p) {
+  const src = p.image || (p.query ? imageUrl(p.query, p.id) : '');
+  const picture = src
+    ? `<img src="${escapeHtml(src)}" alt="${escapeHtml(p.name || 'Dự án Sunwa')}" loading="lazy" decoding="async"
+             class="h-full w-full object-cover transition duration-normal group-hover:scale-105">`
+    : `<div class="pmedia-empty">
+         <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.5-3.5L9 20"/></svg>
+         <span>Hình ảnh đang cập nhật</span>
+       </div>`;
+  const play = p.youtubeId
+    ? `<button type="button" class="pmedia-play" data-video-id="${escapeHtml(p.youtubeId)}"
+               data-video-title="${escapeHtml(p.name || 'Video công trình Sunwa')}"
+               aria-label="Phát video: ${escapeHtml(p.name || 'công trình Sunwa')}">
+         <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7L8 5Z"/></svg>
+       </button>`
+    : '';
+  return `
+      <div class="relative aspect-[4/3] overflow-hidden bg-bg-dark" data-media>
+        ${p.typeLabel ? `<span class="project-tag">${escapeHtml(p.typeLabel)}</span>` : ''}
+        ${picture}${play}
+      </div>`;
+}
+
 function projectCardHtml(p) {
+  // Ô trống (chưa điền name): thẻ "đang cập nhật" — không mở modal chi tiết.
+  if (!p.name) {
+    return `
+    <article class="project-card is-placeholder fade-in" data-type="${p.type}" data-id="${p.id}">
+      ${projectMediaHtml(p)}
+      <div class="p-4">
+        <h3 class="text-lg font-medium text-text-light">Dự án đang được cập nhật</h3>
+        <p class="mt-1 text-base text-text-light">Thông tin công trình sẽ sớm có mặt tại đây.</p>
+      </div>
+    </article>`;
+  }
   return `
     <article class="project-card group fade-in" data-type="${p.type}" data-id="${p.id}" tabindex="0" role="button"
              aria-label="Xem chi tiết ${escapeHtml(p.name)}">
-      <div class="relative aspect-[4/3] overflow-hidden bg-bg-dark">
-        <span class="project-tag">${escapeHtml(p.typeLabel)}</span>
-        <img src="${imageUrl(p.query, p.id)}" alt="${escapeHtml(p.name)}" loading="lazy"
-             class="h-full w-full object-cover transition duration-normal group-hover:scale-105">
-      </div>
+      ${projectMediaHtml(p)}
       <div class="p-4">
         <h3 class="text-lg font-medium text-text">${escapeHtml(p.name)}</h3>
         <p class="mt-1 text-base text-text-muted">${escapeHtml(p.area)} · ${escapeHtml(p.cost)} · ${escapeHtml(p.duration)}</p>
       </div>
     </article>`;
+}
+
+/* Bấm Play trên thẻ dự án → thay ảnh bằng iframe (không mở modal chi tiết). */
+function initCardVideos() {
+  document.querySelectorAll('.pmedia-play').forEach((btn) => {
+    let played = false;
+    const stop = (e) => e.stopPropagation();
+    btn.addEventListener('keydown', stop); // chặn Enter/Space lan lên thẻ (mở modal)
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (played) return;
+      played = true;
+      const media = btn.closest('[data-media]');
+      const frame = document.createElement('iframe');
+      frame.src = 'https://www.youtube-nocookie.com/embed/' +
+        encodeURIComponent(btn.getAttribute('data-video-id')) + '?autoplay=1';
+      frame.title = btn.getAttribute('data-video-title') || 'Video công trình';
+      frame.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+      frame.allowFullscreen = true;
+      frame.className = 'pmedia-frame';
+      media.innerHTML = '';
+      media.appendChild(frame);
+    });
+  });
 }
 
 function renderProjects() {
@@ -327,7 +419,7 @@ function openModal(project) {
   const body = modalEl.querySelector('[data-modal-body]');
   body.innerHTML = `
     <div class="aspect-[16/9] w-full overflow-hidden rounded-t-lg bg-bg-dark">
-      <img src="${imageUrl(project.query, project.id, '1200x675')}" alt="${escapeHtml(project.name)}"
+      <img src="${escapeHtml(project.image || imageUrl(project.query, project.id, '1200x675'))}" alt="${escapeHtml(project.name)}"
            loading="lazy" class="h-full w-full object-cover">
     </div>
     <div class="p-6">
@@ -538,6 +630,86 @@ function traCuuDashHtml(data) {
     </div>`;
 }
 
+/* ==========================================================================
+   VIDEO CÔNG TRÌNH — /du-an (#videos-grid)
+   Cách thêm video: dán ID YouTube vào youtubeId (phần sau "v=" trong URL,
+   vd https://www.youtube.com/watch?v=dQw4w9WgXcQ → 'dQw4w9WgXcQ') và sửa title.
+   Ô chưa có ID hiển thị "Video đang được cập nhật". Ô có ID chỉ tải ảnh bìa;
+   trình phát YouTube (nocookie) chỉ tải khi khách bấm Play — trang luôn nhẹ.
+   ========================================================================== */
+const PROJECT_VIDEOS = [
+  { title: 'Video công trình 1', youtubeId: '' },
+  { title: 'Video công trình 2', youtubeId: '' },
+  { title: 'Video công trình 3', youtubeId: '' },
+  { title: 'Video công trình 4', youtubeId: '' },
+  { title: 'Video công trình 5', youtubeId: '' },
+  { title: 'Video công trình 6', youtubeId: '' },
+  { title: 'Video công trình 7', youtubeId: '' },
+  { title: 'Video công trình 8', youtubeId: '' },
+  { title: 'Video công trình 9', youtubeId: '' },
+  { title: 'Video công trình 10', youtubeId: '' },
+  { title: 'Video công trình 11', youtubeId: '' },
+  { title: 'Video công trình 12', youtubeId: '' },
+  { title: 'Video công trình 13', youtubeId: '' },
+  { title: 'Video công trình 14', youtubeId: '' },
+  { title: 'Video công trình 15', youtubeId: '' },
+  { title: 'Video công trình 16', youtubeId: '' },
+  { title: 'Video công trình 17', youtubeId: '' },
+  { title: 'Video công trình 18', youtubeId: '' },
+  { title: 'Video công trình 19', youtubeId: '' },
+  { title: 'Video công trình 20', youtubeId: '' },
+  { title: 'Video công trình 21', youtubeId: '' },
+];
+
+function initProjectVideos() {
+  const gridEl = document.getElementById('videos-grid');
+  if (!gridEl) return;
+
+  gridEl.innerHTML = PROJECT_VIDEOS.map((v, i) => {
+    const title = escapeHtml(v.title);
+    if (!v.youtubeId) {
+      return `
+        <div class="video-slot is-empty fade-in">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m22 8-6 4 6 4V8Z"/><rect x="2" y="6" width="14" height="12" rx="2"/></svg>
+          <span class="video-slot__label">Video đang được cập nhật</span>
+        </div>`;
+    }
+    const id = encodeURIComponent(v.youtubeId);
+    return `
+      <div class="video-slot fade-in" data-video-slot="${i}" role="button" tabindex="0" aria-label="Phát video: ${title}">
+        <img src="https://i.ytimg.com/vi/${id}/hqdefault.jpg" alt="${title}" width="480" height="360"
+             loading="lazy" decoding="async" class="video-slot__thumb">
+        <span class="video-slot__play" aria-hidden="true">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7L8 5Z"/></svg>
+        </span>
+        <span class="video-slot__title">${title}</span>
+      </div>`;
+  }).join('');
+
+  gridEl.querySelectorAll('[data-video-slot]').forEach((slot) => {
+    let played = false;
+    const play = () => {
+      const video = PROJECT_VIDEOS[Number(slot.getAttribute('data-video-slot'))];
+      if (played || !video || !video.youtubeId) return;
+      played = true;
+      const frame = document.createElement('iframe');
+      frame.src = 'https://www.youtube-nocookie.com/embed/' + encodeURIComponent(video.youtubeId) + '?autoplay=1';
+      frame.title = video.title;
+      frame.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+      frame.allowFullscreen = true;
+      frame.className = 'video-slot__frame';
+      slot.innerHTML = '';
+      slot.appendChild(frame);
+      slot.removeAttribute('role');
+      slot.removeAttribute('tabindex');
+    };
+    slot.addEventListener('click', play);
+    slot.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); play(); }
+    });
+  });
+}
+
 function initTraCuu() {
   const form = document.querySelector('[data-tra-cuu-form]');
   const loginBox = document.querySelector('[data-tra-cuu-login]');
@@ -611,9 +783,10 @@ function initModal() {
   if (!containers.length) return;
 
   const handleActivate = (card) => {
+    if (card.classList.contains('is-placeholder')) return; // ô trống — chưa có gì để xem
     const id = Number(card.getAttribute('data-id'));
     const project = PROJECTS.find((p) => p.id === id);
-    if (project) openModal(project);
+    if (project && project.name) openModal(project);
   };
 
   containers.forEach((container) => {
@@ -1081,7 +1254,8 @@ function initServiceNav() {
 document.addEventListener('DOMContentLoaded', () => {
   initNavToggle();
   initHeroReveal();
-  renderProjects(); // phải chạy trước initModal / initScrollReveal
+  renderProjects(); // phải chạy trước initModal / initCardVideos / initScrollReveal
+  initCardVideos();
   initSmoothScroll();
   initFilter();
   initModal();
