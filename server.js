@@ -6,9 +6,14 @@ require('dotenv').config();
 
 const path = require('path');
 const express = require('express');
+const rateLimit = require('express-rate-limit');
 const { handleSubmit } = require('./lib/mailer');
 
 const app = express();
+
+// Behind Cloudflare Tunnel the socket peer is always localhost; trust the
+// first proxy hop so req.ip reflects the real client (X-Forwarded-For).
+app.set('trust proxy', 1);
 
 app.use(express.json());
 
@@ -20,8 +25,18 @@ app.use((req, res, next) => {
   next();
 });
 
-// Form backend.
-app.post('/api/submit', async (req, res) => {
+// Form backend. Rate-limited per IP so bots can't burn the Gmail send quota.
+const submitLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 5,
+  standardHeaders: 'draft-7',
+  legacyHeaders: false,
+  message: {
+    ok: false,
+    error: 'Bạn đã gửi quá nhiều yêu cầu. Vui lòng thử lại sau ít phút hoặc gọi hotline 0916 557 558.',
+  },
+});
+app.post('/api/submit', submitLimiter, async (req, res) => {
   const { status, body } = await handleSubmit(req.body || {});
   res.status(status).json(body);
 });
