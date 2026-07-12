@@ -1,0 +1,32 @@
+# Deploy to the self-hosted Mac Mini on every push to main.
+# The runner lives on the Mac itself; the job updates the canonical clone at
+# ~/Projects/Sunwa_Design, rebuilds the CSS, and hot-reloads the pm2 process.
+# Secrets stay in the Mac's local .env — never in this workflow.
+
+name: Deploy to Mac Mini (self-hosted)
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+concurrency:
+  group: selfhost-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: [self-hosted, macOS]
+    steps:
+      - name: Pull, build, reload
+        run: |
+          export PATH="/opt/homebrew/bin:$PATH"
+          cd ~/Projects/Sunwa_Design
+          git pull --ff-only origin main
+          npm ci
+          npm run build:css
+          pm2 reload sunwa --update-env
+          pm2 save
+          sleep 2
+          curl -sf http://localhost:3000/healthz

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <!-- System LaunchDaemon: resurrect the pm2 process list at BOOT (pre-login),
+       so the site comes back after a power cut with nobody logged in.
+       Install: see deploy/README.md -->
+  <key>Label</key>
+  <string>com.sunwa.pm2</string>
+
+  <key>ProgramArguments</key>
+  <array>
+    <string>/opt/homebrew/bin/pm2</string>
+    <string>resurrect</string>
+  </array>
+
+  <key>UserName</key>
+  <string>nhathuy</string>
+
+  <key>EnvironmentVariables</key>
+  <dict>
+    <key>PATH</key>
+    <string>/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin</string>
+    <key>HOME</key>
+    <string>/Users/nhathuy</string>
+    <key>PM2_HOME</key>
+    <string>/Users/nhathuy/.pm2</string>
+  </dict>
+
+  <key>RunAtLoad</key>
+  <true/>
+
+  <key>StandardOutPath</key>
+  <string>/Users/nhathuy/.pm2/launchd-out.log</string>
+  <key>StandardErrorPath</key>
+  <string>/Users/nhathuy/.pm2/launchd-err.log</string>
+</dict>
+</plist>
