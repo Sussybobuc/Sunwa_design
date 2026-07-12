@@ -1,7 +1,7 @@
 # Cổng tra cứu hồ sơ khách hàng (/bao-hanh) — hướng dẫn quản lý dữ liệu
 
 Khách hàng đăng nhập tại **https://\<domain\>/bao-hanh** (tab "Tra cứu hồ sơ") bằng
-**mã hợp đồng + số điện thoại** đã đăng ký. Sau khi đăng nhập họ thấy: tài liệu (hợp đồng,
+**số điện thoại đã đăng ký** (chỉ cần SĐT — không cần mã). Sau khi đăng nhập họ thấy: tài liệu (hợp đồng,
 thiết kế…), nhật ký thi công, và thời hạn bảo hành (kết cấu 5 năm · chống thấm 3 năm ·
 hoàn thiện 1 năm, tính từ ngày bàn giao).
 
@@ -46,24 +46,28 @@ Private/clients/
 ```
 
 Ghi chú các trường:
-- **Mã hợp đồng** (khóa của mục): viết HOA; khách nhập không phân biệt hoa thường.
-- **`phone`**: số di động VN 10 số (đầu 03/05/07/08/09) — đúng số khách sẽ dùng để đăng nhập.
+- **Mã hợp đồng** (khóa của mục): viết HOA — chỉ dùng nội bộ (đặt tên thư mục, hiển thị trên
+  dashboard); khách KHÔNG cần nhập mã này.
+- **`phone`**: số di động VN 10 số (đầu 03/05/07/08/09) — chính là "mật khẩu" đăng nhập của khách.
+  **Mỗi khách một số duy nhất** — không được trùng giữa hai mục (trùng thì khách chỉ thấy mục đầu tiên).
 - **`handover`**: ngày bàn giao `YYYY-MM-DD`. Để `null` nếu đang thi công (chưa hiện đếm ngược).
 - **`warranty`** (không bắt buộc): ghi đè số năm mặc định, vd `{ "ketCau": 10 }`.
 - **`docs[].file`** và **`logs[].photos[]`**: đường dẫn tương đối bên trong thư mục của khách đó.
 - **JSON phải hợp lệ** (dấu phẩy, ngoặc). Kiểm tra nhanh:
   `node -e "JSON.parse(require('fs').readFileSync('Private/clients/clients.json'))" && echo OK`
 
-3. Xong — không cần restart. Báo khách: vào **\<domain\>/bao-hanh**, nhập mã + SĐT.
+3. Xong — không cần restart. Báo khách: vào **\<domain\>/bao-hanh**, nhập SĐT đã đăng ký.
 
 ## Thêm nhật ký thi công cho khách đã có
 Thêm một mục vào mảng `logs` (mới nhất hiển thị trên cùng) và chép ảnh vào `nhat-ky/`.
 
 ## Bảo mật (đã cài sẵn — chỉ cần biết)
-- Đăng nhập sai bị giới hạn 10 lần / 15 phút / IP; thông báo lỗi không tiết lộ sai mã hay sai SĐT.
+- Đăng nhập sai bị giới hạn 10 lần / 15 phút / IP. Lưu ý: đăng nhập CHỈ bằng SĐT nên ai biết số
+  điện thoại của khách đều xem được hồ sơ khách đó — chỉ đưa vào portal những tài liệu chấp nhận
+  mức riêng tư này (không để giấy tờ tùy thân, thông tin thanh toán…).
 - Phiên đăng nhập là cookie ký HMAC (khóa `SESSION_SECRET` trong `.env`), hạn 24 giờ.
 - Khách chỉ tải được file trong đúng thư mục của mình; mọi truy cập khác bị chặn.
 - Đổi `SESSION_SECRET` sẽ đăng xuất toàn bộ khách (dùng khi nghi ngờ lộ khóa).
 
 ## Khách demo
-`DEMO-001` / `0900000001` — dữ liệu mẫu để thử. Xóa mục này khi đưa khách thật lên.
+SĐT `0900000001` (mã nội bộ `DEMO-001`) — dữ liệu mẫu để thử. Xóa mục này khi đưa khách thật lên.

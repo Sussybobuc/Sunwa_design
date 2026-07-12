@@ -96,13 +96,14 @@ Google is deprecating App Passwords. See `docs/run-and-deploy.md` §2.3 for how 
 ### Client portal — `/bao-hanh` + `lib/portal.js`
 The hero "Giấy Chứng nhận Bảo hành" button links to `/bao-hanh`: tab 1 shows the warranty
 certificate (`Materials/Insurance.webp`, zooms via the shared lightbox), tab 2 is a client login
-(**mã hợp đồng + SĐT**) → dashboard with docs, construction logs, and a 3-tier warranty countdown
+(**registered phone number only** — the phone is the whole credential; must be unique per client)
+→ dashboard with docs, construction logs, and a 3-tier warranty countdown
 (kết cấu 5y · chống thấm 3y · hoàn thiện 1y from `handover`). Backend: `lib/portal.js` — stateless
 HMAC-signed HttpOnly cookie (`SESSION_SECRET` env, 24h), routes `/api/tra-cuu/login|me|logout`
 (login rate-limited 10/15min) and authenticated downloads at `/ho-so/<code>/<file>` (cookie code
 must match URL code; traversal-guarded). **Data lives in git-ignored `Private/clients/`**
 (`clients.json` + one folder per client, mtime-cached — staff edit files directly, no admin UI;
-format doc: `deploy/client-portal.md`). Demo login: `DEMO-001` / `0900000001`. Frontend:
+format doc: `deploy/client-portal.md`). Demo login: phone `0900000001`. Frontend:
 `initTabs()` + `initTraCuu()` in `js/main.js`; `.tab-*`/`.wr-*` styles in `css/tailwind.css`.
 Never commit client PII; `Private/clients/` + `.env` are the two backup-outside-git items.
 

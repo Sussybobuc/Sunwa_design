@@ -744,9 +744,7 @@ function initTraCuu() {
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     errorEl.classList.add('hidden');
-    const code = form.code.value.trim().toUpperCase();
     const phone = form.phone.value.trim();
-    if (!code) return showError('Vui lòng nhập mã hợp đồng.');
     if (!PHONE_REGEX.test(phone)) return showError('Số điện thoại không hợp lệ.');
 
     submitBtn.disabled = true;
@@ -755,7 +753,7 @@ function initTraCuu() {
       const res = await fetch('/api/tra-cuu/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ code, phone }),
+        body: JSON.stringify({ phone }),
       });
       const json = await res.json().catch(() => ({}));
       if (res.ok && json.ok) showDash(json);
