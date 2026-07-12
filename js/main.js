@@ -476,59 +476,65 @@ function warrantyMetersHtml(handoverIso, warranty) {
 
 function traCuuDashHtml(data) {
   const docs = (data.docs || []).length
-    ? '<ul class="mt-4 space-y-2.5">' + data.docs.map((d) => `
-        <li>
-          <a href="${escapeHtml(d.url)}" target="_blank" rel="noopener" class="group inline-flex items-center gap-2.5 text-base font-medium text-primary hover:text-primary-dark">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
-            <span class="group-hover:underline">${escapeHtml(d.label)}</span>
-          </a>
-        </li>`).join('') + '</ul>'
-    : '<p class="mt-4 text-base text-text-muted">Chưa có tài liệu.</p>';
+    ? '<div class="mt-4 space-y-3">' + data.docs.map((d) => `
+        <a href="${escapeHtml(d.url)}" target="_blank" rel="noopener" class="contact-channel">
+          <span class="icon-box shrink-0"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg></span>
+          <span class="contact-channel__text">
+            <span class="contact-channel__label">Tài liệu</span>
+            <span class="contact-channel__value">${escapeHtml(d.label)}</span>
+          </span>
+          <svg class="shrink-0 text-text-light" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/></svg>
+        </a>`).join('') + '</div>'
+    : '<p class="mt-4 text-base text-text-muted">Chưa có tài liệu nào. Hồ sơ sẽ được Sunwa cập nhật tại đây.</p>';
 
   const logs = (data.logs || []).length
-    ? '<ol class="mt-4 space-y-5">' + data.logs.slice().reverse().map((l) => `
-        <li class="border-l-2 border-primary-light pl-4">
-          <p class="text-sm font-medium text-text-muted">${l.date ? fmtDateVN(l.date) : ''}</p>
+    ? '<ol class="log-list mt-5">' + data.logs.slice().reverse().map((l) => `
+        <li class="log-item">
+          <span class="log-dot" aria-hidden="true"></span>
+          <p class="text-sm font-semibold text-primary">${l.date ? fmtDateVN(l.date) : ''}</p>
           <p class="mt-1 text-base">${escapeHtml(l.text)}</p>
           ${(l.photos || []).length ? `
           <div class="mt-2.5 flex flex-wrap gap-2">
             ${l.photos.map((p) => `
-              <img src="${escapeHtml(p)}" alt="Ảnh nhật ký ${l.date ? fmtDateVN(l.date) : ''}" width="96" height="72"
+              <img src="${escapeHtml(p)}" alt="Ảnh nhật ký ${l.date ? fmtDateVN(l.date) : ''}" width="120" height="90"
                    loading="lazy" decoding="async" data-log-photo data-caption="${escapeHtml(l.text)}"
-                   class="h-[72px] w-24 cursor-zoom-in rounded-sm border border-border object-cover">`).join('')}
+                   class="h-[90px] w-[120px] cursor-zoom-in rounded-md border border-border object-cover transition duration-fast hover:border-primary hover:shadow-sm">`).join('')}
           </div>` : ''}
         </li>`).join('') + '</ol>'
-    : '<p class="mt-4 text-base text-text-muted">Chưa có nhật ký thi công.</p>';
+    : '<p class="mt-4 text-base text-text-muted">Chưa có nhật ký thi công. Các mốc thi công sẽ xuất hiện tại đây.</p>';
 
   const warranty = data.handover
     ? `<p class="text-base text-text-muted">Bàn giao ngày <strong class="font-medium text-text">${fmtDateVN(data.handover)}</strong></p>
-       <div class="mt-4 space-y-4">${warrantyMetersHtml(data.handover, data.warranty || {})}</div>`
-    : '<p class="text-base text-text-muted">Công trình đang thi công — thời hạn bảo hành sẽ được kích hoạt khi bàn giao.</p>';
+       <div class="mt-5 space-y-4">${warrantyMetersHtml(data.handover, data.warranty || {})}</div>`
+    : '<p class="text-base text-text-muted">Công trình đang thi công — thời hạn bảo hành được kích hoạt từ ngày bàn giao.</p>';
 
   return `
-    <div class="card p-6">
+    <div class="contact-panel p-6 md:p-8">
       <div class="flex flex-wrap items-start justify-between gap-4">
-        <div>
-          <h2 class="text-xl font-semibold">${escapeHtml(data.name)}</h2>
-          <p class="mt-1 text-base text-text-muted">${escapeHtml(data.project)}</p>
-          <p class="mt-1 text-sm text-text-muted">Mã hợp đồng: <strong class="font-medium text-text">${escapeHtml(data.code)}</strong></p>
+        <div class="flex items-start gap-4">
+          <span class="icon-box mt-0.5 shrink-0"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg></span>
+          <div>
+            <h2 class="text-xl font-semibold leading-tight">${escapeHtml(data.name)}</h2>
+            <p class="mt-1 text-base text-text-muted">${escapeHtml(data.project)}</p>
+            <p class="mt-2"><span class="inline-flex items-center gap-1.5 rounded-full bg-bg-secondary px-3 py-1 text-sm font-medium text-text">Hợp đồng ${escapeHtml(data.code)}</span></p>
+          </div>
         </div>
-        <button type="button" data-tra-cuu-logout class="btn-outline">Đăng xuất</button>
+        <button type="button" data-tra-cuu-logout class="btn-outline shrink-0">Đăng xuất</button>
       </div>
-    </div>
-    <div class="mt-5 grid grid-cols-1 gap-5 lg:grid-cols-2">
-      <div class="card p-6">
-        <h3 class="text-md font-semibold">Hồ sơ &amp; tài liệu</h3>
-        ${docs}
+      <div class="mt-6 grid grid-cols-1 gap-8 border-t border-border pt-6 lg:grid-cols-2 lg:gap-10">
+        <div>
+          <h3 class="text-md font-semibold">Hồ sơ &amp; tài liệu</h3>
+          ${docs}
+        </div>
+        <div>
+          <h3 class="text-md font-semibold">Thời hạn bảo hành</h3>
+          <div class="mt-2">${warranty}</div>
+        </div>
       </div>
-      <div class="card p-6">
-        <h3 class="text-md font-semibold">Thời hạn bảo hành</h3>
-        <div class="mt-2">${warranty}</div>
+      <div class="mt-6 border-t border-border pt-6">
+        <h3 class="text-md font-semibold">Nhật ký thi công</h3>
+        ${logs}
       </div>
-    </div>
-    <div class="card mt-5 p-6">
-      <h3 class="text-md font-semibold">Nhật ký thi công</h3>
-      ${logs}
     </div>`;
 }
 

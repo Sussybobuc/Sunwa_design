@@ -312,6 +312,17 @@
   .wr-row.is-expired .wr-fill {
     @apply bg-border;
   }
+
+  /* Trang Bảo hành — timeline nhật ký thi công (mốc mới nhất trên cùng) */
+  .log-list {
+    @apply relative ml-1.5 border-l-2 border-primary-light;
+  }
+  .log-item {
+    @apply relative pb-6 pl-6 last:pb-0;
+  }
+  .log-dot {
+    @apply absolute -left-[7px] top-1 block h-3 w-3 rounded-full border-2 border-bg bg-primary;
+  }
 }
 
 /* ============================================================
