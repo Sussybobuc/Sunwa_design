@@ -3,5 +3,8 @@ docs/
 # Dependencies
 node_modules/
 
+# Local secrets (mail credentials) — see .env.example
+.env
+
 # Claude Code local (personal) settings
 .claude/

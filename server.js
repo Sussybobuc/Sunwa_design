@@ -1,5 +1,9 @@
 'use strict';
 
+// Load .env if present (self-hosted Mac). No-op when the file doesn't exist
+// (e.g. Azure, where config comes from App Service application settings).
+require('dotenv').config();
+
 const path = require('path');
 const express = require('express');
 const { handleSubmit } = require('./lib/mailer');

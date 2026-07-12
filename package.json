@@ -14,6 +14,7 @@
     "watch:css": "tailwindcss -i css/tailwind.css -o css/style.css --watch"
   },
   "dependencies": {
+    "dotenv": "^17.4.2",
     "express": "^4.21.2",
     "nodemailer": "^6.9.16"
   },
