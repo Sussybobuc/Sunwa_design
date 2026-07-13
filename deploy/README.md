@@ -27,8 +27,9 @@ Internet → Cloudflare edge (TLS, DDoS) → outbound-only tunnel (cloudflared)
 | Tunnel daemon | `/Library/LaunchDaemons/com.cloudflare.cloudflared.plist` | root |
 | CI runner | `~/actions-runner` (`sunwa-mac-mini`, labels `self-hosted,macOS,ARM64`) | LaunchAgent (starts at login) |
 
-Tunnel: name `sunwa`, ID `7b911984-e908-4c24-81f5-ff17e0538223`. Ingress: `test.sunwadesign.vn`,
-apex and `www` → `http://localhost:3000`, everything else → 404. (Hostnames pending domain purchase.)
+Tunnel: name `sunwa`, ID `7b911984-e908-4c24-81f5-ff17e0538223`. Ingress: `test.sunwadesign.com`,
+`sunwadesign.com` and `www.sunwadesign.com` → `http://localhost:3000`, everything else → 404.
+The domain was bought via **Cloudflare Registrar** (DNS lives on Cloudflare automatically).
 
 > **Gotcha (already fixed once):** `cloudflared service install` writes a plist that launches
 > `cloudflared` with **no arguments**, which modern versions refuse. The plist's `ProgramArguments`
@@ -64,13 +65,14 @@ sudo launchctl kickstart -k system/com.cloudflare.cloudflared   # tunnel
 sudo launchctl kickstart -k system/com.sunwa.pm2                # pm2 resurrect (one-shot)
 ```
 
-## Remaining before go-live (as of 2026-07-12)
+## Go-live status
 
-1. **Buy the domain** (decision pending: `.vn` vs `.com` — `sunwadesign.com` was available) and add
-   it to the Cloudflare account (nameservers → Cloudflare unless bought via Cloudflare Registrar).
-2. Route DNS: `cloudflared tunnel route dns sunwa test.<domain>` → verify site end-to-end over HTTPS.
-3. Cutover: route apex + `www`, update canonical/OG URLs in all HTML `<head>`s + `sitemap.xml`,
-   update `CLAUDE.md` Deploy section and `docs/run-and-deploy.md`.
-4. Reboot-without-login test (verify pm2 + tunnel daemons come up headless).
-5. After ~1 week stable: delete the Azure Web App + remove `.github/workflows/main_sunwa-design.yml`.
-```
+**Cutover done 2026-07-13**: domain `sunwadesign.com` bought via Cloudflare Registrar; apex + `www` +
+`test.` all routed to the tunnel; canonical/OG URLs + `sitemap.xml` + `robots.txt` updated.
+
+Remaining:
+1. Reboot-without-login test (verify pm2 + tunnel daemons come up headless).
+2. After ~1 week stable: delete the Azure Web App + remove `.github/workflows/main_sunwa-design.yml`.
+
+> Gotcha: `cloudflared tunnel login`'s `cert.pem` is **zone-scoped** — after adding a new zone,
+> re-login and pick it, or `tunnel route dns` writes records into the old zone.

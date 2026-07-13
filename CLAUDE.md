@@ -7,7 +7,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 Static marketing website for **CÔNG TY TNHH MTV Thiết kế và Xây dựng Sunwa** (Sunwa Design),
 a residential construction/design company in Đà Nẵng, Vietnam. The UI is in **Vietnamese**.
 Stack: vanilla HTML + **Tailwind CSS (CLI build)** + vanilla JS, served by a small **Express**
-app (`server.js`) that also hosts the contact/quote form backend. Deploys to **Azure App Service**.
+app (`server.js`) that also hosts the contact/quote form backend. **Self-hosted on a Mac Mini M4**
+behind a Cloudflare Tunnel at `https://sunwadesign.com` (see `deploy/README.md`).
 
 ## Commands
 
@@ -88,10 +89,10 @@ link-click. Styles live in `css/tailwind.css` `@media (max-width:767px)` keyed o
    `TO_EMAIL`, `SMTP_HOST` (default `smtp.gmail.com`), `SMTP_PORT` (465).
 3. Returns JSON `{ ok: true }` or `{ ok: false, error }` (Vietnamese error strings).
 
-Locally, set the mail env vars in your shell before `npm start` (or leave them unset — the route
-returns a 500 "chưa được cấu hình" message). In Azure they are set under the App Service's
-**Application settings**. Preferred: **Gmail OAuth2** (client ID/secret + refresh token), since
-Google is deprecating App Passwords. See `docs/run-and-deploy.md` §2.3 for how to obtain them.
+Config comes from **`.env`** next to `server.js` (loaded by `dotenv` at startup; keys documented in
+`.env.example`; the real file is git-ignored, chmod 600, on the Mac Mini). Leave it absent and the
+route returns a 500 "chưa được cấu hình" message. Preferred: **Gmail OAuth2** (client ID/secret +
+refresh token), since Google is deprecating App Passwords. See `docs/run-and-deploy.md` §2.3.
 
 ### Client portal — `/bao-hanh` + `lib/portal.js`
 The hero "Giấy Chứng nhận Bảo hành" button links to `/bao-hanh`: tab 1 shows the warranty
@@ -130,16 +131,18 @@ defined in `css/tailwind.css` under `@layer components`; `prefers-reduced-motion
 
 ## Deploy
 
-Deploys to **Azure App Service** (Linux, Node 20 LTS). Create a Web App, then wire it to GitHub via
-**Deployment Center → GitHub** so pushes to `main` build (`npm install` + `npm run build:css`) and
-restart the app (`npm start`). Set the mail secrets under **App Service → Configuration → Application
-settings** — OAuth2 preferred (`SMTP_USER`, `OAUTH_CLIENT_ID`, `OAUTH_CLIENT_SECRET`,
-`OAUTH_REFRESH_TOKEN`, `TO_EMAIL`, `SMTP_HOST`, `SMTP_PORT`); `SMTP_PASS` is the App Password
-fallback. Full runbook in `docs/run-and-deploy.md`.
+**Self-hosted on a Mac Mini M4** (this machine, `~/Projects/Sunwa_Design`) behind an outbound-only
+**Cloudflare Tunnel** (`sunwa`) serving `https://sunwadesign.com` (+ `www`, + `test.` for staging).
+Push to `main` → `.github/workflows/selfhost-deploy.yml` runs on the Mac's own GitHub runner:
+`git pull` → `npm ci` → `npm run build:css` → `pm2 reload sunwa` → health check. The app runs under
+**pm2** (`ecosystem.config.js`), boots pre-login via LaunchDaemons. Secrets live in the git-ignored
+`.env`. Full runbook: **`deploy/README.md`**.
+
+> Legacy: the old **Azure App Service** deploy (`.github/workflows/main_sunwa-design.yml`) still runs
+> in parallel as a fallback during the transition window — delete the Web App + that workflow once
+> the Mac has been stable ~1 week (cutover was 2026-07-13).
 
 ## Known TODOs before go-live
 - Replace `source.unsplash.com` placeholder images with real project photos.
-- Set the real canonical/OG domain (currently placeholder `https://sunwadesign.vn/...`).
 - Fill in the real GPKD (business registration) number in the footer.
-- Configure Gmail OAuth2 (`OAUTH_CLIENT_ID` / `OAUTH_CLIENT_SECRET` / `OAUTH_REFRESH_TOKEN`) in
-  App Service → Configuration → Application settings.
+- Decommission Azure after the stability window (see Deploy above).
