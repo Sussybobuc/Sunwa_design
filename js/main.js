@@ -843,6 +843,23 @@ function validateForm(form) {
     }
   }
 
+  const message = form.querySelector('[name="message"]');
+  if (message && !message.value.trim()) {
+    showFieldError(form, 'message', 'Vui lòng mô tả yêu cầu của bạn');
+    valid = false;
+  } else if (message) {
+    showFieldError(form, 'message', '');
+  }
+
+  const files = form.querySelector('[name="files"]');
+  if (files && files.files.length > 0) {
+    const err = attachmentError(files.files);
+    showFieldError(form, 'files', err || '');
+    if (err) valid = false;
+  } else if (files) {
+    showFieldError(form, 'files', '');
+  }
+
   const consent = form.querySelector('[name="consent"]');
   if (consent && !consent.checked) {
     showFieldError(form, 'consent', 'Vui lòng đồng ý để chúng tôi liên hệ');
@@ -854,18 +871,52 @@ function validateForm(form) {
   return valid;
 }
 
+/* Đính kèm: PDF/ảnh, tối đa 3 tệp, tổng ≤10 MB — trả về chuỗi lỗi hoặc null.
+   Phải khớp giới hạn phía server (server.js + lib/mailer.js). */
+const MAX_FILES = 3;
+const MAX_TOTAL_BYTES = 10 * 1024 * 1024;
+
+function attachmentError(fileList) {
+  if (fileList.length > MAX_FILES) return `Tối đa ${MAX_FILES} tệp đính kèm`;
+  let total = 0;
+  for (const f of fileList) {
+    total += f.size;
+    const okType = f.type === 'application/pdf' || f.type.startsWith('image/');
+    if (!okType) return 'Chỉ nhận tệp PDF hoặc ảnh';
+  }
+  if (total > MAX_TOTAL_BYTES) return 'Tệp đính kèm vượt quá 10 MB';
+  return null;
+}
+
 function initForms() {
   document.querySelectorAll('form.lead-form').forEach((form) => {
     const status = form.querySelector('[data-form-status]');
     const success = document.getElementById(form.getAttribute('data-success') || 'form-success');
     const submitBtn = form.querySelector('[type="submit"]');
 
+    // Danh sách tệp đã chọn + kiểm tra ngay khi chọn (chỉ form có input file)
+    const fileInput = form.querySelector('[name="files"]');
+    const fileListEl = form.querySelector('[data-file-list]');
+    if (fileInput) {
+      fileInput.addEventListener('change', () => {
+        const err = fileInput.files.length > 0 ? attachmentError(fileInput.files) : null;
+        showFieldError(form, 'files', err || '');
+        if (fileListEl) {
+          fileListEl.textContent = Array.from(fileInput.files)
+            .map((f) => `${f.name} (${(f.size / 1024 / 1024).toFixed(1)} MB)`)
+            .join(' · ');
+        }
+      });
+    }
+
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       if (status) status.textContent = '';
       if (!validateForm(form)) return;
 
-      const data = Object.fromEntries(new FormData(form).entries());
+      // FormData multipart: gửi được cả tệp đính kèm; form không có tệp vẫn OK.
+      // KHÔNG set Content-Type — trình duyệt tự thêm boundary.
+      const data = new FormData(form);
       if (submitBtn) {
         submitBtn.disabled = true;
         submitBtn.dataset.label = submitBtn.textContent;
@@ -873,19 +924,20 @@ function initForms() {
       }
 
       try {
-        const res = await fetch('/api/submit', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(data),
-        });
-        if (!res.ok) throw new Error('Request failed');
+        const res = await fetch('/api/submit', { method: 'POST', body: data });
+        if (!res.ok) {
+          // Hiện lỗi cụ thể từ server (VD: tệp quá lớn) thay vì thông báo chung
+          let serverError = '';
+          try { serverError = (await res.json()).error || ''; } catch { /* body không phải JSON */ }
+          throw new Error(serverError);
+        }
 
         form.classList.add('hidden');
         if (success) success.classList.remove('hidden');
         form.reset();
       } catch (err) {
         if (status) {
-          status.textContent =
+          status.textContent = err.message ||
             'Gửi không thành công. Vui lòng gọi hotline 0916 557 558 để được hỗ trợ.';
         }
       } finally {
@@ -977,6 +1029,9 @@ function initActiveNav() {
   const base = current.replace(/\.html$/, '');
 
   document.querySelectorAll('[data-page]').forEach((link) => {
+    // Chỉ tô sáng .nav-link thật — KHÔNG tô nút .btn-primary "Báo giá ngay"
+    // (text-primary trên nền primary = chữ tàng hình) hay logo header.
+    if (!link.classList.contains('nav-link')) return;
     const page = link.getAttribute('data-page');
     if (page === base || (base === 'index' && page === 'index')) {
       link.classList.add('nav-link--active');

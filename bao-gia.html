@@ -94,8 +94,8 @@
             </div>
             <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div>
-                <label class="field-label" for="area">Diện tích dự kiến</label>
-                <input class="field-input" type="text" id="area" name="area" placeholder="VD: 80m²">
+                <label class="field-label" for="area">Thông tin lô đất</label>
+                <input class="field-input" type="text" id="area" name="area" placeholder="VD: 80m², mặt tiền 5m, hướng Đông…">
               </div>
               <div>
                 <label class="field-label" for="address">Địa chỉ xây dựng</label>
@@ -103,8 +103,16 @@
               </div>
             </div>
             <div>
-              <label class="field-label" for="message">Mô tả yêu cầu</label>
-              <textarea class="field-input" id="message" name="message" rows="4" placeholder="Mô tả ngắn về công trình bạn mong muốn…"></textarea>
+              <label class="field-label" for="files">Hoặc đính kèm hồ sơ lô đất</label>
+              <input class="field-input" type="file" id="files" name="files" multiple accept="application/pdf,image/*">
+              <p class="mt-1 text-sm text-text-muted">Sổ hồng, bản vẽ hoặc ảnh lô đất — PDF hoặc ảnh, tối đa 3 tệp, tổng cộng 10&nbsp;MB.</p>
+              <p class="field-error" data-error="files"></p>
+              <p class="mt-1 text-sm text-text-muted" data-file-list></p>
+            </div>
+            <div>
+              <label class="field-label" for="message">Mô tả yêu cầu <span class="text-primary">*</span></label>
+              <textarea class="field-input" id="message" name="message" rows="4" required placeholder="Mô tả ngắn về công trình bạn mong muốn…"></textarea>
+              <p class="field-error" data-error="message"></p>
             </div>
             <div>
               <label class="flex items-start gap-2 text-base text-text-muted">
@@ -174,8 +182,11 @@
         <ul class="mt-3 space-y-2 text-base">
           <li><a href="/dich-vu" class="hover:text-white">Dịch vụ</a></li>
           <li><a href="/du-an" class="hover:text-white">Dự án</a></li>
-          <li><a href="/bao-gia" class="hover:text-white">Báo giá</a></li>
+          <li><a href="/quan-ly-chat-luong" class="hover:text-white">Quản lý chất lượng</a></li>
+          <li><a href="/he-thong-phap-ly" class="hover:text-white">Hệ thống pháp lý</a></li>
+          <li><a href="/tin-tuc" class="hover:text-white">Tin tức</a></li>
           <li><a href="/lien-he" class="hover:text-white">Liên hệ</a></li>
+          <li><a href="/bao-gia" class="hover:text-white">Báo giá</a></li>
         </ul>
       </div>
       <div>

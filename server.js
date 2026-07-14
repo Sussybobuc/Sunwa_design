@@ -7,6 +7,7 @@ require('dotenv').config();
 const path = require('path');
 const express = require('express');
 const rateLimit = require('express-rate-limit');
+const multer = require('multer');
 const { handleSubmit } = require('./lib/mailer');
 const portal = require('./lib/portal');
 
@@ -37,9 +38,40 @@ const submitLimiter = rateLimit({
     error: 'Bạn đã gửi quá nhiều yêu cầu. Vui lòng thử lại sau ít phút hoặc gọi hotline 0916 557 558.',
   },
 });
-app.post('/api/submit', submitLimiter, async (req, res) => {
-  const { status, body } = await handleSubmit(req.body || {});
+// Đính kèm hồ sơ lô đất: PDF/ảnh, ≤3 tệp, tổng ≤10 MB, giữ trong RAM rồi gắn
+// thẳng vào email — không lưu xuống đĩa. Multer chỉ xử lý body multipart;
+// request JSON thuần vẫn đi qua express.json() như cũ.
+const MAX_TOTAL_UPLOAD = 10 * 1024 * 1024;
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: MAX_TOTAL_UPLOAD, files: 3 },
+  fileFilter: (req, file, cb) => {
+    const ok = file.mimetype === 'application/pdf' || /^image\//.test(file.mimetype);
+    cb(ok ? null : new multer.MulterError('LIMIT_UNEXPECTED_FILE', file.fieldname), ok);
+  },
+});
+
+app.post('/api/submit', submitLimiter, upload.array('files', 3), async (req, res) => {
+  const files = req.files || [];
+  const total = files.reduce((sum, f) => sum + f.size, 0);
+  if (total > MAX_TOTAL_UPLOAD) {
+    return res.status(400).json({ ok: false, error: 'Tệp đính kèm vượt quá 10 MB. Vui lòng gửi tệp nhỏ hơn.' });
+  }
+  const { status, body } = await handleSubmit(req.body || {}, files);
   res.status(status).json(body);
+});
+
+// Lỗi multer (quá dung lượng / sai loại tệp / quá số tệp) → 400 tiếng Việt
+app.use('/api/submit', (err, req, res, next) => {
+  if (err instanceof multer.MulterError) {
+    const error = err.code === 'LIMIT_FILE_SIZE'
+      ? 'Tệp đính kèm vượt quá 10 MB. Vui lòng gửi tệp nhỏ hơn.'
+      : err.code === 'LIMIT_FILE_COUNT' || err.code === 'LIMIT_UNEXPECTED_FILE'
+        ? 'Chỉ nhận tối đa 3 tệp PDF hoặc ảnh.'
+        : 'Tệp đính kèm không hợp lệ.';
+    return res.status(400).json({ ok: false, error });
+  }
+  next(err);
 });
 
 // Client portal (tra cứu hồ sơ) — see lib/portal.js. Login gets its own, stricter limiter.

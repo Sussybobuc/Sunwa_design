@@ -124,9 +124,16 @@ format doc: `deploy/client-portal.md`). Demo login: phone `0900000001`. Frontend
 Never commit client PII; `Private/clients/` + `.env` are the two backup-outside-git items.
 
 ### The `/api/submit` contract (shared FE ⇄ BE)
-Payload: `{ name, phone, email, type, area, address, message, consent }`. The `type` field maps to
-`TYPE_LABELS` in `lib/mailer.js` (`nha-pho`, `biet-thu`, `nha-cap-4`, `cai-tao`, `thiet-ke`). When
-changing form fields, update **both** the HTML form, the JS in `main.js`, and `lib/mailer.js` together.
+Fields: `{ name, phone, email, type, area, address, message, consent }` + optional `files[]`
+attachments. The FE (`initForms()`) posts **multipart FormData**; plain JSON still works for
+field-only posts (multer ignores non-multipart bodies — the health check relies on this). `message`
+is **required** (client + server). `area` is the "Thông tin lô đất" free-text field; `files` accepts
+**≤3 PDF/image files, ≤10 MB total** (multer memory storage in `server.js`, Vietnamese 400s on
+size/type/count violations, attachments forwarded to the email — never stored on disk). The `type`
+field maps to `TYPE_LABELS` in `lib/mailer.js` (`nha-pho`, `biet-thu`, `nha-cap-4`, `cai-tao`,
+`thiet-ke`). When changing form fields, update the HTML forms (bao-gia + lien-he), `main.js`
+(`validateForm`/`attachmentError`), and `lib/mailer.js` together — client and server limits must
+stay in sync.
 
 ### Media — the `Materials/` folder
 Real photos/videos for the site live in `Materials/`, served publicly at `/materials/...` (static
