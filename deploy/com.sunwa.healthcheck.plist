@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <!-- Daily 08:00 health check (pre-login capable). Install: see deploy/README.md -->
+  <key>Label</key>
+  <string>com.sunwa.healthcheck</string>
+
+  <key>ProgramArguments</key>
+  <array>
+    <string>/opt/homebrew/bin/node</string>
+    <string>/Users/nhathuy/Projects/Sunwa_Design/deploy/healthcheck.js</string>
+  </array>
+
+  <key>UserName</key>
+  <string>nhathuy</string>
+
+  <key>WorkingDirectory</key>
+  <string>/Users/nhathuy/Projects/Sunwa_Design</string>
+
+  <key>EnvironmentVariables</key>
+  <dict>
+    <key>PATH</key>
+    <string>/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
+    <key>HOME</key>
+    <string>/Users/nhathuy</string>
+  </dict>
+
+  <key>StartCalendarInterval</key>
+  <dict>
+    <key>Hour</key>
+    <integer>8</integer>
+    <key>Minute</key>
+    <integer>0</integer>
+  </dict>
+
+  <key>StandardOutPath</key>
+  <string>/Users/nhathuy/Library/Logs/sunwa-healthcheck.log</string>
+  <key>StandardErrorPath</key>
+  <string>/Users/nhathuy/Library/Logs/sunwa-healthcheck.log</string>
+</dict>
+</plist>

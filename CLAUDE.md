@@ -151,7 +151,8 @@ defined in `css/tailwind.css` under `@layer components`; `prefers-reduced-motion
 Push to `main` → `.github/workflows/selfhost-deploy.yml` runs on the Mac's own GitHub runner:
 `git pull` → `npm ci` → `npm run build:css` → `pm2 reload sunwa` → health check. The app runs under
 **pm2** (`ecosystem.config.js`), boots pre-login via LaunchDaemons. Secrets live in the git-ignored
-`.env`. Full runbook: **`deploy/README.md`**.
+`.env`. A daily 08:00 health check (`deploy/healthcheck.js`, LaunchDaemon) emails
+`HEALTH_ALERT_EMAIL` on failure. Full runbook: **`deploy/README.md`**.
 
 > Legacy: the old **Azure App Service** deploy (`.github/workflows/main_sunwa-design.yml`) still runs
 > in parallel as a fallback during the transition window — delete the Web App + that workflow once

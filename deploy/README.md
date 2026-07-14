@@ -65,6 +65,16 @@ sudo launchctl kickstart -k system/com.cloudflare.cloudflared   # tunnel
 sudo launchctl kickstart -k system/com.sunwa.pm2                # pm2 resurrect (one-shot)
 ```
 
+## Daily health check
+
+`deploy/healthcheck.js` runs at **08:00 daily** (LaunchDaemon `com.sunwa.healthcheck`, plist in
+`deploy/`). Checks: site via Cloudflare (`/healthz`), `www`, `/api/news` has items, form API returns
+400 on bad input, all statusboard services up (`:8787/api/stats`), Gmail OAuth2 `verify()` (catches
+refresh-token expiry), disk free > 10 GB. Every run logs one line to
+`~/Library/Logs/sunwa-healthcheck.log`; it **emails `HEALTH_ALERT_EMAIL` only on failure**, plus an
+all-OK summary on Mondays. Manual run: `node deploy/healthcheck.js` (add `--force-email` to test the
+alert). External total-outage alerting is handled by Cloudflare notifications, not this script.
+
 ## Go-live status
 
 **Cutover done 2026-07-13**: domain `sunwadesign.com` bought via Cloudflare Registrar; apex + `www` +
