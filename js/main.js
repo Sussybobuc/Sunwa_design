@@ -2,8 +2,9 @@
 
 /* ============================================================
    DATA — 20 công trình thực tế (video trên kênh YouTube của Sunwa,
-   thứ tự = thứ tự đăng). Thẻ hiển thị thumbnail YouTube + nút Play;
-   trình phát (youtube-nocookie) CHỈ tải khi khách bấm — trang luôn nhẹ.
+   thứ tự = thứ tự đăng). Thẻ hiển thị thumbnail YouTube + huy hiệu Play;
+   bấm thẻ → mở modal chi tiết và video phát TO trong modal
+   (youtube-nocookie, chỉ tải khi mở) — trang luôn nhẹ.
    Cách cập nhật — chỉ cần sửa mảng này, không đụng chỗ khác:
    - name/location: hiện trên thẻ + modal chi tiết.
    - typeLabel/area/cost/duration/description: đang để trống, điền dần
@@ -301,12 +302,13 @@ function projectMediaHtml(p) {
          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.5-3.5L9 20"/></svg>
          <span>Hình ảnh đang cập nhật</span>
        </div>`;
+  // Huy hiệu Play thuần trang trí — bấm ở ĐÂU trên thẻ cũng mở modal và video
+  // phát to trong đó (không phát nhỏ trong thẻ nữa). pointer-events:none để
+  // click xuyên qua huy hiệu rơi vào thẻ.
   const play = p.youtubeId
-    ? `<button type="button" class="pmedia-play" data-video-id="${escapeHtml(p.youtubeId)}"
-               data-video-title="${escapeHtml(p.name || 'Video công trình Sunwa')}"
-               aria-label="Phát video: ${escapeHtml(p.name || 'công trình Sunwa')}">
+    ? `<span class="pmedia-play" style="pointer-events:none" aria-hidden="true">
          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7L8 5Z"/></svg>
-       </button>`
+       </span>`
     : '';
   return `
       <div class="relative aspect-[4/3] overflow-hidden bg-bg-dark" data-media>
@@ -341,29 +343,6 @@ function projectCardHtml(p) {
     </article>`;
 }
 
-/* Bấm Play trên thẻ dự án → thay ảnh bằng iframe (không mở modal chi tiết). */
-function initCardVideos() {
-  document.querySelectorAll('.pmedia-play').forEach((btn) => {
-    let played = false;
-    const stop = (e) => e.stopPropagation();
-    btn.addEventListener('keydown', stop); // chặn Enter/Space lan lên thẻ (mở modal)
-    btn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      if (played) return;
-      played = true;
-      const media = btn.closest('[data-media]');
-      const frame = document.createElement('iframe');
-      frame.src = 'https://www.youtube-nocookie.com/embed/' +
-        encodeURIComponent(btn.getAttribute('data-video-id')) + '?autoplay=1';
-      frame.title = btn.getAttribute('data-video-title') || 'Video công trình';
-      frame.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
-      frame.allowFullscreen = true;
-      frame.className = 'pmedia-frame';
-      media.innerHTML = '';
-      media.appendChild(frame);
-    });
-  });
-}
 
 function renderProjects() {
   const preview = document.getElementById('projects-preview');
@@ -416,10 +395,18 @@ function buildModal() {
 function openModal(project) {
   if (!modalEl) buildModal();
   const body = modalEl.querySelector('[data-modal-body]');
+  // Có video → phát ngay trong modal (khách vừa bấm thẻ nên autoplay hợp lý);
+  // iframe bị xoá khi đóng modal (closeModal) nên video không kêu ngầm.
+  const media = project.youtubeId
+    ? `<iframe src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(project.youtubeId)}?autoplay=1"
+               title="${escapeHtml(project.name)}" allowfullscreen
+               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+               class="h-full w-full border-0"></iframe>`
+    : `<img src="${escapeHtml(project.image || imageUrl(project.query, project.id, '1200x675'))}" alt="${escapeHtml(project.name)}"
+           loading="lazy" class="h-full w-full object-cover">`;
   body.innerHTML = `
     <div class="aspect-[16/9] w-full overflow-hidden rounded-t-lg bg-bg-dark">
-      <img src="${escapeHtml(project.image || imageUrl(project.query, project.id, '1200x675'))}" alt="${escapeHtml(project.name)}"
-           loading="lazy" class="h-full w-full object-cover">
+      ${media}
     </div>
     <div class="p-6">
       ${project.typeLabel ? `<span class="inline-block rounded-full bg-primary-light px-3 py-1 text-xs font-medium text-primary">${escapeHtml(project.typeLabel)}</span>` : ''}
@@ -453,6 +440,9 @@ function closeModal() {
   modalEl.classList.add('hidden');
   modalEl.classList.remove('flex');
   document.body.style.overflow = '';
+  // Dừng video: gỡ iframe YouTube khỏi DOM (nếu không, âm thanh chạy ngầm)
+  const body = modalEl.querySelector('[data-modal-body]');
+  if (body && body.querySelector('iframe')) body.innerHTML = '';
   if (lastFocused && typeof lastFocused.focus === 'function') lastFocused.focus();
 }
 
@@ -1273,8 +1263,7 @@ async function initNews() {
 document.addEventListener('DOMContentLoaded', () => {
   initNavToggle();
   initHeroReveal();
-  renderProjects(); // phải chạy trước initModal / initCardVideos / initScrollReveal
-  initCardVideos();
+  renderProjects(); // phải chạy trước initModal / initScrollReveal
   initSmoothScroll();
   initModal();
   initInsuranceModal();

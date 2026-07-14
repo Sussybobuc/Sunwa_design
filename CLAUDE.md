@@ -88,7 +88,9 @@ reset in `initNavToggle()` matches with `matchMedia('(min-width: 1024px)')`.
   upload order). Each has `name` (the video title), `location`, `youtubeId`, and `image` (the
   video's own `i.ytimg.com` thumbnail); `typeLabel/area/cost/duration/description` are empty until
   real data exists — card meta and modal rows auto-hide empty fields. `renderProjects()` injects
-  cards; `initCardVideos()` swaps in the `youtube-nocookie` iframe only when Play is clicked.
+  cards; the in-card Play badge is decorative (`pointer-events:none`) — clicking anywhere on a card
+  opens the detail modal where the video plays BIG (`openModal()` renders an autoplaying
+  `youtube-nocookie` iframe; `closeModal()` removes it so audio stops). No in-card playback.
   There is **no type filter** (removed by request — don't reintroduce `initFilter`).
 - `PRICE_PER_M2` — lookup table driving `initCalculator()` (the cost estimator on the quote page).
 - `initModal()` (project detail lightbox), `initNavToggle()`,
