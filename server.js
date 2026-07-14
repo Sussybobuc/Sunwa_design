@@ -58,6 +58,14 @@ app.get('/api/tra-cuu/me', portal.handleMe);
 app.post('/api/tra-cuu/logout', portal.handleLogout);
 app.get('/ho-so/:code/*', portal.handleFile);
 
+// News feed aggregation (tin-tuc page) — served from a 2h in-memory cache.
+const { getNews } = require('./lib/news');
+app.get('/api/news', async (req, res) => {
+  const body = await getNews();
+  res.set('Cache-Control', 'public, max-age=300');
+  res.json(body);
+});
+
 // Health check (for Azure monitoring / uptime probes).
 app.get('/healthz', (req, res) => res.json({ ok: true }));
 
@@ -81,6 +89,7 @@ const PAGES = {
   '/bao-gia': 'bao-gia',
   '/lien-he': 'lien-he',
   '/bao-hanh': 'bao-hanh',
+  '/tin-tuc': 'tin-tuc',
   // Section landing pages (placeholder)
   '/quan-ly-chat-luong': 'quan-ly-chat-luong',
   '/he-thong-phap-ly': 'he-thong-phap-ly',

@@ -1249,6 +1249,48 @@ function initServiceNav() {
 /* ============================================================
    INIT
    ============================================================ */
+/* ============================================================
+   TIN TỨC — /tin-tuc (RSS tổng hợp từ /api/news)
+   ============================================================ */
+async function initNews() {
+  const gridEl = document.getElementById('news-grid');
+  if (!gridEl) return;
+
+  let items = [];
+  try {
+    const res = await fetch('/api/news');
+    const data = await res.json();
+    items = (data && data.items) || [];
+  } catch {
+    items = [];
+  }
+
+  if (items.length === 0) {
+    gridEl.innerHTML = '<p class="text-base text-text-muted">Không tải được tin tức. Vui lòng thử lại sau.</p>';
+    return;
+  }
+
+  gridEl.innerHTML = items.map((it) => {
+    const date = it.date
+      ? new Date(it.date).toLocaleDateString('vi-VN', { day: 'numeric', month: 'long', year: 'numeric' })
+      : '';
+    const thumb = it.thumb
+      ? `<img src="${escapeHtml(it.thumb)}" alt="" loading="lazy" decoding="async" class="aspect-[16/9] w-full rounded-t-lg object-cover">`
+      : '<div class="aspect-[16/9] w-full rounded-t-lg bg-bg-secondary"></div>';
+    return `
+      <article class="card flex flex-col overflow-hidden p-0">
+        <a href="${escapeHtml(it.link)}" target="_blank" rel="noopener">${thumb}</a>
+        <div class="flex flex-1 flex-col gap-2 p-5">
+          <p class="text-xs text-text-muted"><span class="font-semibold text-primary">${escapeHtml(it.source)}</span>${date ? ' · ' + escapeHtml(date) : ''}</p>
+          <h2 class="text-md font-semibold leading-snug">
+            <a href="${escapeHtml(it.link)}" target="_blank" rel="noopener" class="hover:text-primary">${escapeHtml(it.title)}</a>
+          </h2>
+          <p class="text-sm text-text-muted">${escapeHtml(it.snippet)}</p>
+        </div>
+      </article>`;
+  }).join('');
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   initNavToggle();
   initHeroReveal();
@@ -1267,4 +1309,5 @@ document.addEventListener('DOMContentLoaded', () => {
   initTestimonialCarousel();
   initActiveNav();
   initServiceNav();
+  initNews();
 });

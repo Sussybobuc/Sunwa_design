@@ -37,9 +37,10 @@ There is no test suite, linter, or framework build step — Tailwind compilation
 
 ## Architecture
 
-### Pages (6 static HTML files at repo root)
+### Pages (7 static HTML files at repo root)
 `index.html`, `du-an.html` (projects), `dich-vu.html` (services), `bao-gia.html` (quote),
-`lien-he.html` (contact), `bao-hanh.html` (warranty + client portal). The navbar, footer, and
+`lien-he.html` (contact), `bao-hanh.html` (warranty + client portal), `tin-tuc.html` (news,
+RSS-fed — see below). The navbar, footer, and
 floating action buttons are **inlined and duplicated in every page** — there is no
 templating/include system, so shared-markup changes must be applied to all of them. Pretty URLs
 (`/du-an` → `du-an.html`) are routes registered in `server.js` (the `PAGES` map), not real files.
@@ -54,8 +55,19 @@ The navbar has two plain nav links (`<a class="nav-link">`): **"Quản lý chấ
 > `initSectionDropdowns()` in `js/main.js`, `.nav-dropdown*` CSS). That was removed — the 8 subpages,
 > the JS, and the CSS are all gone. Don't reintroduce `nav-dropdown` markup/classes.
 
-There are **8 HTML files with identical navbar markup** (6 main + the 2 landing pages) — apply any
-shared-navbar change to all of them.
+There are **9 HTML files with identical navbar markup** (7 main + the 2 landing pages) — apply any
+shared-navbar change to all of them. "Tin tức" (`/tin-tuc`) sits between "Hệ thống pháp lý" and
+"Liên hệ".
+
+### News page — `/tin-tuc` + `lib/news.js`
+`GET /api/news` (in `server.js`) serves headlines aggregated from Vietnamese newspaper **RSS feeds**
+(no public APIs exist; the `FEEDS` array in `lib/news.js` currently has VnExpress + Dân Trí
+"bất động sản" — adding a feed is one line). `lib/news.js` fetches feeds in parallel
+(`Promise.allSettled`, 8s timeout, `rss-parser`), extracts title/link/date/snippet/thumb, merges +
+sorts desc, caps 30 items, and caches in memory for **2h** — on refresh failure it serves the stale
+cache, so a newspaper outage never blanks the page. `initNews()` in `js/main.js` renders the cards
+into `#news-grid`; articles **link out** to the original paper (aggregation with attribution only —
+never republish full text).
 
 ### Mobile nav — left slide-out drawer
 Below `md` (768px) the navbar (`#nav-menu`) is a **drawer that slides in from the left** (sits below
