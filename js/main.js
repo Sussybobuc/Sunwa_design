@@ -1275,8 +1275,9 @@ async function initNews() {
     const date = it.date
       ? new Date(it.date).toLocaleDateString('vi-VN', { day: 'numeric', month: 'long', year: 'numeric' })
       : '';
+    // referrerpolicy: báo (Dân Trí) chặn hotlink theo Referer — bỏ Referer thì CDN trả ảnh bình thường
     const thumb = it.thumb
-      ? `<img src="${escapeHtml(it.thumb)}" alt="" loading="lazy" decoding="async" class="aspect-[16/9] w-full rounded-t-lg object-cover">`
+      ? `<img src="${escapeHtml(it.thumb)}" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" class="aspect-[16/9] w-full rounded-t-lg bg-bg-secondary object-cover">`
       : '<div class="aspect-[16/9] w-full rounded-t-lg bg-bg-secondary"></div>';
     return `
       <article class="card flex flex-col overflow-hidden p-0">
