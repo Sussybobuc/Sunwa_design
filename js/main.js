@@ -223,7 +223,8 @@ function initNavToggle() {
   });
 
   // Reset khi chuyển sang desktop (xoá trạng thái drawer/dim/khoá cuộn)
-  const mqDesktop = window.matchMedia('(min-width: 768px)');
+  // Navbar đầy đủ chỉ hiện từ lg (1024px) — tablet dùng drawer như mobile.
+  const mqDesktop = window.matchMedia('(min-width: 1024px)');
   mqDesktop.addEventListener('change', (e) => {
     if (e.matches) close();
   });

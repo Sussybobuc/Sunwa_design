@@ -70,14 +70,17 @@ into `#news-grid`; articles **link out** to the original paper (aggregation with
 never republish full text).
 
 ### Mobile nav — left slide-out drawer
-Below `md` (768px) the navbar (`#nav-menu`) is a **drawer that slides in from the left** (sits below
-the 64px sticky header so the header's hamburger/X stays the close button). **<480px:** full-width,
-**no dim**. **480–767px:** ~300px drawer with a **dim backdrop** over the rest of the page. The
+Below `lg` (1024px — phones AND tablets; the full link row got too wide for tablets) the navbar
+(`#nav-menu`) is a **drawer that slides in from the left** (sits below the 64px sticky header so
+the header's hamburger/X stays the close button). **<480px:** full-width, **no dim**.
+**480–1023px:** ~300px drawer with a **dim backdrop** over the rest of the page. At `lg`–`xl` the
+desktop row uses `lg:gap-4`, relaxing to `xl:gap-6`. The
 backdrop `<div class="nav-backdrop">` is **injected by `initNavToggle()`** (`js/main.js`) — not in the
 HTML; open/close toggles `.is-open` on both `#nav-menu` and the backdrop, locks page scroll
 (`body.style.overflow`), and resets when crossing to desktop. Closes via X / backdrop-tap / Esc /
-link-click. Styles live in `css/tailwind.css` `@media (max-width:767px)` keyed on `#nav-menu` /
-`.nav-backdrop` (custom selectors only — never Tailwind utility names in raw CSS).
+link-click. Styles live in `css/tailwind.css` `@media (max-width:1023px)` keyed on `#nav-menu` /
+`.nav-backdrop` (custom selectors only — never Tailwind utility names in raw CSS); the JS desktop
+reset in `initNavToggle()` matches with `matchMedia('(min-width: 1024px)')`.
 
 ### Client logic — `js/main.js` (single file, no modules/bundler)
 `'use strict'`, IIFE-style `initX()` functions wired up on `DOMContentLoaded`. Key pieces:

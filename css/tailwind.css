@@ -377,12 +377,12 @@
 }
 
 /* ============================================================
-   MOBILE NAV = DRAWER TRƯỢT RA TỪ TRÁI (below md)
+   MOBILE NAV = DRAWER TRƯỢT RA TỪ TRÁI (below lg — mobile + tablet)
    JS toggles .is-open trên #nav-menu + .nav-backdrop (chèn bằng JS).
    Chỉ dùng selector tên tuỳ chỉnh (#nav-menu / .nav-backdrop / .is-open)
    — KHÔNG dùng tên utility Tailwind trong selector raw (tránh rule rác).
    ============================================================ */
-@media (max-width: 767px) {
+@media (max-width: 1023px) {
   #nav-menu {
     position: fixed;
     top: 64px;            /* ngay dưới header sticky (h-nav) */
@@ -437,7 +437,7 @@
 }
 
 /* Mobile lớn / tablet (≥480px): drawer cố định bề rộng + dim hiển thị */
-@media (min-width: 480px) and (max-width: 767px) {
+@media (min-width: 480px) and (max-width: 1023px) {
   #nav-menu {
     right: auto;
     width: min(78vw, 320px);
