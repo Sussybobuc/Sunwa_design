@@ -84,10 +84,14 @@ reset in `initNavToggle()` matches with `matchMedia('(min-width: 1024px)')`.
 
 ### Client logic — `js/main.js` (single file, no modules/bundler)
 `'use strict'`, IIFE-style `initX()` functions wired up on `DOMContentLoaded`. Key pieces:
-- `PROJECTS` — hardcoded array of 7 sample projects (each has a `query` of Unsplash keywords used to
-  build image URLs). `renderProjects()` injects cards into the projects grid.
+- `PROJECTS` — hardcoded array of the **20 real projects** (YouTube videos on Sunwa's channel, in
+  upload order). Each has `name` (the video title), `location`, `youtubeId`, and `image` (the
+  video's own `i.ytimg.com` thumbnail); `typeLabel/area/cost/duration/description` are empty until
+  real data exists — card meta and modal rows auto-hide empty fields. `renderProjects()` injects
+  cards; `initCardVideos()` swaps in the `youtube-nocookie` iframe only when Play is clicked.
+  There is **no type filter** (removed by request — don't reintroduce `initFilter`).
 - `PRICE_PER_M2` — lookup table driving `initCalculator()` (the cost estimator on the quote page).
-- `initFilter()` (project type filter), `initModal()` (image lightbox), `initNavToggle()`,
+- `initModal()` (project detail lightbox), `initNavToggle()`,
   `initSmoothScroll()`, `initScrollReveal()` (IntersectionObserver), `initActiveNav()`.
 - `initForms()` — client-side validation then `fetch` POST to `/api/submit`. The VN phone regex is
   `/^(0[3|5|7|8|9])+([0-9]{8})$/` and must stay in sync with the server copy.
@@ -166,6 +170,5 @@ Push to `main` → `.github/workflows/selfhost-deploy.yml` runs on the Mac's own
 > the Mac has been stable ~1 week (cutover was 2026-07-13).
 
 ## Known TODOs before go-live
-- Replace `source.unsplash.com` placeholder images with real project photos.
 - Fill in the real GPKD (business registration) number in the footer.
 - Decommission Azure after the stability window (see Deploy above).

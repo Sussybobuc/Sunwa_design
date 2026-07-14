@@ -1,136 +1,177 @@
 'use strict';
 
 /* ============================================================
-   DATA — 21 dự án (thẻ nào chưa có dữ liệu sẽ hiện "đang cập nhật")
-   Cách cập nhật một dự án — chỉ cần sửa mảng này, không đụng chỗ khác:
-   - name/type/typeLabel/area/cost/duration/location/year/description: thông tin thẻ + modal.
-     type ∈ 'nha-pho' | 'biet-thu' | 'nha-cap-4' | 'cai-tao' (khớp bộ lọc).
-   - image: ảnh đại diện thật, vd '/materials/du-an/du-an-8.webp' (nén WebP theo
-     Materials/README.md). Bỏ trống → dùng ảnh Unsplash tạm theo `query` (nếu có).
-   - youtubeId: ID video YouTube (phần sau "v=" trong URL). Có ID → thẻ hiện nút Play
-     trên ảnh; NHẤN mới tải trình phát (youtube-nocookie) — không preload gì cả.
+   DATA — 20 công trình thực tế (video trên kênh YouTube của Sunwa,
+   thứ tự = thứ tự đăng). Thẻ hiển thị thumbnail YouTube + nút Play;
+   trình phát (youtube-nocookie) CHỈ tải khi khách bấm — trang luôn nhẹ.
+   Cách cập nhật — chỉ cần sửa mảng này, không đụng chỗ khác:
+   - name/location: hiện trên thẻ + modal chi tiết.
+   - typeLabel/area/cost/duration/description: đang để trống, điền dần
+     khi có số liệu — thẻ và modal tự ẩn các trường trống.
+   - youtubeId: ID video (phần sau "v=" hoặc "youtu.be/" trong URL);
+     image: thumbnail YouTube của chính video đó (i.ytimg.com).
    ============================================================ */
 const PROJECTS = [
   {
     id: 1,
-    name: 'Nhà anh Minh — Sơn Trà',
-    type: 'nha-pho',
-    typeLabel: 'Nhà phố 3 tầng',
-    area: '120 m²',
-    cost: '850 triệu',
-    duration: '5 tháng',
-    location: 'Sơn Trà, Đà Nẵng',
-    year: 2024,
-    query: 'modern,townhouse',
-    image: '',
-    youtubeId: '',
-    description: 'Nhà phố 3 tầng phong cách hiện đại tối giản, tối ưu ánh sáng tự nhiên.',
+    name: 'Vỹ HOUSE Cẩm Lệ',
+    location: 'Cẩm Lệ, Đà Nẵng',
+    youtubeId: '1J7vnAMqagU',
+    image: 'https://i.ytimg.com/vi/1J7vnAMqagU/hqdefault.jpg',
+    type: '', typeLabel: '', area: '', cost: '', duration: '', year: '', query: '', description: '',
   },
   {
     id: 2,
-    name: 'Biệt thự chị Lan — Ngũ Hành Sơn',
-    type: 'biet-thu',
-    typeLabel: 'Biệt thự',
-    area: '280 m²',
-    cost: '2.4 tỷ',
-    duration: '9 tháng',
-    location: 'Ngũ Hành Sơn, Đà Nẵng',
-    year: 2023,
-    query: 'villa,pool',
-    image: '',
-    youtubeId: '',
-    description: 'Biệt thự sân vườn kết hợp hồ bơi, phong cách nhiệt đới hiện đại.',
+    name: 'Bình HOUSE Sơn Trà',
+    location: 'Sơn Trà, Đà Nẵng',
+    youtubeId: 'LlCo5vPOFw0',
+    image: 'https://i.ytimg.com/vi/LlCo5vPOFw0/hqdefault.jpg',
+    type: '', typeLabel: '', area: '', cost: '', duration: '', year: '', query: '', description: '',
   },
   {
     id: 3,
-    name: 'Nhà anh Tùng — Liên Chiểu',
-    type: 'nha-cap-4',
-    typeLabel: 'Nhà cấp 4',
-    area: '90 m²',
-    cost: '420 triệu',
-    duration: '3 tháng',
-    location: 'Liên Chiểu, Đà Nẵng',
-    year: 2024,
-    query: 'house,bungalow',
-    image: '',
-    youtubeId: '',
-    description: 'Nhà cấp 4 mái thái, thiết kế thông thoáng, phù hợp khí hậu Đà Nẵng.',
+    name: 'MS Thu Ngũ Hành Sơn',
+    location: 'Ngũ Hành Sơn, Đà Nẵng',
+    youtubeId: 'cjbbqwBTCI0',
+    image: 'https://i.ytimg.com/vi/cjbbqwBTCI0/hqdefault.jpg',
+    type: '', typeLabel: '', area: '', cost: '', duration: '', year: '', query: '', description: '',
   },
   {
     id: 4,
-    name: 'Cải tạo nhà chị Hoa — Cẩm Lệ',
-    type: 'cai-tao',
-    typeLabel: 'Cải tạo',
-    area: '65 m²',
-    cost: '180 triệu',
-    duration: '2 tháng',
-    location: 'Cẩm Lệ, Đà Nẵng',
-    year: 2024,
-    query: 'home,renovation',
-    image: '',
-    youtubeId: '',
-    description: 'Nâng cấp toàn bộ nội thất và mặt tiền, giữ nguyên kết cấu cũ.',
+    name: 'MS HOA Ngũ Hành Sơn',
+    location: 'Ngũ Hành Sơn, Đà Nẵng',
+    youtubeId: 'Zbl7Rj70bAA',
+    image: 'https://i.ytimg.com/vi/Zbl7Rj70bAA/hqdefault.jpg',
+    type: '', typeLabel: '', area: '', cost: '', duration: '', year: '', query: '', description: '',
   },
   {
     id: 5,
-    name: 'Nhà anh Bình — Hải Châu',
-    type: 'nha-pho',
-    typeLabel: 'Nhà phố 4 tầng',
-    area: '160 m²',
-    cost: '1.2 tỷ',
-    duration: '7 tháng',
-    location: 'Hải Châu, Đà Nẵng',
-    year: 2023,
-    query: 'building,facade',
-    image: '',
-    youtubeId: '',
-    description: 'Nhà phố kết hợp kinh doanh tầng trệt, 3 tầng ở trên, thang máy gia đình.',
+    name: 'Villa CHÂU THẠNH Cẩm Lệ',
+    location: 'Cẩm Lệ, Đà Nẵng',
+    youtubeId: '4EduK8Jl9zY',
+    image: 'https://i.ytimg.com/vi/4EduK8Jl9zY/hqdefault.jpg',
+    type: '', typeLabel: '', area: '', cost: '', duration: '', year: '', query: '', description: '',
   },
   {
     id: 6,
-    name: 'Biệt thự anh Nam — Hòa Xuân',
-    type: 'biet-thu',
-    typeLabel: 'Biệt thự',
-    area: '350 m²',
-    cost: '3.1 tỷ',
-    duration: '12 tháng',
+    name: 'Villa QUÝ HÀ Hòa Xuân',
     location: 'Hòa Xuân, Đà Nẵng',
-    year: 2022,
-    query: 'mediterranean,villa',
-    image: '',
-    youtubeId: '',
-    description: 'Biệt thự đơn lập 2 tầng phong cách Địa Trung Hải, mái ngói đỏ đặc trưng.',
+    youtubeId: 'gCk1mE6lrBE',
+    image: 'https://i.ytimg.com/vi/gCk1mE6lrBE/hqdefault.jpg',
+    type: '', typeLabel: '', area: '', cost: '', duration: '', year: '', query: '', description: '',
   },
   {
     id: 7,
-    name: 'Nhà vườn chị Thu — Hòa Vang',
-    type: 'nha-cap-4',
-    typeLabel: 'Nhà vườn',
-    area: '200 m²',
-    cost: '680 triệu',
-    duration: '5 tháng',
-    location: 'Hòa Vang, Đà Nẵng',
-    year: 2023,
-    query: 'garden,house',
-    image: '',
-    youtubeId: '',
-    description: 'Nhà vườn mái thái rộng, sân vườn cây xanh, không gian nghỉ dưỡng.',
+    name: 'Mr Truyền Sơn Trà',
+    location: 'Sơn Trà, Đà Nẵng',
+    youtubeId: 'xu06CrwjZ1U',
+    image: 'https://i.ytimg.com/vi/xu06CrwjZ1U/hqdefault.jpg',
+    type: '', typeLabel: '', area: '', cost: '', duration: '', year: '', query: '', description: '',
   },
-  // ---- Ô trống 8–21: điền dần khi có dự án thật ----
-  { id: 8, name: '', type: '', typeLabel: '', area: '', cost: '', duration: '', location: '', year: '', query: '', description: '', image: '', youtubeId: '' },
-  { id: 9, name: '', type: '', typeLabel: '', area: '', cost: '', duration: '', location: '', year: '', query: '', description: '', image: '', youtubeId: '' },
-  { id: 10, name: '', type: '', typeLabel: '', area: '', cost: '', duration: '', location: '', year: '', query: '', description: '', image: '', youtubeId: '' },
-  { id: 11, name: '', type: '', typeLabel: '', area: '', cost: '', duration: '', location: '', year: '', query: '', description: '', image: '', youtubeId: '' },
-  { id: 12, name: '', type: '', typeLabel: '', area: '', cost: '', duration: '', location: '', year: '', query: '', description: '', image: '', youtubeId: '' },
-  { id: 13, name: '', type: '', typeLabel: '', area: '', cost: '', duration: '', location: '', year: '', query: '', description: '', image: '', youtubeId: '' },
-  { id: 14, name: '', type: '', typeLabel: '', area: '', cost: '', duration: '', location: '', year: '', query: '', description: '', image: '', youtubeId: '' },
-  { id: 15, name: '', type: '', typeLabel: '', area: '', cost: '', duration: '', location: '', year: '', query: '', description: '', image: '', youtubeId: '' },
-  { id: 16, name: '', type: '', typeLabel: '', area: '', cost: '', duration: '', location: '', year: '', query: '', description: '', image: '', youtubeId: '' },
-  { id: 17, name: '', type: '', typeLabel: '', area: '', cost: '', duration: '', location: '', year: '', query: '', description: '', image: '', youtubeId: '' },
-  { id: 18, name: '', type: '', typeLabel: '', area: '', cost: '', duration: '', location: '', year: '', query: '', description: '', image: '', youtubeId: '' },
-  { id: 19, name: '', type: '', typeLabel: '', area: '', cost: '', duration: '', location: '', year: '', query: '', description: '', image: '', youtubeId: '' },
-  { id: 20, name: '', type: '', typeLabel: '', area: '', cost: '', duration: '', location: '', year: '', query: '', description: '', image: '', youtubeId: '' },
-  { id: 21, name: '', type: '', typeLabel: '', area: '', cost: '', duration: '', location: '', year: '', query: '', description: '', image: '', youtubeId: '' },
+  {
+    id: 8,
+    name: 'ANH THƯ Villa Ngũ Hành Sơn',
+    location: 'Ngũ Hành Sơn, Đà Nẵng',
+    youtubeId: 'R9y4x-HwbPM',
+    image: 'https://i.ytimg.com/vi/R9y4x-HwbPM/hqdefault.jpg',
+    type: '', typeLabel: '', area: '', cost: '', duration: '', year: '', query: '', description: '',
+  },
+  {
+    id: 9,
+    name: 'Hiền Villa Hòa Xuân',
+    location: 'Hòa Xuân, Đà Nẵng',
+    youtubeId: 'A8Mx8C1FgBg',
+    image: 'https://i.ytimg.com/vi/A8Mx8C1FgBg/hqdefault.jpg',
+    type: '', typeLabel: '', area: '', cost: '', duration: '', year: '', query: '', description: '',
+  },
+  {
+    id: 10,
+    name: 'Shop ME&BE Đà Nẵng',
+    location: 'Đà Nẵng',
+    youtubeId: 'jlZF6C9FJzk',
+    image: 'https://i.ytimg.com/vi/jlZF6C9FJzk/hqdefault.jpg',
+    type: '', typeLabel: '', area: '', cost: '', duration: '', year: '', query: '', description: '',
+  },
+  {
+    id: 11,
+    name: 'Nhà ở Quê Điện Tiến',
+    location: 'Điện Tiến, Quảng Nam',
+    youtubeId: 'i34Ec9STXrg',
+    image: 'https://i.ytimg.com/vi/i34Ec9STXrg/hqdefault.jpg',
+    type: '', typeLabel: '', area: '', cost: '', duration: '', year: '', query: '', description: '',
+  },
+  {
+    id: 12,
+    name: 'Dự Án Quy Nhơn',
+    location: 'Quy Nhơn',
+    youtubeId: 'patqYg09Dz0',
+    image: 'https://i.ytimg.com/vi/patqYg09Dz0/hqdefault.jpg',
+    type: '', typeLabel: '', area: '', cost: '', duration: '', year: '', query: '', description: '',
+  },
+  {
+    id: 13,
+    name: 'Huyện Ủy Hòa Vang',
+    location: 'Hòa Vang, Đà Nẵng',
+    youtubeId: 'XLcdn4L_EOg',
+    image: 'https://i.ytimg.com/vi/XLcdn4L_EOg/hqdefault.jpg',
+    type: '', typeLabel: '', area: '', cost: '', duration: '', year: '', query: '', description: '',
+  },
+  {
+    id: 14,
+    name: 'Nhà hàng Tiệc Cưới QUY NHƠN',
+    location: 'Quy Nhơn',
+    youtubeId: '7jllfCQN3S0',
+    image: 'https://i.ytimg.com/vi/7jllfCQN3S0/hqdefault.jpg',
+    type: '', typeLabel: '', area: '', cost: '', duration: '', year: '', query: '', description: '',
+  },
+  {
+    id: 15,
+    name: 'KS MERIA QUY NHƠN',
+    location: 'Quy Nhơn',
+    youtubeId: 'sXw9MkffAyQ',
+    image: 'https://i.ytimg.com/vi/sXw9MkffAyQ/hqdefault.jpg',
+    type: '', typeLabel: '', area: '', cost: '', duration: '', year: '', query: '', description: '',
+  },
+  {
+    id: 16,
+    name: 'Nhà thờ Hà Thanh ĐIỆN BÀN',
+    location: 'Điện Bàn, Quảng Nam',
+    youtubeId: 'FNPIV7MQtfU',
+    image: 'https://i.ytimg.com/vi/FNPIV7MQtfU/hqdefault.jpg',
+    type: '', typeLabel: '', area: '', cost: '', duration: '', year: '', query: '', description: '',
+  },
+  {
+    id: 17,
+    name: 'Chùa AN LONG QUY NHƠN',
+    location: 'Quy Nhơn',
+    youtubeId: 'tvjAHtp1zHw',
+    image: 'https://i.ytimg.com/vi/tvjAHtp1zHw/hqdefault.jpg',
+    type: '', typeLabel: '', area: '', cost: '', duration: '', year: '', query: '', description: '',
+  },
+  {
+    id: 18,
+    name: 'Di Tich Đồi Trung Sơn Hòa Liên',
+    location: 'Hòa Liên, Đà Nẵng',
+    youtubeId: 'U8hv7I3XRL8',
+    image: 'https://i.ytimg.com/vi/U8hv7I3XRL8/hqdefault.jpg',
+    type: '', typeLabel: '', area: '', cost: '', duration: '', year: '', query: '', description: '',
+  },
+  {
+    id: 19,
+    name: 'Đài Liệt Sĩ Hòa Vang',
+    location: 'Hòa Vang, Đà Nẵng',
+    youtubeId: '6IGLrQ4K56E',
+    image: 'https://i.ytimg.com/vi/6IGLrQ4K56E/hqdefault.jpg',
+    type: '', typeLabel: '', area: '', cost: '', duration: '', year: '', query: '', description: '',
+  },
+  {
+    id: 20,
+    name: 'Trụ sở LĐLĐ Đà Nẵng',
+    location: 'Đà Nẵng',
+    youtubeId: 'KIAVZn_IQHQ',
+    image: 'https://i.ytimg.com/vi/KIAVZn_IQHQ/hqdefault.jpg',
+    type: '', typeLabel: '', area: '', cost: '', duration: '', year: '', query: '', description: '',
+  },
 ];
 
 /* Đơn giá tham khảo (VNĐ/m²) cho calculator */
@@ -292,7 +333,10 @@ function projectCardHtml(p) {
       ${projectMediaHtml(p)}
       <div class="p-4">
         <h3 class="text-lg font-medium text-text">${escapeHtml(p.name)}</h3>
-        <p class="mt-1 text-base text-text-muted">${escapeHtml(p.area)} · ${escapeHtml(p.cost)} · ${escapeHtml(p.duration)}</p>
+        ${(() => {
+          const meta = [p.typeLabel, p.area, p.cost, p.duration, p.location].filter(Boolean).join(' · ');
+          return meta ? `<p class="mt-1 text-base text-text-muted">${escapeHtml(meta)}</p>` : '';
+        })()}
       </div>
     </article>`;
 }
@@ -333,52 +377,6 @@ function renderProjects() {
   }
 }
 
-/* ============================================================
-   4. FILTER DỰ ÁN THEO LOẠI
-   ============================================================ */
-function initFilter() {
-  const tabs = document.querySelectorAll('[data-filter]');
-  const gridEl = document.getElementById('projects-grid');
-  if (!tabs.length || gridEl === null) return;
-
-  // Gạch chân trượt (chỉ hiện ở desktop qua CSS md:block)
-  const bar = document.querySelector('[data-filter-bar]');
-  let indicator = null;
-  let activeTab =
-    document.querySelector('.filter-tab--active') || tabs[0];
-  const moveIndicator = (tab) => {
-    if (!indicator || !tab) return;
-    indicator.style.width = tab.offsetWidth + 'px';
-    indicator.style.transform = 'translateX(' + tab.offsetLeft + 'px)';
-  };
-  if (bar) {
-    indicator = document.createElement('span');
-    indicator.className = 'filter-bar__indicator';
-    bar.appendChild(indicator);
-    moveIndicator(activeTab);
-    window.addEventListener('resize', () => moveIndicator(activeTab));
-    // Font web tải xong có thể đổi bề rộng tab → đặt lại vị trí
-    if (document.fonts && document.fonts.ready) {
-      document.fonts.ready.then(() => moveIndicator(activeTab));
-    }
-  }
-
-  tabs.forEach((tab) => {
-    tab.addEventListener('click', () => {
-      const filter = tab.getAttribute('data-filter');
-
-      tabs.forEach((t) => t.classList.remove('filter-tab--active'));
-      tab.classList.add('filter-tab--active');
-      activeTab = tab;
-      moveIndicator(tab);
-
-      gridEl.querySelectorAll('.project-card').forEach((card) => {
-        const match = filter === 'all' || card.getAttribute('data-type') === filter;
-        card.classList.toggle('hidden', !match);
-      });
-    });
-  });
-}
 
 /* ============================================================
    5. LIGHTBOX MODAL CHI TIẾT DỰ ÁN
@@ -424,15 +422,19 @@ function openModal(project) {
            loading="lazy" class="h-full w-full object-cover">
     </div>
     <div class="p-6">
-      <span class="inline-block rounded-full bg-primary-light px-3 py-1 text-xs font-medium text-primary">${escapeHtml(project.typeLabel)}</span>
+      ${project.typeLabel ? `<span class="inline-block rounded-full bg-primary-light px-3 py-1 text-xs font-medium text-primary">${escapeHtml(project.typeLabel)}</span>` : ''}
       <h3 class="mt-3 text-2xl font-semibold text-text">${escapeHtml(project.name)}</h3>
       <dl class="mt-4 grid grid-cols-2 gap-3 text-base">
-        <div><dt class="text-text-muted">Địa điểm</dt><dd class="font-medium">${escapeHtml(project.location)}</dd></div>
-        <div><dt class="text-text-muted">Diện tích</dt><dd class="font-medium">${escapeHtml(project.area)}</dd></div>
-        <div><dt class="text-text-muted">Tổng đầu tư</dt><dd class="font-medium">${escapeHtml(project.cost)}</dd></div>
-        <div><dt class="text-text-muted">Thời gian thi công</dt><dd class="font-medium">${escapeHtml(project.duration)}</dd></div>
+        ${[
+          ['Địa điểm', project.location],
+          ['Diện tích', project.area],
+          ['Tổng đầu tư', project.cost],
+          ['Thời gian thi công', project.duration],
+        ].filter(([, v]) => v)
+         .map(([label, v]) => `<div><dt class="text-text-muted">${label}</dt><dd class="font-medium">${escapeHtml(v)}</dd></div>`)
+         .join('')}
       </dl>
-      <p class="mt-4 text-md leading-relaxed text-text-muted">${escapeHtml(project.description)}</p>
+      ${project.description ? `<p class="mt-4 text-md leading-relaxed text-text-muted">${escapeHtml(project.description)}</p>` : ''}
       <a href="/bao-gia.html" class="btn-primary mt-6">Nhận báo giá tương tự →</a>
     </div>`;
 
@@ -629,86 +631,6 @@ function traCuuDashHtml(data) {
         ${logs}
       </div>
     </div>`;
-}
-
-/* ==========================================================================
-   VIDEO CÔNG TRÌNH — /du-an (#videos-grid)
-   Cách thêm video: dán ID YouTube vào youtubeId (phần sau "v=" trong URL,
-   vd https://www.youtube.com/watch?v=dQw4w9WgXcQ → 'dQw4w9WgXcQ') và sửa title.
-   Ô chưa có ID hiển thị "Video đang được cập nhật". Ô có ID chỉ tải ảnh bìa;
-   trình phát YouTube (nocookie) chỉ tải khi khách bấm Play — trang luôn nhẹ.
-   ========================================================================== */
-const PROJECT_VIDEOS = [
-  { title: 'Video công trình 1', youtubeId: '' },
-  { title: 'Video công trình 2', youtubeId: '' },
-  { title: 'Video công trình 3', youtubeId: '' },
-  { title: 'Video công trình 4', youtubeId: '' },
-  { title: 'Video công trình 5', youtubeId: '' },
-  { title: 'Video công trình 6', youtubeId: '' },
-  { title: 'Video công trình 7', youtubeId: '' },
-  { title: 'Video công trình 8', youtubeId: '' },
-  { title: 'Video công trình 9', youtubeId: '' },
-  { title: 'Video công trình 10', youtubeId: '' },
-  { title: 'Video công trình 11', youtubeId: '' },
-  { title: 'Video công trình 12', youtubeId: '' },
-  { title: 'Video công trình 13', youtubeId: '' },
-  { title: 'Video công trình 14', youtubeId: '' },
-  { title: 'Video công trình 15', youtubeId: '' },
-  { title: 'Video công trình 16', youtubeId: '' },
-  { title: 'Video công trình 17', youtubeId: '' },
-  { title: 'Video công trình 18', youtubeId: '' },
-  { title: 'Video công trình 19', youtubeId: '' },
-  { title: 'Video công trình 20', youtubeId: '' },
-  { title: 'Video công trình 21', youtubeId: '' },
-];
-
-function initProjectVideos() {
-  const gridEl = document.getElementById('videos-grid');
-  if (!gridEl) return;
-
-  gridEl.innerHTML = PROJECT_VIDEOS.map((v, i) => {
-    const title = escapeHtml(v.title);
-    if (!v.youtubeId) {
-      return `
-        <div class="video-slot is-empty fade-in">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m22 8-6 4 6 4V8Z"/><rect x="2" y="6" width="14" height="12" rx="2"/></svg>
-          <span class="video-slot__label">Video đang được cập nhật</span>
-        </div>`;
-    }
-    const id = encodeURIComponent(v.youtubeId);
-    return `
-      <div class="video-slot fade-in" data-video-slot="${i}" role="button" tabindex="0" aria-label="Phát video: ${title}">
-        <img src="https://i.ytimg.com/vi/${id}/hqdefault.jpg" alt="${title}" width="480" height="360"
-             loading="lazy" decoding="async" class="video-slot__thumb">
-        <span class="video-slot__play" aria-hidden="true">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7L8 5Z"/></svg>
-        </span>
-        <span class="video-slot__title">${title}</span>
-      </div>`;
-  }).join('');
-
-  gridEl.querySelectorAll('[data-video-slot]').forEach((slot) => {
-    let played = false;
-    const play = () => {
-      const video = PROJECT_VIDEOS[Number(slot.getAttribute('data-video-slot'))];
-      if (played || !video || !video.youtubeId) return;
-      played = true;
-      const frame = document.createElement('iframe');
-      frame.src = 'https://www.youtube-nocookie.com/embed/' + encodeURIComponent(video.youtubeId) + '?autoplay=1';
-      frame.title = video.title;
-      frame.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
-      frame.allowFullscreen = true;
-      frame.className = 'video-slot__frame';
-      slot.innerHTML = '';
-      slot.appendChild(frame);
-      slot.removeAttribute('role');
-      slot.removeAttribute('tabindex');
-    };
-    slot.addEventListener('click', play);
-    slot.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); play(); }
-    });
-  });
 }
 
 function initTraCuu() {
@@ -1354,7 +1276,6 @@ document.addEventListener('DOMContentLoaded', () => {
   renderProjects(); // phải chạy trước initModal / initCardVideos / initScrollReveal
   initCardVideos();
   initSmoothScroll();
-  initFilter();
   initModal();
   initInsuranceModal();
   initTabs();
