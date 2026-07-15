@@ -135,8 +135,9 @@ The FE (`initForms()`) posts **multipart FormData**; plain JSON still works for 
 (multer ignores non-multipart bodies — the health check relies on this). `message` is **required**
 (client + server). The quote form has **no "Loại công trình" select** (removed by request; the
 optional `type` field is still honored server-side and maps to `TYPE_LABELS` in `lib/mailer.js`,
-which the bao-gia calculator slugs still use). `area` is the "Thông tin lô đất" free-text field;
-`files` accepts **≤3 PDF/image files, ≤10 MB total** (multer memory storage in `server.js`,
+which the bao-gia calculator slugs still use). The "Thông tin lô đất" text input was removed too —
+lô đất info arrives ONLY as the required attachment (`area` remains accepted server-side for
+compatibility). `files` accepts **≤3 PDF/image files, ≤10 MB total** (multer memory storage in `server.js`,
 Vietnamese 400s on violations, attachments forwarded to the email — never stored on disk).
 **Attachments are REQUIRED for quote submissions**: the bao-gia form carries a hidden
 `source=bao-gia` field and the server rejects such posts without files; the lien-he form (no file
