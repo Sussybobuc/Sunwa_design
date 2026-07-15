@@ -84,7 +84,7 @@ reset in `initNavToggle()` matches with `matchMedia('(min-width: 1024px)')`.
 
 ### Client logic — `js/main.js` (single file, no modules/bundler)
 `'use strict'`, IIFE-style `initX()` functions wired up on `DOMContentLoaded`. Key pieces:
-- `PROJECTS` — hardcoded array of the **20 real projects** (YouTube videos on Sunwa's channel, in
+- `PROJECTS` — hardcoded array of the **21 real projects** (YouTube videos on Sunwa's channel, in
   upload order). Each has `name` (the video title), `location`, `youtubeId`, and `image` (the
   video's own `i.ytimg.com` thumbnail); `typeLabel/area/cost/duration/description` are empty until
   real data exists — card meta and modal rows auto-hide empty fields. `renderProjects()` injects

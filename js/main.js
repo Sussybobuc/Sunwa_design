@@ -1,7 +1,7 @@
 'use strict';
 
 /* ============================================================
-   DATA — 20 công trình thực tế (video trên kênh YouTube của Sunwa,
+   DATA — 21 công trình thực tế (video trên kênh YouTube của Sunwa,
    thứ tự = thứ tự đăng). Thẻ hiển thị thumbnail YouTube + huy hiệu Play;
    bấm thẻ → mở modal chi tiết và video phát TO trong modal
    (youtube-nocookie, chỉ tải khi mở) — trang luôn nhẹ.
@@ -171,6 +171,14 @@ const PROJECTS = [
     location: 'Đà Nẵng',
     youtubeId: 'KIAVZn_IQHQ',
     image: 'https://i.ytimg.com/vi/KIAVZn_IQHQ/hqdefault.jpg',
+    type: '', typeLabel: '', area: '', cost: '', duration: '', year: '', query: '', description: '',
+  },
+  {
+    id: 21,
+    name: 'Dương Bình House - Hội An, Đà Nẵng',
+    location: 'Hội An',
+    youtubeId: 'V82ZtpQor7o',
+    image: 'https://i.ytimg.com/vi/V82ZtpQor7o/hqdefault.jpg',
     type: '', typeLabel: '', area: '', cost: '', duration: '', year: '', query: '', description: '',
   },
 ];
