@@ -776,6 +776,9 @@ function validateForm(form) {
     const err = attachmentError(files.files);
     showFieldError(form, 'files', err || '');
     if (err) valid = false;
+  } else if (files && files.required) {
+    showFieldError(form, 'files', 'Vui lòng đính kèm hồ sơ lô đất (PDF hoặc ảnh)');
+    valid = false;
   } else if (files) {
     showFieldError(form, 'files', '');
   }
