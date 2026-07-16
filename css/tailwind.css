@@ -291,6 +291,13 @@
   .wr-row + .wr-row {
     @apply mt-4;
   }
+  /* Bản compact cho thẻ gallery /bao-hanh — thanh mảnh hơn, sát nhau hơn */
+  .wr-row--compact + .wr-row--compact {
+    @apply mt-2;
+  }
+  .wr-row--compact .wr-track {
+    @apply mt-1 h-1.5;
+  }
   .wr-track {
     @apply mt-2 block h-2 overflow-hidden rounded-full bg-primary-light;
   }

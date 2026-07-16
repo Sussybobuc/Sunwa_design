@@ -514,9 +514,11 @@ function remainingLabel(end, now) {
   return 'còn ' + y + ' năm' + (m ? ' ' + m + ' tháng' : '');
 }
 
-function warrantyMetersHtml(handoverIso, warranty) {
+function warrantyMetersHtml(handoverIso, warranty, compact) {
   const start = new Date(handoverIso + 'T00:00:00');
   const now = new Date();
+  // compact: bản thu nhỏ cho thẻ gallery /bao-hanh — cùng thanh wr-*, chữ nhỏ hơn
+  const txt = compact ? 'text-sm' : 'text-base';
   const rows = WARRANTY_TIERS.map(({ key, label }) => {
     const years = Number(warranty[key]) || 0;
     if (!years) return '';
@@ -530,10 +532,10 @@ function warrantyMetersHtml(handoverIso, warranty) {
       ? escapeHtml(remain)
       : 'Đã hết hạn ' + fmtDateVN(end.toISOString().slice(0, 10));
     return `
-      <div class="wr-row${remain ? '' : ' is-expired'}">
+      <div class="wr-row${remain ? '' : ' is-expired'}${compact ? ' wr-row--compact' : ''}">
         <div class="flex items-baseline justify-between gap-3">
-          <span class="text-base font-medium">${label} <span class="font-normal text-text-muted">(${years} năm)</span></span>
-          <span class="text-base text-text-muted">${status}</span>
+          <span class="${txt} font-medium">${label} <span class="font-normal text-text-muted">(${years} năm)</span></span>
+          <span class="${txt} text-text-muted">${status}</span>
         </div>
         <div class="wr-track" role="img" aria-label="${label}: ${status}">
           <span class="wr-fill" style="width:${remain ? pctLeft : 100}%"></span>
@@ -547,20 +549,6 @@ function warrantyMetersHtml(handoverIso, warranty) {
    GIẤY BẢO HÀNH ĐÃ CẤP — gallery công khai trên /bao-hanh
    (mọi giấy đã cấp, kể cả hết hạn; ảnh bấm phóng to, PDF mở tab mới)
    ============================================================ */
-/* "còn 9 năm 4 tháng" / "còn 25 ngày" / null nếu đã qua hạn */
-function remainingVN(untilISO) {
-  const until = new Date(untilISO + 'T23:59:59');
-  const now = new Date();
-  const days = Math.ceil((until - now) / 86400000);
-  if (days <= 0) return null;
-  if (days <= 60) return `còn ${days} ngày`;
-  const months = Math.floor(days / 30.44);
-  const years = Math.floor(months / 12);
-  const remMonths = months % 12;
-  if (years === 0) return `còn ${remMonths} tháng`;
-  return remMonths === 0 ? `còn ${years} năm` : `còn ${years} năm ${remMonths} tháng`;
-}
-
 async function initCertGallery() {
   const gridEl = document.getElementById('cert-grid');
   if (!gridEl) return;
@@ -586,22 +574,17 @@ async function initCertGallery() {
             class="flex aspect-[4/3] w-full items-center justify-center rounded-t-lg bg-bg-secondary text-text-muted">
            <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
          </a>`;
-    // Đếm ngược 3 hạng mục — công khai, nhỏ gọn (nhãn khớp W_LABELS bên quản trị)
-    const tierLabels = { ketCau: 'Kết cấu', chongTham: 'Chống thấm', hoanThien: 'Hoàn thiện' };
-    const chips = Object.entries(c.warranties || {}).map(([key, w]) => {
-      if (!w.until) return '';
-      const left = remainingVN(w.until);
-      const cls = left ? 'bg-[#DCFCE7] text-[#166534]' : 'bg-[#FEE2E2] text-[#991B1B]';
-      const text = left || `hết hạn ${fmtDateVN(w.until)}`;
-      return `<span class="inline-block rounded-full px-2 py-0.5 text-xs font-medium ${cls}">${tierLabels[key] || key} · ${text}</span>`;
-    }).join(' ');
+    // Đếm ngược 3 hạng mục — cùng thanh wr-* như dashboard /tra-cuu, bản compact
+    const years = {};
+    for (const [key, w] of Object.entries(c.warranties || {})) years[key] = w.years;
+    const meters = c.handover ? warrantyMetersHtml(c.handover, years, true) : '';
     return `
       <article class="card overflow-hidden p-0">
         ${media}
         <div class="p-4">
           <h3 class="text-base font-semibold">${escapeHtml(c.name)}</h3>
           <p class="mt-0.5 text-sm text-text-muted">${c.project ? escapeHtml(c.project) + ' · ' : ''}${date ? 'Bàn giao ' + escapeHtml(date) : ''}</p>
-          ${chips ? `<div class="mt-2.5 flex flex-wrap gap-1.5">${chips}</div>` : ''}
+          ${meters ? `<div class="mt-3">${meters}</div>` : ''}
           <div class="mt-3 flex items-center gap-3 border-t border-border pt-3">
             <img src="/assets/qr-tra-cuu.svg" alt="QR tra cứu hồ sơ" width="64" height="64"
                  loading="lazy" decoding="async" class="h-16 w-16 shrink-0 rounded border border-border">
