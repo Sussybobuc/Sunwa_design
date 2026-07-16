@@ -113,6 +113,7 @@ app.get('/quan-tri', localOnly, (req, res) => res.sendFile(path.join(__dirname, 
 app.get('/quan-tri.html', localOnly, (req, res) => res.sendFile(path.join(__dirname, 'quan-tri.html')));
 app.get('/api/admin/clients', localOnly, admin.handleList);
 app.post('/api/admin/clients', localOnly, adminUpload.array('file', 1), admin.handleCreate);
+app.put('/api/admin/clients/:code', localOnly, admin.handleUpdate);
 app.delete('/api/admin/clients/:code', localOnly, admin.handleDelete);
 app.post('/api/admin/clients/:code/docs', localOnly, adminUpload.array('file', 1), admin.handleAddDoc);
 app.delete('/api/admin/clients/:code/docs/:file', localOnly, admin.handleDeleteDoc);

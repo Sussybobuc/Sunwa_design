@@ -69,7 +69,10 @@ Ghi chú các trường:
 - **`phone`**: số di động VN 10 số (đầu 03/05/07/08/09) — chính là "mật khẩu" đăng nhập của khách.
   **Mỗi khách một số duy nhất** — không được trùng giữa hai mục (trùng thì khách chỉ thấy mục đầu tiên).
 - **`handover`**: ngày bàn giao `YYYY-MM-DD`. Để `null` nếu đang thi công (chưa hiện đếm ngược).
-- **`warranty`** (không bắt buộc): ghi đè số năm mặc định, vd `{ "ketCau": 15 }`.
+- **`warranty`** (không bắt buộc): tuỳ chỉnh từng hạng mục (panel quản trị có UI cho việc này —
+  tick bật/tắt + số + đơn vị năm/tháng). Mỗi khóa `ketCau`/`chongTham`/`hoanThien` nhận:
+  `{ "months": 96 }` (tuỳ chỉnh theo tháng) · `false` (tắt hạng mục — không hiện thanh nào) ·
+  số trần (di sản, hiểu là SỐ NĂM) · vắng mặt (dùng mặc định 120/36/12 tháng).
 - **`docs[].file`** và **`logs[].photos[]`**: đường dẫn tương đối bên trong thư mục của khách đó.
 - **JSON phải hợp lệ** (dấu phẩy, ngoặc). Kiểm tra nhanh:
   `node -e "JSON.parse(require('fs').readFileSync('Private/clients/clients.json'))" && echo OK`

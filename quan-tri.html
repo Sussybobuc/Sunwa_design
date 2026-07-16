@@ -44,6 +44,11 @@
             <input class="field-input" type="text" id="ad-project" name="project" placeholder="Nhà phố 3 tầng — Hải Châu">
           </div>
           <div>
+            <p class="field-label">Thời hạn bảo hành (bỏ tick để tắt hạng mục)</p>
+            <div data-warranty-rows class="space-y-2"></div>
+          </div>
+          <input type="hidden" name="warranty">
+          <div>
             <label class="field-label" for="ad-file">Giấy chứng nhận bảo hành <span class="text-primary">*</span></label>
             <input class="field-input" type="file" id="ad-file" name="file" required accept="application/pdf,image/*">
             <p class="mt-1 text-sm text-text-muted">PDF hoặc ảnh, tối đa 10 MB (ảnh được tự nén). <strong class="font-medium text-text">Hiện CÔNG KHAI</strong> trong mục "Giấy bảo hành đã cấp" trên trang /bao-hanh. Hồ sơ dự án riêng tư thêm sau ở danh sách bên phải.</p>
@@ -76,14 +81,62 @@
     const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
     const fmtDate = (iso) => iso ? new Date(iso + 'T00:00:00').toLocaleDateString('vi-VN') : '—';
     const W_LABELS = { ketCau: 'Kết cấu', chongTham: 'Chống thấm', hoanThien: 'Hoàn thiện' };
+    const W_DEFAULT_MONTHS = { ketCau: 120, chongTham: 36, hoanThien: 12 };
+    const fmtMonths = (n) => {
+      const y = Math.floor(n / 12), m = n % 12;
+      return y === 0 ? `${m} tháng` : m === 0 ? `${y} năm` : `${y} năm ${m} tháng`;
+    };
 
     function chip(key, w) {
       const cls = w.active
         ? 'bg-[#DCFCE7] text-[#166534]'   /* còn hạn */
         : 'bg-[#FEE2E2] text-[#991B1B]';  /* hết hạn */
       const status = w.active ? 'đến ' + fmtDate(w.until) : 'hết hạn ' + fmtDate(w.until);
-      return `<span class="inline-block rounded-full px-2.5 py-0.5 text-xs font-medium ${cls}">${W_LABELS[key]} ${w.years} năm · ${status}</span>`;
+      return `<span class="inline-block rounded-full px-2.5 py-0.5 text-xs font-medium ${cls}">${W_LABELS[key]} ${fmtMonths(w.months)} · ${status}</span>`;
     }
+
+    /* ---- Hàng cấu hình bảo hành: [✓ Hạng mục] [số] [năm/tháng] ---- */
+    // prefill = warranties từ server ({key:{months,...}}, hạng mục tắt vắng mặt) hoặc null = mặc định
+    function warrantyRowsHtml(prefill) {
+      return Object.entries(W_LABELS).map(([key, label]) => {
+        const months = prefill ? (prefill[key] ? prefill[key].months : null) : W_DEFAULT_MONTHS[key];
+        const on = months !== null;
+        const useYears = on && months % 12 === 0;
+        const num = on ? (useYears ? months / 12 : months) : W_DEFAULT_MONTHS[key] / 12;
+        return `
+          <div class="flex items-center gap-2" data-tier="${key}">
+            <label class="flex w-28 shrink-0 items-center gap-1.5 text-sm"><input type="checkbox" data-tier-on${on ? ' checked' : ''}> ${label}</label>
+            <input type="number" data-tier-num min="1" max="100" step="1" value="${num}" ${on ? '' : 'disabled '}class="field-input w-20 py-1.5 text-sm">
+            <select data-tier-unit ${on ? '' : 'disabled '}class="field-input w-24 py-1.5 text-sm">
+              <option value="nam"${!on || useYears ? ' selected' : ''}>năm</option>
+              <option value="thang"${on && !useYears ? ' selected' : ''}>tháng</option>
+            </select>
+          </div>`;
+      }).join('');
+    }
+
+    // Đọc các hàng thành spec { key: false | {months} }; trả null nếu số không hợp lệ
+    function readWarrantySpec(container) {
+      const spec = {};
+      for (const row of container.querySelectorAll('[data-tier]')) {
+        const key = row.getAttribute('data-tier');
+        if (!row.querySelector('[data-tier-on]').checked) { spec[key] = false; continue; }
+        const num = Number(row.querySelector('[data-tier-num]').value);
+        if (!Number.isInteger(num) || num < 1) return null;
+        const unit = row.querySelector('[data-tier-unit]').value;
+        spec[key] = { months: unit === 'nam' ? num * 12 : num };
+      }
+      return spec;
+    }
+
+    // Bật/tắt input theo checkbox (event delegation — dùng cho cả form thêm lẫn form sửa)
+    document.addEventListener('change', (e) => {
+      if (!e.target.matches('[data-tier-on]')) return;
+      const row = e.target.closest('[data-tier]');
+      const on = e.target.checked;
+      row.querySelector('[data-tier-num]').disabled = !on;
+      row.querySelector('[data-tier-unit]').disabled = !on;
+    });
 
     function logsHtml(c) {
       const logs = c.logs || [];
@@ -113,7 +166,10 @@
               <span class="ml-2 text-sm text-text-muted">${esc(c.code)}</span>
               ${c.hasCert ? '<span class="ml-2 rounded-full bg-[#DBEAFE] px-2 py-0.5 text-xs font-medium text-[#1E40AF]">giấy BH công khai ✓</span>' : ''}
             </div>
-            <button type="button" class="text-sm text-[#991B1B] hover:underline" data-del="${esc(c.code)}">Xoá hồ sơ</button>
+            <div class="flex gap-3">
+              <button type="button" class="text-sm text-primary hover:underline" data-edit="${esc(c.code)}">Sửa</button>
+              <button type="button" class="text-sm text-[#991B1B] hover:underline" data-del="${esc(c.code)}">Xoá hồ sơ</button>
+            </div>
           </div>
           <p class="text-sm text-text-muted">SĐT: <strong class="font-medium text-text">${esc(c.phone)}</strong>
             · Bàn giao: ${fmtDate(c.handover)}${c.project ? ' · ' + esc(c.project) : ''}</p>
@@ -138,12 +194,15 @@
         </article>`;
     }
 
+    let clientsByCode = {};
+
     async function loadList() {
       const listEl = document.getElementById('client-list');
       try {
         const res = await fetch('/api/admin/clients');
         const data = await res.json();
         const rows = data.clients || [];
+        clientsByCode = Object.fromEntries(rows.map((c) => [c.code, c]));
         document.getElementById('count').textContent = rows.length;
         listEl.innerHTML = rows.length
           ? rows.map(rowHtml).join('')
@@ -153,7 +212,50 @@
       }
     }
 
+    /* ---- Sửa khách ngay trong thẻ ---- */
+    function editFormHtml(c) {
+      return `
+        <form data-edit-form="${esc(c.code)}" class="space-y-3">
+          <p class="font-semibold">Sửa hồ sơ ${esc(c.code)}</p>
+          <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <div>
+              <label class="field-label">Tên khách hàng</label>
+              <input class="field-input py-1.5 text-sm" type="text" name="name" required value="${esc(c.name)}">
+            </div>
+            <div>
+              <label class="field-label">Số điện thoại</label>
+              <input class="field-input py-1.5 text-sm" type="tel" name="phone" required inputmode="numeric" value="${esc(c.phone)}">
+            </div>
+            <div>
+              <label class="field-label">Ngày bàn giao</label>
+              <input class="field-input py-1.5 text-sm" type="date" name="handover" required value="${esc(c.handover || '')}">
+            </div>
+            <div>
+              <label class="field-label">Công trình</label>
+              <input class="field-input py-1.5 text-sm" type="text" name="project" value="${esc(c.project)}">
+            </div>
+          </div>
+          <div>
+            <p class="field-label">Thời hạn bảo hành (bỏ tick để tắt hạng mục)</p>
+            <div data-warranty-rows class="space-y-2">${warrantyRowsHtml(c.warranties || {})}</div>
+          </div>
+          <p data-edit-error class="hidden text-sm text-[#C2410C]" role="alert"></p>
+          <div class="flex gap-2">
+            <button type="submit" class="btn-primary px-4 py-1.5 text-sm">Lưu</button>
+            <button type="button" data-cancel class="rounded-md border border-border px-4 py-1.5 text-sm hover:bg-bg-secondary">Huỷ</button>
+          </div>
+        </form>`;
+    }
+
     document.getElementById('client-list').addEventListener('click', async (e) => {
+      const editBtn = e.target.closest('[data-edit]');
+      if (editBtn) {
+        const code = editBtn.getAttribute('data-edit');
+        const card = editBtn.closest('article');
+        if (clientsByCode[code] && card) card.innerHTML = editFormHtml(clientsByCode[code]);
+        return;
+      }
+      if (e.target.closest('[data-cancel]')) { loadList(); return; }
       const delLog = e.target.closest('[data-del-log]');
       if (delLog) {
         const code = delLog.getAttribute('data-del-log');
@@ -180,8 +282,41 @@
       if (res.ok) loadList();
     });
 
+    // Lưu form sửa khách (PUT)
+    document.getElementById('client-list').addEventListener('submit', async (e) => {
+      const form = e.target.closest('[data-edit-form]');
+      if (!form) return;
+      e.preventDefault();
+      const errEl = form.querySelector('[data-edit-error]');
+      errEl.classList.add('hidden');
+      const spec = readWarrantySpec(form.querySelector('[data-warranty-rows]'));
+      if (!spec) {
+        errEl.textContent = 'Thời hạn bảo hành phải là số nguyên ≥ 1.';
+        errEl.classList.remove('hidden');
+        return;
+      }
+      try {
+        const res = await fetch('/api/admin/clients/' + encodeURIComponent(form.getAttribute('data-edit-form')), {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: form.name.value, phone: form.phone.value,
+            handover: form.handover.value, project: form.project.value,
+            warranty: spec,
+          }),
+        });
+        const data = await res.json();
+        if (!res.ok || !data.ok) throw new Error(data.error || 'Không lưu được.');
+        loadList();
+      } catch (err) {
+        errEl.textContent = err.message;
+        errEl.classList.remove('hidden');
+      }
+    });
+
     // Thêm hồ sơ dự án / nhật ký thi công cho từng khách (form con trong mỗi thẻ)
     document.getElementById('client-list').addEventListener('submit', async (e) => {
+      if (e.target.closest('[data-edit-form]')) return; // đã xử lý ở listener trên
       const docForm = e.target.closest('[data-add-doc]');
       const logForm = e.target.closest('[data-add-log]');
       if (!docForm && !logForm) return;
@@ -212,11 +347,21 @@
       }
     });
 
+    // Hàng bảo hành mặc định cho form thêm khách
+    document.querySelector('#add-form [data-warranty-rows]').innerHTML = warrantyRowsHtml(null);
+
     document.getElementById('add-form').addEventListener('submit', async (e) => {
       e.preventDefault();
       const form = e.target;
       const errEl = document.getElementById('add-error');
       errEl.classList.add('hidden');
+      const spec = readWarrantySpec(form.querySelector('[data-warranty-rows]'));
+      if (!spec) {
+        errEl.textContent = 'Thời hạn bảo hành phải là số nguyên ≥ 1.';
+        errEl.classList.remove('hidden');
+        return;
+      }
+      form.warranty.value = JSON.stringify(spec);
       const btn = form.querySelector('[type="submit"]');
       btn.disabled = true; btn.textContent = 'Đang tạo…';
       try {

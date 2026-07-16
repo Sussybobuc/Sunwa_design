@@ -514,27 +514,33 @@ function remainingLabel(end, now) {
   return 'còn ' + y + ' năm' + (m ? ' ' + m + ' tháng' : '');
 }
 
-function warrantyMetersHtml(handoverIso, warranty, compact) {
+/* "10 năm" / "18 tháng" / "2 năm 6 tháng" */
+function fmtMonthsVN(n) {
+  const y = Math.floor(n / 12);
+  const m = n % 12;
+  if (y === 0) return `${m} tháng`;
+  return m === 0 ? `${y} năm` : `${y} năm ${m} tháng`;
+}
+
+/* summary = { ketCau: {months, until}, ... } từ server (hạng mục tắt sẽ vắng mặt) */
+function warrantyMetersHtml(handoverIso, summary, compact) {
   const start = new Date(handoverIso + 'T00:00:00');
   const now = new Date();
   // compact: bản thu nhỏ cho thẻ gallery /bao-hanh — cùng thanh wr-*, chữ nhỏ hơn
   const txt = compact ? 'text-sm' : 'text-base';
   const rows = WARRANTY_TIERS.map(({ key, label }) => {
-    const years = Number(warranty[key]) || 0;
-    if (!years) return '';
-    const end = new Date(start);
-    end.setFullYear(end.getFullYear() + years);
+    const tier = summary && summary[key];
+    if (!tier || !tier.until) return '';
+    const end = new Date(tier.until + 'T23:59:59');
     const remain = remainingLabel(end, now);
     const pctLeft = remain
       ? Math.max(0, Math.min(100, Math.round(((end - now) / (end - start)) * 100)))
       : 0;
-    const status = remain
-      ? escapeHtml(remain)
-      : 'Đã hết hạn ' + fmtDateVN(end.toISOString().slice(0, 10));
+    const status = remain ? escapeHtml(remain) : 'Đã hết hạn ' + fmtDateVN(tier.until);
     return `
       <div class="wr-row${remain ? '' : ' is-expired'}${compact ? ' wr-row--compact' : ''}">
         <div class="flex items-baseline justify-between gap-3">
-          <span class="${txt} font-medium">${label} <span class="font-normal text-text-muted">(${years} năm)</span></span>
+          <span class="${txt} font-medium">${label} <span class="font-normal text-text-muted">(${fmtMonthsVN(tier.months)})</span></span>
           <span class="${txt} text-text-muted">${status}</span>
         </div>
         <div class="wr-track" role="img" aria-label="${label}: ${status}">
@@ -574,10 +580,8 @@ async function initCertGallery() {
             class="flex aspect-[4/3] w-full items-center justify-center rounded-t-lg bg-bg-secondary text-text-muted">
            <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
          </a>`;
-    // Đếm ngược 3 hạng mục — cùng thanh wr-* như dashboard /tra-cuu, bản compact
-    const years = {};
-    for (const [key, w] of Object.entries(c.warranties || {})) years[key] = w.years;
-    const meters = c.handover ? warrantyMetersHtml(c.handover, years, true) : '';
+    // Đếm ngược các hạng mục — cùng thanh wr-* như dashboard /tra-cuu, bản compact
+    const meters = c.handover ? warrantyMetersHtml(c.handover, c.warranties, true) : '';
     return `
       <article class="card overflow-hidden p-0">
         ${media}

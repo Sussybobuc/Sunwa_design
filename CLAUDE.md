@@ -123,15 +123,18 @@ refresh token), since Google is deprecating App Passwords. See `docs/run-and-dep
 docs stay behind `/ho-so` + cookie). Client lookup lives on **`tra-cuu.html`, a HIDDEN page** (noindex, in
 `PAGES` but linked nowhere — customers reach it via the **QR printed on the warranty paper**):
 login with **registered phone number only** (the phone is the whole credential; unique per client)
-→ dashboard with docs, construction logs, and a 3-tier warranty countdown
-(kết cấu 10y · chống thấm 3y · hoàn thiện 1y from `handover`). Backend: `lib/portal.js` — stateless
+→ dashboard with docs, construction logs, and a warranty countdown (defaults kết cấu 10 năm ·
+chống thấm 3 năm · hoàn thiện 1 năm from `handover`; per-client override via `warranty` —
+each tier can be disabled or set in months, managed in /quan-tri, legacy plain numbers = years;
+math lives ONCE in `lib/portal.js` `warrantySummary`). Backend: `lib/portal.js` — stateless
 HMAC-signed HttpOnly cookie (`SESSION_SECRET` env, 24h), routes `/api/tra-cuu/login|me|logout`
 (login rate-limited 10/15min) and authenticated downloads at `/ho-so/<code>/<file>` (cookie code
 must match URL code; traversal-guarded). **Admin panel `/quan-tri` is LOCALHOST-ONLY** (`localOnly`
 middleware in `server.js` + `lib/admin.js`: loopback socket AND no cf-ray/cf-connecting-ip/
 x-forwarded-for headers, else the 404 page — from the internet it doesn't exist; no password; its
 JS is inline in `quan-tri.html`, NOT in `main.js`). Admin can add a client (name + phone +
-handover date + PUBLIC warranty-paper upload → auto code `HD-<year>-<NNN>`, auto expiry), add/remove
+handover date + PUBLIC warranty-paper upload → auto code `HD-<year>-<NNN>`, auto expiry,
+per-tier warranty config), EDIT a client in place (`PUT /api/admin/clients/:code`), add/remove
 per-client PRIVATE "hồ sơ dự án" docs (file + label), list with expiry chips, delete (record only;
 folder kept). Image uploads auto-normalize via `sharp` (EXIF-rotate, ≤1600px, WebP); PDFs pass
 through. Data model per client: `baoHanh` (public cert) vs `docs`/`logs` (private). **Data lives in git-ignored `Private/clients/`**
