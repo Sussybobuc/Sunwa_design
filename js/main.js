@@ -544,16 +544,36 @@ function warrantyMetersHtml(handoverIso, warranty) {
 }
 
 function traCuuDashHtml(data) {
+  // Xem trước ngay trong trang: ảnh hiện trong khung (bấm để phóng to qua
+  // lightbox chung), PDF nhúng trình xem của trình duyệt; luôn kèm nút tải về.
+  const docPreview = (d) => {
+    if (d.kind === 'image') {
+      return `
+        <img src="${escapeHtml(d.url)}" alt="${escapeHtml(d.label)}" loading="lazy" decoding="async"
+             data-doc-preview data-caption="${escapeHtml(d.label)}"
+             class="mt-3 w-full cursor-zoom-in rounded-lg border border-border bg-bg-secondary object-contain">`;
+    }
+    if (d.kind === 'pdf') {
+      return `
+        <object data="${escapeHtml(d.url)}" type="application/pdf" class="mt-3 h-[480px] w-full rounded-lg border border-border">
+          <p class="p-4 text-base text-text-muted">Trình duyệt không xem được PDF tại đây — dùng nút tải về bên dưới.</p>
+        </object>`;
+    }
+    return '';
+  };
   const docs = (data.docs || []).length
-    ? '<div class="mt-4 space-y-3">' + data.docs.map((d) => `
-        <a href="${escapeHtml(d.url)}" target="_blank" rel="noopener" class="contact-channel">
+    ? '<div class="mt-4 space-y-5">' + data.docs.map((d) => `
+      <div>
+        ${docPreview(d)}
+        <a href="${escapeHtml(d.url)}" target="_blank" rel="noopener" class="contact-channel mt-3">
           <span class="icon-box shrink-0"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg></span>
           <span class="contact-channel__text">
             <span class="contact-channel__label">Tài liệu</span>
             <span class="contact-channel__value">${escapeHtml(d.label)}</span>
           </span>
           <svg class="shrink-0 text-text-light" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/></svg>
-        </a>`).join('') + '</div>'
+        </a>
+      </div>`).join('') + '</div>'
     : '<p class="mt-4 text-base text-text-muted">Chưa có tài liệu nào. Hồ sơ sẽ được Sunwa cập nhật tại đây.</p>';
 
   const logs = (data.logs || []).length
@@ -632,7 +652,7 @@ function initTraCuu() {
       loginBox.classList.remove('hidden');
       form.reset();
     });
-    dash.querySelectorAll('[data-log-photo]').forEach((img) => {
+    dash.querySelectorAll('[data-log-photo], [data-doc-preview]').forEach((img) => {
       img.addEventListener('click', () =>
         openImageModal(img.getAttribute('src'), img.getAttribute('alt'), img.getAttribute('data-caption')));
     });
