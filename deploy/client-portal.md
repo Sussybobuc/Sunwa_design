@@ -4,7 +4,7 @@ Khách hàng đăng nhập tại **https://\<domain\>/tra-cuu** — trang ẨN, 
 chỉ tới được qua **QR in trên giấy chứng nhận bảo hành** (QR do Sunwa tự in, trỏ về URL trên).
 Đăng nhập bằng **số điện thoại đã đăng ký** (chỉ cần SĐT — không cần mã). Sau khi đăng nhập họ
 thấy: tài liệu (giấy bảo hành, hợp đồng, thiết kế…), nhật ký thi công, và thời hạn bảo hành
-(kết cấu 5 năm · chống thấm 3 năm · hoàn thiện 1 năm, tính từ ngày bàn giao).
+(kết cấu 10 năm · chống thấm 3 năm · hoàn thiện 1 năm, tính từ ngày bàn giao).
 Trang `/bao-hanh` công khai giờ CHỈ hiển thị giấy chứng nhận mẫu.
 
 **Trang quản trị: http://localhost:3000/quan-tri — CHỈ mở được trên chính Mac Mini.**
@@ -69,7 +69,7 @@ Ghi chú các trường:
 - **`phone`**: số di động VN 10 số (đầu 03/05/07/08/09) — chính là "mật khẩu" đăng nhập của khách.
   **Mỗi khách một số duy nhất** — không được trùng giữa hai mục (trùng thì khách chỉ thấy mục đầu tiên).
 - **`handover`**: ngày bàn giao `YYYY-MM-DD`. Để `null` nếu đang thi công (chưa hiện đếm ngược).
-- **`warranty`** (không bắt buộc): ghi đè số năm mặc định, vd `{ "ketCau": 10 }`.
+- **`warranty`** (không bắt buộc): ghi đè số năm mặc định, vd `{ "ketCau": 15 }`.
 - **`docs[].file`** và **`logs[].photos[]`**: đường dẫn tương đối bên trong thư mục của khách đó.
 - **JSON phải hợp lệ** (dấu phẩy, ngoặc). Kiểm tra nhanh:
   `node -e "JSON.parse(require('fs').readFileSync('Private/clients/clients.json'))" && echo OK`

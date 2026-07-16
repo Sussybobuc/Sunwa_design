@@ -124,7 +124,7 @@ docs stay behind `/ho-so` + cookie). Client lookup lives on **`tra-cuu.html`, a 
 `PAGES` but linked nowhere — customers reach it via the **QR printed on the warranty paper**):
 login with **registered phone number only** (the phone is the whole credential; unique per client)
 → dashboard with docs, construction logs, and a 3-tier warranty countdown
-(kết cấu 5y · chống thấm 3y · hoàn thiện 1y from `handover`). Backend: `lib/portal.js` — stateless
+(kết cấu 10y · chống thấm 3y · hoàn thiện 1y from `handover`). Backend: `lib/portal.js` — stateless
 HMAC-signed HttpOnly cookie (`SESSION_SECRET` env, 24h), routes `/api/tra-cuu/login|me|logout`
 (login rate-limited 10/15min) and authenticated downloads at `/ho-so/<code>/<file>` (cookie code
 must match URL code; traversal-guarded). **Admin panel `/quan-tri` is LOCALHOST-ONLY** (`localOnly`
