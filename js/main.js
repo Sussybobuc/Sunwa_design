@@ -543,6 +543,51 @@ function warrantyMetersHtml(handoverIso, warranty) {
   return rows.join('');
 }
 
+/* ============================================================
+   GIẤY BẢO HÀNH ĐÃ CẤP — gallery công khai trên /bao-hanh
+   (mọi giấy đã cấp, kể cả hết hạn; ảnh bấm phóng to, PDF mở tab mới)
+   ============================================================ */
+async function initCertGallery() {
+  const gridEl = document.getElementById('cert-grid');
+  if (!gridEl) return;
+
+  let certs = [];
+  try {
+    const res = await fetch('/api/bao-hanh');
+    certs = ((await res.json()).certs) || [];
+  } catch { certs = []; }
+
+  if (certs.length === 0) {
+    gridEl.innerHTML = '<p class="text-base text-text-muted">Danh sách đang được cập nhật.</p>';
+    return;
+  }
+
+  gridEl.innerHTML = certs.map((c) => {
+    const date = c.handover ? fmtDateVN(c.handover) : '';
+    const media = c.kind === 'image'
+      ? `<img src="${escapeHtml(c.url)}" alt="Giấy bảo hành — ${escapeHtml(c.name)}" loading="lazy" decoding="async"
+              data-cert-photo data-caption="${escapeHtml(c.name)}${date ? ' · bàn giao ' + escapeHtml(date) : ''}"
+              class="aspect-[4/3] w-full cursor-zoom-in rounded-t-lg bg-bg-secondary object-cover">`
+      : `<a href="${escapeHtml(c.url)}" target="_blank" rel="noopener"
+            class="flex aspect-[4/3] w-full items-center justify-center rounded-t-lg bg-bg-secondary text-text-muted">
+           <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
+         </a>`;
+    return `
+      <article class="card overflow-hidden p-0">
+        ${media}
+        <div class="p-4">
+          <h3 class="text-base font-semibold">${escapeHtml(c.name)}</h3>
+          <p class="mt-0.5 text-sm text-text-muted">${c.project ? escapeHtml(c.project) + ' · ' : ''}${date ? 'Bàn giao ' + escapeHtml(date) : ''}</p>
+        </div>
+      </article>`;
+  }).join('');
+
+  gridEl.querySelectorAll('[data-cert-photo]').forEach((img) => {
+    img.addEventListener('click', () =>
+      openImageModal(img.getAttribute('src'), img.getAttribute('alt'), img.getAttribute('data-caption')));
+  });
+}
+
 function traCuuDashHtml(data) {
   // Xem trước ngay trong trang: ảnh hiện trong khung (bấm để phóng to qua
   // lightbox chung), PDF nhúng trình xem của trình duyệt; luôn kèm nút tải về.
@@ -1283,4 +1328,5 @@ document.addEventListener('DOMContentLoaded', () => {
   initActiveNav();
   initServiceNav();
   initNews();
+  initCertGallery();
 });

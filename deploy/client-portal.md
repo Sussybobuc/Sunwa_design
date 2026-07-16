@@ -10,8 +10,17 @@ Trang `/bao-hanh` công khai giờ CHỈ hiển thị giấy chứng nhận mẫ
 **Trang quản trị: http://localhost:3000/quan-tri — CHỈ mở được trên chính Mac Mini.**
 Mọi truy cập qua internet/tunnel nhận 404 (middleware `localOnly`, xem `lib/admin.js`) — từ bên
 ngoài trang này coi như không tồn tại. Tại đó có thể: thêm khách (tên + SĐT + ngày bàn giao +
-tải giấy bảo hành lên — mã hồ sơ `HD-<năm>-<số>` tự sinh, hạn bảo hành tự tính), xem danh sách
-kèm hạn còn/hết, và xoá hồ sơ (chỉ gỡ khỏi tra cứu — thư mục tệp được giữ lại).
+tải giấy bảo hành lên — mã hồ sơ `HD-<năm>-<số>` tự sinh, hạn bảo hành tự tính), thêm/gỡ
+**hồ sơ dự án** cho từng khách (hợp đồng, thiết kế… — kèm nhãn), xem danh sách kèm hạn còn/hết,
+và xoá hồ sơ (chỉ gỡ khỏi tra cứu — thư mục tệp được giữ lại). Ảnh tải lên được tự nén
+(WebP ≤1600px); PDF giữ nguyên.
+
+## Công khai vs riêng tư — hai loại tệp khác nhau
+
+| | Giấy chứng nhận bảo hành (`baoHanh`) | Hồ sơ dự án (`docs`) + nhật ký (`logs`) |
+|---|---|---|
+| Ai xem được | **MỌI NGƯỜI** — mục "Giấy bảo hành đã cấp" trên `/bao-hanh` (kể cả giấy đã hết hạn) | **Chỉ khách đó** — sau khi đăng nhập `/tra-cuu` bằng SĐT |
+| Đường dẫn tệp | `/giay-bao-hanh/<mã>/<tệp>` (public, CHỈ trả đúng tệp đã đăng ký) | `/ho-so/<mã>/<tệp>` (bắt buộc cookie phiên đúng mã) |
 
 Sửa file trực tiếp như trước vẫn được — server tự nhận thay đổi (không cần restart).
 

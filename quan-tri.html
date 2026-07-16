@@ -46,7 +46,7 @@
           <div>
             <label class="field-label" for="ad-file">Giấy chứng nhận bảo hành <span class="text-primary">*</span></label>
             <input class="field-input" type="file" id="ad-file" name="file" required accept="application/pdf,image/*">
-            <p class="mt-1 text-sm text-text-muted">PDF hoặc ảnh, tối đa 10 MB. Khách sẽ thấy tệp này khi tra cứu.</p>
+            <p class="mt-1 text-sm text-text-muted">PDF hoặc ảnh, tối đa 10 MB (ảnh được tự nén). <strong class="font-medium text-text">Hiện CÔNG KHAI</strong> trong mục "Giấy bảo hành đã cấp" trên trang /bao-hanh. Hồ sơ dự án riêng tư thêm sau ở danh sách bên phải.</p>
           </div>
           <p id="add-error" class="hidden text-base text-[#C2410C]" role="alert"></p>
           <button type="submit" class="btn-primary w-full">Tạo hồ sơ</button>
@@ -87,18 +87,35 @@
 
     function rowHtml(c) {
       const chips = Object.entries(c.warranties || {}).map(([k, w]) => chip(k, w)).join(' ');
+      const docs = (c.docs || []).length
+        ? `<ul class="mt-1 space-y-1">${c.docs.map((d) => `
+            <li class="flex items-center justify-between gap-2 text-sm">
+              <span>📄 ${esc(d.label)}</span>
+              <button type="button" class="text-xs text-[#991B1B] hover:underline" data-del-doc="${esc(c.code)}" data-file="${esc(d.file)}">gỡ</button>
+            </li>`).join('')}</ul>`
+        : '<p class="mt-1 text-sm text-text-muted">Chưa có tài liệu nào.</p>';
       return `
         <article class="card flex flex-col gap-2 p-4" data-code="${esc(c.code)}">
           <div class="flex flex-wrap items-baseline justify-between gap-2">
             <div>
               <span class="font-semibold">${esc(c.name)}</span>
               <span class="ml-2 text-sm text-text-muted">${esc(c.code)}</span>
+              ${c.hasCert ? '<span class="ml-2 rounded-full bg-[#DBEAFE] px-2 py-0.5 text-xs font-medium text-[#1E40AF]">giấy BH công khai ✓</span>' : ''}
             </div>
-            <button type="button" class="text-sm text-[#991B1B] hover:underline" data-del="${esc(c.code)}">Xoá</button>
+            <button type="button" class="text-sm text-[#991B1B] hover:underline" data-del="${esc(c.code)}">Xoá hồ sơ</button>
           </div>
           <p class="text-sm text-text-muted">SĐT: <strong class="font-medium text-text">${esc(c.phone)}</strong>
-            · Bàn giao: ${fmtDate(c.handover)}${c.project ? ' · ' + esc(c.project) : ''} · ${c.docsCount} tài liệu</p>
+            · Bàn giao: ${fmtDate(c.handover)}${c.project ? ' · ' + esc(c.project) : ''}</p>
           <div class="flex flex-wrap gap-1.5">${chips}</div>
+          <div class="mt-2 border-t border-border pt-3">
+            <p class="text-sm font-medium">Hồ sơ dự án (riêng tư — khách xem sau khi đăng nhập)</p>
+            ${docs}
+            <form class="mt-2 flex flex-wrap items-center gap-2" data-add-doc="${esc(c.code)}">
+              <input type="file" name="file" required accept="application/pdf,image/*" class="min-w-0 flex-1 text-sm">
+              <input type="text" name="label" placeholder="Tên tài liệu (vd: Hợp đồng thi công)" class="field-input w-56 py-1.5 text-sm">
+              <button type="submit" class="btn-primary px-3 py-1.5 text-sm">Thêm</button>
+            </form>
+          </div>
         </article>`;
     }
 
@@ -118,12 +135,43 @@
     }
 
     document.getElementById('client-list').addEventListener('click', async (e) => {
+      const delDoc = e.target.closest('[data-del-doc]');
+      if (delDoc) {
+        const code = delDoc.getAttribute('data-del-doc');
+        const file = delDoc.getAttribute('data-file');
+        if (!confirm(`Gỡ tài liệu này khỏi hồ sơ ${code}? (tệp trên đĩa vẫn được giữ)`)) return;
+        const res = await fetch('/api/admin/clients/' + encodeURIComponent(code) + '/docs/' + encodeURIComponent(file), { method: 'DELETE' });
+        if (res.ok) loadList();
+        return;
+      }
       const btn = e.target.closest('[data-del]');
       if (!btn) return;
       const code = btn.getAttribute('data-del');
-      if (!confirm(`Xoá hồ sơ ${code}? Khách sẽ không tra cứu được nữa (thư mục tệp vẫn được giữ).`)) return;
+      if (!confirm(`Xoá hồ sơ ${code}? Khách sẽ không tra cứu được nữa và giấy bảo hành công khai cũng bị gỡ (thư mục tệp vẫn được giữ).`)) return;
       const res = await fetch('/api/admin/clients/' + encodeURIComponent(code), { method: 'DELETE' });
       if (res.ok) loadList();
+    });
+
+    // Thêm hồ sơ dự án cho từng khách (form con trong mỗi thẻ)
+    document.getElementById('client-list').addEventListener('submit', async (e) => {
+      const form = e.target.closest('[data-add-doc]');
+      if (!form) return;
+      e.preventDefault();
+      const code = form.getAttribute('data-add-doc');
+      const btn = form.querySelector('[type="submit"]');
+      btn.disabled = true; btn.textContent = '…';
+      try {
+        const res = await fetch('/api/admin/clients/' + encodeURIComponent(code) + '/docs', {
+          method: 'POST', body: new FormData(form),
+        });
+        const data = await res.json();
+        if (!res.ok || !data.ok) throw new Error(data.error || 'Không thêm được tài liệu.');
+        loadList();
+      } catch (err) {
+        alert(err.message);
+      } finally {
+        btn.disabled = false; btn.textContent = 'Thêm';
+      }
     });
 
     document.getElementById('add-form').addEventListener('submit', async (e) => {

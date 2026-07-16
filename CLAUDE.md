@@ -116,8 +116,11 @@ route returns a 500 "chưa được cấu hình" message. Preferred: **Gmail OAu
 refresh token), since Google is deprecating App Passwords. See `docs/run-and-deploy.md` §2.3.
 
 ### Client portal — hidden `/tra-cuu` + `lib/portal.js`; admin `/quan-tri` (localhost-only) + `lib/admin.js`
-`/bao-hanh` (public) shows ONLY the warranty certificate (`Materials/Insurance.webp`, zooms via the
-shared lightbox) — no tabs. Client lookup lives on **`tra-cuu.html`, a HIDDEN page** (noindex, in
+`/bao-hanh` (public) shows the specimen certificate (`Materials/Insurance.webp`) plus the
+**"Giấy bảo hành đã cấp" gallery** — EVERY issued warranty paper incl. expired ones
+(`initCertGallery()` ← `GET /api/bao-hanh` ← `client.baoHanh.file`; public files served ONLY via
+`/giay-bao-hanh/<code>/<file>`, which refuses any filename other than the registered cert — private
+docs stay behind `/ho-so` + cookie). Client lookup lives on **`tra-cuu.html`, a HIDDEN page** (noindex, in
 `PAGES` but linked nowhere — customers reach it via the **QR printed on the warranty paper**):
 login with **registered phone number only** (the phone is the whole credential; unique per client)
 → dashboard with docs, construction logs, and a 3-tier warranty countdown
@@ -128,8 +131,10 @@ must match URL code; traversal-guarded). **Admin panel `/quan-tri` is LOCALHOST-
 middleware in `server.js` + `lib/admin.js`: loopback socket AND no cf-ray/cf-connecting-ip/
 x-forwarded-for headers, else the 404 page — from the internet it doesn't exist; no password; its
 JS is inline in `quan-tri.html`, NOT in `main.js`). Admin can add a client (name + phone +
-handover date + warranty-paper upload → auto code `HD-<year>-<NNN>`, auto expiry), list with
-expiry chips, delete (record only; folder kept). **Data lives in git-ignored `Private/clients/`**
+handover date + PUBLIC warranty-paper upload → auto code `HD-<year>-<NNN>`, auto expiry), add/remove
+per-client PRIVATE "hồ sơ dự án" docs (file + label), list with expiry chips, delete (record only;
+folder kept). Image uploads auto-normalize via `sharp` (EXIF-rotate, ≤1600px, WebP); PDFs pass
+through. Data model per client: `baoHanh` (public cert) vs `docs`/`logs` (private). **Data lives in git-ignored `Private/clients/`**
 (`clients.json` + one folder per client, mtime-cached — hand-editing still works;
 format doc: `deploy/client-portal.md`). Demo login: phone `0900000001`. Frontend:
 `initTraCuu()` in `js/main.js`; `.wr-*` styles in `css/tailwind.css` (tabs/`initTabs` removed).

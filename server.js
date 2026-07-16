@@ -89,6 +89,9 @@ app.post('/api/tra-cuu/login', loginLimiter, portal.handleLogin);
 app.get('/api/tra-cuu/me', portal.handleMe);
 app.post('/api/tra-cuu/logout', portal.handleLogout);
 app.get('/ho-so/:code/*', portal.handleFile);
+// Giấy chứng nhận bảo hành công khai (gallery trên /bao-hanh)
+app.get('/api/bao-hanh', portal.handleCertList);
+app.get('/giay-bao-hanh/:code/:file', portal.handleCertFile);
 
 // Quản trị bảo hành — CHỈ truy cập được từ chính Mac Mini (localhost, không qua
 // tunnel). Mọi request khác nhận trang 404 y hệt đường dẫn không tồn tại, nên từ
@@ -111,6 +114,8 @@ app.get('/quan-tri.html', localOnly, (req, res) => res.sendFile(path.join(__dirn
 app.get('/api/admin/clients', localOnly, admin.handleList);
 app.post('/api/admin/clients', localOnly, adminUpload.array('file', 1), admin.handleCreate);
 app.delete('/api/admin/clients/:code', localOnly, admin.handleDelete);
+app.post('/api/admin/clients/:code/docs', localOnly, adminUpload.array('file', 1), admin.handleAddDoc);
+app.delete('/api/admin/clients/:code/docs/:file', localOnly, admin.handleDeleteDoc);
 app.use('/api/admin', (err, req, res, next) => {
   if (err instanceof multer.MulterError) {
     return res.status(400).json({ ok: false, error: 'Tệp không hợp lệ (PDF hoặc ảnh, tối đa 10 MB).' });
