@@ -85,6 +85,17 @@
       return `<span class="inline-block rounded-full px-2.5 py-0.5 text-xs font-medium ${cls}">${W_LABELS[key]} ${w.years} năm · ${status}</span>`;
     }
 
+    function logsHtml(c) {
+      const logs = c.logs || [];
+      if (!logs.length) return '<p class="mt-1 text-sm text-text-muted">Chưa có dòng nhật ký nào.</p>';
+      // Hiển thị mới nhất trên cùng nhưng giữ index gốc để gỡ đúng dòng
+      return `<ul class="mt-1 space-y-1">${logs.map((l, i) => ({ l, i })).reverse().map(({ l, i }) => `
+        <li class="flex items-start justify-between gap-2 text-sm">
+          <span>🛠 <strong class="font-medium">${fmtDate(l.date)}</strong> — ${esc(l.text)}</span>
+          <button type="button" class="shrink-0 text-xs text-[#991B1B] hover:underline" data-del-log="${esc(c.code)}" data-index="${i}">gỡ</button>
+        </li>`).join('')}</ul>`;
+    }
+
     function rowHtml(c) {
       const chips = Object.entries(c.warranties || {}).map(([k, w]) => chip(k, w)).join(' ');
       const docs = (c.docs || []).length
@@ -115,6 +126,14 @@
               <input type="text" name="label" placeholder="Tên tài liệu (vd: Hợp đồng thi công)" class="field-input w-56 py-1.5 text-sm">
               <button type="submit" class="btn-primary px-3 py-1.5 text-sm">Thêm</button>
             </form>
+
+            <p class="mt-4 text-sm font-medium">Nhật ký thi công</p>
+            ${logsHtml(c)}
+            <form class="mt-2 flex flex-wrap items-center gap-2" data-add-log="${esc(c.code)}">
+              <input type="date" name="date" class="field-input w-40 py-1.5 text-sm" title="Bỏ trống = hôm nay">
+              <input type="text" name="text" required maxlength="500" placeholder="VD: Đổ bê tông móng, nghiệm thu cốt thép…" class="field-input min-w-0 flex-1 py-1.5 text-sm">
+              <button type="submit" class="btn-primary px-3 py-1.5 text-sm">Thêm</button>
+            </form>
           </div>
         </article>`;
     }
@@ -135,6 +154,15 @@
     }
 
     document.getElementById('client-list').addEventListener('click', async (e) => {
+      const delLog = e.target.closest('[data-del-log]');
+      if (delLog) {
+        const code = delLog.getAttribute('data-del-log');
+        const index = delLog.getAttribute('data-index');
+        if (!confirm('Gỡ dòng nhật ký này?')) return;
+        const res = await fetch('/api/admin/clients/' + encodeURIComponent(code) + '/logs/' + index, { method: 'DELETE' });
+        if (res.ok) loadList();
+        return;
+      }
       const delDoc = e.target.closest('[data-del-doc]');
       if (delDoc) {
         const code = delDoc.getAttribute('data-del-doc');
@@ -152,20 +180,30 @@
       if (res.ok) loadList();
     });
 
-    // Thêm hồ sơ dự án cho từng khách (form con trong mỗi thẻ)
+    // Thêm hồ sơ dự án / nhật ký thi công cho từng khách (form con trong mỗi thẻ)
     document.getElementById('client-list').addEventListener('submit', async (e) => {
-      const form = e.target.closest('[data-add-doc]');
-      if (!form) return;
+      const docForm = e.target.closest('[data-add-doc]');
+      const logForm = e.target.closest('[data-add-log]');
+      if (!docForm && !logForm) return;
       e.preventDefault();
-      const code = form.getAttribute('data-add-doc');
+      const form = docForm || logForm;
       const btn = form.querySelector('[type="submit"]');
       btn.disabled = true; btn.textContent = '…';
       try {
-        const res = await fetch('/api/admin/clients/' + encodeURIComponent(code) + '/docs', {
-          method: 'POST', body: new FormData(form),
-        });
+        let res;
+        if (docForm) {
+          res = await fetch('/api/admin/clients/' + encodeURIComponent(docForm.getAttribute('data-add-doc')) + '/docs', {
+            method: 'POST', body: new FormData(docForm),
+          });
+        } else {
+          res = await fetch('/api/admin/clients/' + encodeURIComponent(logForm.getAttribute('data-add-log')) + '/logs', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ text: logForm.text.value, date: logForm.date.value }),
+          });
+        }
         const data = await res.json();
-        if (!res.ok || !data.ok) throw new Error(data.error || 'Không thêm được tài liệu.');
+        if (!res.ok || !data.ok) throw new Error(data.error || 'Không lưu được.');
         loadList();
       } catch (err) {
         alert(err.message);

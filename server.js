@@ -116,6 +116,8 @@ app.post('/api/admin/clients', localOnly, adminUpload.array('file', 1), admin.ha
 app.delete('/api/admin/clients/:code', localOnly, admin.handleDelete);
 app.post('/api/admin/clients/:code/docs', localOnly, adminUpload.array('file', 1), admin.handleAddDoc);
 app.delete('/api/admin/clients/:code/docs/:file', localOnly, admin.handleDeleteDoc);
+app.post('/api/admin/clients/:code/logs', localOnly, admin.handleAddLog);
+app.delete('/api/admin/clients/:code/logs/:index', localOnly, admin.handleDeleteLog);
 app.use('/api/admin', (err, req, res, next) => {
   if (err instanceof multer.MulterError) {
     return res.status(400).json({ ok: false, error: 'Tệp không hợp lệ (PDF hoặc ảnh, tối đa 10 MB).' });
