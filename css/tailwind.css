@@ -287,6 +287,28 @@
     @apply flex flex-1 min-h-[52px] items-center justify-center gap-2 text-sm font-medium text-text;
   }
 
+  /* Trang Bảo hành — danh sách phạm vi/điều kiện: ✓ được bảo hành, ✕ loại trừ */
+  .policy-list li {
+    @apply relative pl-6 text-base text-text;
+  }
+  .policy-list li + li {
+    @apply mt-1.5;
+  }
+  .policy-list li::before {
+    @apply absolute left-0 top-0 font-semibold;
+  }
+  .policy-list--yes li::before {
+    content: '✓';
+    color: #166534; /* xanh "còn hạn" — cùng tông chip quản trị */
+  }
+  .policy-list--no li::before {
+    content: '✕';
+    @apply text-text-light;
+  }
+  .policy-list--no li {
+    @apply text-text-muted;
+  }
+
   /* Trang Bảo hành — thanh thời hạn bảo hành (meter: fill = primary, track = bậc nhạt cùng tông) */
   .wr-row + .wr-row {
     @apply mt-4;

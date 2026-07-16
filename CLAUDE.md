@@ -116,7 +116,9 @@ route returns a 500 "chưa được cấu hình" message. Preferred: **Gmail OAu
 refresh token), since Google is deprecating App Passwords. See `docs/run-and-deploy.md` §2.3.
 
 ### Client portal — hidden `/tra-cuu` + `lib/portal.js`; admin `/quan-tri` (localhost-only) + `lib/admin.js`
-`/bao-hanh` (public) shows the specimen certificate (`Materials/Insurance.webp`) plus the
+`/bao-hanh` (public) shows the policy banner (`Materials/Insurance_policy.webp`) + the warranty
+policy content (from `Materials/"Noi dung Bao hanh.doc"`, hand-laid-out as tier cards with
+được/không-được-bảo-hành `.policy-list`s, conditions checklist, response-time tiles) plus the
 **"Giấy bảo hành đã cấp" gallery** — EVERY issued warranty paper incl. expired ones
 (`initCertGallery()` ← `GET /api/bao-hanh` ← `client.baoHanh.file`; public files served ONLY via
 `/giay-bao-hanh/<code>/<file>`, which refuses any filename other than the registered cert — private
@@ -164,8 +166,9 @@ Real photos/videos for the site live in `Materials/`, served publicly at `/mater
 route in `server.js`, 30-day cache). To keep the site light, **every upload must follow the
 weight-control checklist in [`Materials/README.md`](Materials/README.md)** (WebP/AVIF, set
 `width`/`height`, `loading="lazy"`, `<picture>`+`srcset` for responsive, `preload="none"`+`poster`
-for video). The hero "Giấy chứng nhận bảo hiểm" button opens `Materials/Insurance.webp` in the
-shared lightbox modal.
+for video). `Materials/Insurance.webp` (old specimen) and the `initInsuranceModal` lightbox are
+GONE from the site — the bao-hanh banner is `Insurance_policy.webp` (converted from the source
+`Insurance_policy.jpg` kept alongside).
 
 ## Design tokens
 

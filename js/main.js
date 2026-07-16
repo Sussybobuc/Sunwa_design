@@ -472,19 +472,6 @@ function openImageModal(src, alt, caption) {
   modalEl.querySelector('[data-modal-close]').focus();
 }
 
-function initInsuranceModal() {
-  const btn = document.querySelector('[data-insurance]');
-  if (!btn) return;
-  const show = () =>
-    openImageModal('/materials/Insurance.webp', 'Giấy Chứng nhận Bảo hành', 'Giấy Chứng nhận Bảo hành');
-  btn.addEventListener('click', show);
-  // Trên /bao-hanh phần tử là <img role="button"> — hỗ trợ bàn phím.
-  btn.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); show(); }
-  });
-  // Esc đã được initModal() xử lý chung (cùng modalEl) — không cần listener trùng ở đây.
-}
-
 
 /* ==========================================================================
    TRA CỨU HỒ SƠ — client portal (login + dashboard) on /bao-hanh
@@ -1337,7 +1324,6 @@ document.addEventListener('DOMContentLoaded', () => {
   renderProjects(); // phải chạy trước initModal / initScrollReveal
   initSmoothScroll();
   initModal();
-  initInsuranceModal();
   initTraCuu();
   initForms();
   initCalculator();
