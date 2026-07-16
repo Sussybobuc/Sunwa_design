@@ -8,6 +8,7 @@
 const path = require('path');
 const fs = require('fs');
 const os = require('os');
+const { execFileSync } = require('child_process');
 
 require('dotenv').config({ path: path.join(__dirname, '..', '.env') });
 const nodemailer = require(path.join(__dirname, '..', 'node_modules', 'nodemailer'));
@@ -93,6 +94,31 @@ const CHECKS = [
       const freeGb = (st.bavail * st.bsize) / 2 ** 30;
       if (freeGb < MIN_FREE_DISK_GB) throw new Error(`chỉ còn ${freeGb.toFixed(1)} GB`);
       return `${freeGb.toFixed(0)} GB trống`;
+    },
+  },
+  {
+    // Hai thứ duy nhất KHÔNG nằm trong git: Private/clients (dữ liệu khách) và
+    // .env (bí mật). Snapshot hằng ngày vào ~/Backups/sunwa-clients/, giữ 30 bản.
+    // Lưu ý: cùng ổ đĩa — chống xoá nhầm, KHÔNG chống hỏng ổ (dùng Time Machine cho việc đó).
+    name: 'Sao lưu Private/clients + .env',
+    async run() {
+      const repo = path.join(__dirname, '..');
+      const backupDir = path.join(os.homedir(), 'Backups', 'sunwa-clients');
+      fs.mkdirSync(backupDir, { recursive: true, mode: 0o700 });
+      const pad = (n) => String(n).padStart(2, '0');
+      const now = new Date();
+      const target = path.join(backupDir, `sunwa-${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}.tar.gz`);
+      const items = ['Private/clients', '.env'].filter((p) => fs.existsSync(path.join(repo, p)));
+      if (items.length === 0) throw new Error('không thấy Private/clients lẫn .env để sao lưu');
+      execFileSync('/usr/bin/tar', ['-czf', target, '-C', repo, ...items]);
+      fs.chmodSync(target, 0o600);
+      // Giữ 30 bản mới nhất (tên file chứa ngày nên sort() = theo thời gian)
+      const files = fs.readdirSync(backupDir).filter((f) => f.endsWith('.tar.gz')).sort();
+      for (const f of files.slice(0, Math.max(0, files.length - 30))) {
+        fs.unlinkSync(path.join(backupDir, f));
+      }
+      const kb = Math.round(fs.statSync(target).size / 1024);
+      return `${path.basename(target)} (${kb} KB), ${Math.min(files.length, 30)} bản đang giữ`;
     },
   },
 ];

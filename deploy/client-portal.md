@@ -37,7 +37,9 @@ Private/clients/
 ```
 
 > `Private/` **không nằm trong git** (thông tin cá nhân khách hàng không bao giờ được commit).
-> Vì vậy thư mục này — cùng với `.env` — phải được **backup riêng** (Time Machine / ổ ngoài).
+> **Backup tự động hằng ngày 08:00** vào `~/Backups/sunwa-clients/` (kèm `.env`, giữ 30 bản —
+> xem `deploy/README.md` mục "Daily backup" để khôi phục). Vẫn nên có Time Machine / ổ ngoài
+> để phòng hỏng ổ đĩa.
 
 ## Thêm một khách hàng
 

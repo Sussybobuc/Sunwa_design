@@ -65,6 +65,22 @@ sudo launchctl kickstart -k system/com.cloudflare.cloudflared   # tunnel
 sudo launchctl kickstart -k system/com.sunwa.pm2                # pm2 resurrect (one-shot)
 ```
 
+## Daily backup — `Private/clients` + `.env`
+
+The 08:00 health check also snapshots the two things that live outside git:
+`~/Backups/sunwa-clients/sunwa-YYYY-MM-DD.tar.gz` (chmod 600, newest 30 kept; failure = alert
+email like any other check). Same-disk only — protects against accidental deletion, NOT disk
+death; keep Time Machine (or an occasional copy of that folder to an external drive) for that.
+
+**Restore** (all clients, or cherry-pick one folder):
+```bash
+cd ~/Projects/Sunwa_Design
+tar -xzf ~/Backups/sunwa-clients/sunwa-<date>.tar.gz Private/clients   # everything
+tar -xzf ~/Backups/sunwa-clients/sunwa-<date>.tar.gz Private/clients/HD-2026-001  # one client's files
+```
+(clients.json is inside `Private/clients/` — extracting "everything" restores records + files;
+the portal picks it up immediately, no restart.)
+
 ## Daily health check
 
 `deploy/healthcheck.js` runs at **08:00 daily** (LaunchDaemon `com.sunwa.healthcheck`, plist in
