@@ -1,7 +1,7 @@
 # Self-hosting on the Mac Mini M4 — runbook
 
-The site runs on a Mac Mini M4 (24 GB, macOS, `arm64`) at the office/home, replacing Azure App
-Service. Azure stays live in parallel until the domain cutover, then gets decommissioned.
+The site runs on a Mac Mini M4 (24 GB, macOS, `arm64`) at the office/home — the ONLY production
+environment (Azure App Service was decommissioned 2026-07-16).
 
 ## Architecture
 
@@ -45,7 +45,6 @@ LaunchDaemons). The CI runner is a LaunchAgent, so queued deploys start after fi
 
 Push to `main` → `.github/workflows/selfhost-deploy.yml` runs on the Mac's own runner:
 `git pull --ff-only` → `npm ci` → `npm run build:css` → `pm2 reload sunwa` → `/healthz` check.
-(The Azure workflow also still runs until decommission.)
 
 Manual deploy (if the runner is down): same commands, from `~/Projects/Sunwa_Design`.
 
@@ -96,9 +95,8 @@ alert). External total-outage alerting is handled by Cloudflare notifications, n
 **Cutover done 2026-07-13**: domain `sunwadesign.com` bought via Cloudflare Registrar; apex + `www` +
 `test.` all routed to the tunnel; canonical/OG URLs + `sitemap.xml` + `robots.txt` updated.
 
-Remaining:
-1. Reboot-without-login test (verify pm2 + tunnel daemons come up headless).
-2. After ~1 week stable: delete the Azure Web App + remove `.github/workflows/main_sunwa-design.yml`.
+Done since: reboot test passed 2026-07-13 (services start post-FileVault-unlock, no login);
+Azure decommissioned 2026-07-16 (workflow + GitHub secrets removed, Web App deleted in portal).
 
 > Gotcha: `cloudflared tunnel login`'s `cert.pem` is **zone-scoped** — after adding a new zone,
 > re-login and pick it, or `tunnel route dns` writes records into the old zone.

@@ -32,8 +32,8 @@ There is no test suite, linter, or framework build step — Tailwind compilation
   colliding with utility class names (this bit us before — `grid` was renamed to `gridEl`).
 - **The site requires a web server — `file://` breaks it.** Pages use root-absolute asset paths
   (`/css/style.css`, `/js/main.js`) and pretty URLs (`/du-an`). Use `npm start`, not double-click.
-- **Node version.** `package.json` `engines` pins `node: 20.x` (App Service targets Node 20 LTS).
-  The Express server and the form API run on any recent Node locally; production runs on Node 20.
+- **Node version.** `package.json` `engines` requires `node >= 20`; production is the Mac Mini's
+  Homebrew Node (currently 26.x).
 
 ## Architecture
 
@@ -182,10 +182,8 @@ Push to `main` → `.github/workflows/selfhost-deploy.yml` runs on the Mac's own
 `.env`. A daily 08:00 health check (`deploy/healthcheck.js`, LaunchDaemon) emails
 `HEALTH_ALERT_EMAIL` on failure. Full runbook: **`deploy/README.md`**.
 
-> Legacy: the old **Azure App Service** deploy (`.github/workflows/main_sunwa-design.yml`) still runs
-> in parallel as a fallback during the transition window — delete the Web App + that workflow once
-> the Mac has been stable ~1 week (cutover was 2026-07-13).
+> Azure App Service (the previous host) was fully decommissioned on 2026-07-16 — workflow and
+> GitHub secrets removed; the Mac is the only production environment.
 
 ## Known TODOs before go-live
 - Fill in the real GPKD (business registration) number in the footer.
-- Decommission Azure after the stability window (see Deploy above).
