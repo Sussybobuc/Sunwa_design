@@ -115,18 +115,24 @@ Config comes from **`.env`** next to `server.js` (loaded by `dotenv` at startup;
 route returns a 500 "chưa được cấu hình" message. Preferred: **Gmail OAuth2** (client ID/secret +
 refresh token), since Google is deprecating App Passwords. See `docs/run-and-deploy.md` §2.3.
 
-### Client portal — `/bao-hanh` + `lib/portal.js`
-The hero "Giấy Chứng nhận Bảo hành" button links to `/bao-hanh`: tab 1 shows the warranty
-certificate (`Materials/Insurance.webp`, zooms via the shared lightbox), tab 2 is a client login
-(**registered phone number only** — the phone is the whole credential; must be unique per client)
+### Client portal — hidden `/tra-cuu` + `lib/portal.js`; admin `/quan-tri` (localhost-only) + `lib/admin.js`
+`/bao-hanh` (public) shows ONLY the warranty certificate (`Materials/Insurance.webp`, zooms via the
+shared lightbox) — no tabs. Client lookup lives on **`tra-cuu.html`, a HIDDEN page** (noindex, in
+`PAGES` but linked nowhere — customers reach it via the **QR printed on the warranty paper**):
+login with **registered phone number only** (the phone is the whole credential; unique per client)
 → dashboard with docs, construction logs, and a 3-tier warranty countdown
 (kết cấu 5y · chống thấm 3y · hoàn thiện 1y from `handover`). Backend: `lib/portal.js` — stateless
 HMAC-signed HttpOnly cookie (`SESSION_SECRET` env, 24h), routes `/api/tra-cuu/login|me|logout`
 (login rate-limited 10/15min) and authenticated downloads at `/ho-so/<code>/<file>` (cookie code
-must match URL code; traversal-guarded). **Data lives in git-ignored `Private/clients/`**
-(`clients.json` + one folder per client, mtime-cached — staff edit files directly, no admin UI;
+must match URL code; traversal-guarded). **Admin panel `/quan-tri` is LOCALHOST-ONLY** (`localOnly`
+middleware in `server.js` + `lib/admin.js`: loopback socket AND no cf-ray/cf-connecting-ip/
+x-forwarded-for headers, else the 404 page — from the internet it doesn't exist; no password; its
+JS is inline in `quan-tri.html`, NOT in `main.js`). Admin can add a client (name + phone +
+handover date + warranty-paper upload → auto code `HD-<year>-<NNN>`, auto expiry), list with
+expiry chips, delete (record only; folder kept). **Data lives in git-ignored `Private/clients/`**
+(`clients.json` + one folder per client, mtime-cached — hand-editing still works;
 format doc: `deploy/client-portal.md`). Demo login: phone `0900000001`. Frontend:
-`initTabs()` + `initTraCuu()` in `js/main.js`; `.tab-*`/`.wr-*` styles in `css/tailwind.css`.
+`initTraCuu()` in `js/main.js`; `.wr-*` styles in `css/tailwind.css` (tabs/`initTabs` removed).
 Never commit client PII; `Private/clients/` + `.env` are the two backup-outside-git items.
 
 ### The `/api/submit` contract (shared FE ⇄ BE)

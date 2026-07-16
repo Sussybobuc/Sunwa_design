@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex">
+  <title>Quản trị bảo hành — Sunwa (localhost)</title>
+  <link rel="icon" href="/assets/favicon.png?v=2" type="image/png" sizes="48x48">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="bg-bg-secondary">
+  <header class="border-b border-border bg-bg">
+    <div class="container-x flex h-nav items-center justify-between">
+      <div class="flex items-center gap-2">
+        <img src="/materials/Logo.webp" alt="" width="36" height="36" class="h-9 w-9">
+        <span class="text-lg font-semibold">Quản trị bảo hành</span>
+        <span class="rounded-full bg-bg-secondary px-2.5 py-0.5 text-xs font-medium text-text-muted">chỉ chạy trên Mac Mini</span>
+      </div>
+      <a href="/" class="text-base text-primary hover:underline">← Về trang chủ</a>
+    </div>
+  </header>
+
+  <main class="container-x py-8">
+    <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
+      <!-- Thêm khách hàng -->
+      <section class="card h-fit p-6">
+        <h2 class="text-xl font-semibold">Thêm khách hàng</h2>
+        <p class="mt-1 text-sm text-text-muted">Tạo hồ sơ bảo hành mới — hạn bảo hành tự tính từ ngày bàn giao (kết cấu 5 năm · chống thấm 3 năm · hoàn thiện 1 năm).</p>
+        <form id="add-form" class="mt-5 space-y-4" novalidate>
+          <div>
+            <label class="field-label" for="ad-name">Tên khách hàng <span class="text-primary">*</span></label>
+            <input class="field-input" type="text" id="ad-name" name="name" required placeholder="Nguyễn Văn A">
+          </div>
+          <div>
+            <label class="field-label" for="ad-phone">Số điện thoại (dùng để đăng nhập) <span class="text-primary">*</span></label>
+            <input class="field-input" type="tel" id="ad-phone" name="phone" required inputmode="numeric" placeholder="0912345678">
+          </div>
+          <div>
+            <label class="field-label" for="ad-handover">Ngày bàn giao (bắt đầu bảo hành) <span class="text-primary">*</span></label>
+            <input class="field-input" type="date" id="ad-handover" name="handover" required>
+          </div>
+          <div>
+            <label class="field-label" for="ad-project">Công trình (tuỳ chọn)</label>
+            <input class="field-input" type="text" id="ad-project" name="project" placeholder="Nhà phố 3 tầng — Hải Châu">
+          </div>
+          <div>
+            <label class="field-label" for="ad-file">Giấy chứng nhận bảo hành <span class="text-primary">*</span></label>
+            <input class="field-input" type="file" id="ad-file" name="file" required accept="application/pdf,image/*">
+            <p class="mt-1 text-sm text-text-muted">PDF hoặc ảnh, tối đa 10 MB. Khách sẽ thấy tệp này khi tra cứu.</p>
+          </div>
+          <p id="add-error" class="hidden text-base text-[#C2410C]" role="alert"></p>
+          <button type="submit" class="btn-primary w-full">Tạo hồ sơ</button>
+        </form>
+        <div class="mt-6 rounded-lg bg-bg-secondary px-4 py-3 text-sm text-text-muted">
+          <p><strong class="font-medium text-text">QR trên giấy bảo hành</strong> trỏ về:</p>
+          <p class="mt-1 select-all font-medium text-primary">https://sunwadesign.com/tra-cuu</p>
+          <p class="mt-1">Khách quét QR rồi nhập SĐT đã đăng ký để xem hồ sơ.</p>
+        </div>
+      </section>
+
+      <!-- Danh sách -->
+      <section class="lg:col-span-2">
+        <div class="flex items-baseline justify-between">
+          <h2 class="text-xl font-semibold">Khách hàng (<span id="count">…</span>)</h2>
+          <p class="text-sm text-text-muted">Xoá chỉ gỡ hồ sơ khỏi tra cứu — thư mục tệp được giữ lại trong Private/clients/.</p>
+        </div>
+        <div id="client-list" class="mt-4 space-y-3">
+          <p class="text-base text-text-muted">Đang tải…</p>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    'use strict';
+    const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    const fmtDate = (iso) => iso ? new Date(iso + 'T00:00:00').toLocaleDateString('vi-VN') : '—';
+    const W_LABELS = { ketCau: 'Kết cấu', chongTham: 'Chống thấm', hoanThien: 'Hoàn thiện' };
+
+    function chip(key, w) {
+      const cls = w.active
+        ? 'bg-[#DCFCE7] text-[#166534]'   /* còn hạn */
+        : 'bg-[#FEE2E2] text-[#991B1B]';  /* hết hạn */
+      const status = w.active ? 'đến ' + fmtDate(w.until) : 'hết hạn ' + fmtDate(w.until);
+      return `<span class="inline-block rounded-full px-2.5 py-0.5 text-xs font-medium ${cls}">${W_LABELS[key]} ${w.years} năm · ${status}</span>`;
+    }
+
+    function rowHtml(c) {
+      const chips = Object.entries(c.warranties || {}).map(([k, w]) => chip(k, w)).join(' ');
+      return `
+        <article class="card flex flex-col gap-2 p-4" data-code="${esc(c.code)}">
+          <div class="flex flex-wrap items-baseline justify-between gap-2">
+            <div>
+              <span class="font-semibold">${esc(c.name)}</span>
+              <span class="ml-2 text-sm text-text-muted">${esc(c.code)}</span>
+            </div>
+            <button type="button" class="text-sm text-[#991B1B] hover:underline" data-del="${esc(c.code)}">Xoá</button>
+          </div>
+          <p class="text-sm text-text-muted">SĐT: <strong class="font-medium text-text">${esc(c.phone)}</strong>
+            · Bàn giao: ${fmtDate(c.handover)}${c.project ? ' · ' + esc(c.project) : ''} · ${c.docsCount} tài liệu</p>
+          <div class="flex flex-wrap gap-1.5">${chips}</div>
+        </article>`;
+    }
+
+    async function loadList() {
+      const listEl = document.getElementById('client-list');
+      try {
+        const res = await fetch('/api/admin/clients');
+        const data = await res.json();
+        const rows = data.clients || [];
+        document.getElementById('count').textContent = rows.length;
+        listEl.innerHTML = rows.length
+          ? rows.map(rowHtml).join('')
+          : '<p class="text-base text-text-muted">Chưa có khách hàng nào — thêm hồ sơ đầu tiên ở bên trái.</p>';
+      } catch {
+        listEl.innerHTML = '<p class="text-base text-[#C2410C]">Không tải được danh sách. Trang này chỉ chạy tại http://localhost:3000/quan-tri trên Mac Mini.</p>';
+      }
+    }
+
+    document.getElementById('client-list').addEventListener('click', async (e) => {
+      const btn = e.target.closest('[data-del]');
+      if (!btn) return;
+      const code = btn.getAttribute('data-del');
+      if (!confirm(`Xoá hồ sơ ${code}? Khách sẽ không tra cứu được nữa (thư mục tệp vẫn được giữ).`)) return;
+      const res = await fetch('/api/admin/clients/' + encodeURIComponent(code), { method: 'DELETE' });
+      if (res.ok) loadList();
+    });
+
+    document.getElementById('add-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const form = e.target;
+      const errEl = document.getElementById('add-error');
+      errEl.classList.add('hidden');
+      const btn = form.querySelector('[type="submit"]');
+      btn.disabled = true; btn.textContent = 'Đang tạo…';
+      try {
+        const res = await fetch('/api/admin/clients', { method: 'POST', body: new FormData(form) });
+        const data = await res.json();
+        if (!res.ok || !data.ok) throw new Error(data.error || 'Không tạo được hồ sơ.');
+        form.reset();
+        loadList();
+      } catch (err) {
+        errEl.textContent = err.message;
+        errEl.classList.remove('hidden');
+      } finally {
+        btn.disabled = false; btn.textContent = 'Tạo hồ sơ';
+      }
+    });
+
+    loadList();
+  </script>
+</body>
+</html>

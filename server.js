@@ -90,6 +90,34 @@ app.get('/api/tra-cuu/me', portal.handleMe);
 app.post('/api/tra-cuu/logout', portal.handleLogout);
 app.get('/ho-so/:code/*', portal.handleFile);
 
+// Quản trị bảo hành — CHỈ truy cập được từ chính Mac Mini (localhost, không qua
+// tunnel). Mọi request khác nhận trang 404 y hệt đường dẫn không tồn tại, nên từ
+// internet trang quản trị coi như không có. Xem lib/admin.js.
+const admin = require('./lib/admin');
+const localOnly = (req, res, next) => {
+  if (admin.isLocalRequest(req)) return next();
+  res.status(404).sendFile(path.join(__dirname, '404.html'));
+};
+const adminUpload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: MAX_TOTAL_UPLOAD, files: 1 },
+  fileFilter: (req, file, cb) => {
+    const ok = file.mimetype === 'application/pdf' || /^image\//.test(file.mimetype);
+    cb(ok ? null : new multer.MulterError('LIMIT_UNEXPECTED_FILE', file.fieldname), ok);
+  },
+});
+app.get('/quan-tri', localOnly, (req, res) => res.sendFile(path.join(__dirname, 'quan-tri.html')));
+app.get('/quan-tri.html', localOnly, (req, res) => res.sendFile(path.join(__dirname, 'quan-tri.html')));
+app.get('/api/admin/clients', localOnly, admin.handleList);
+app.post('/api/admin/clients', localOnly, adminUpload.array('file', 1), admin.handleCreate);
+app.delete('/api/admin/clients/:code', localOnly, admin.handleDelete);
+app.use('/api/admin', (err, req, res, next) => {
+  if (err instanceof multer.MulterError) {
+    return res.status(400).json({ ok: false, error: 'Tệp không hợp lệ (PDF hoặc ảnh, tối đa 10 MB).' });
+  }
+  next(err);
+});
+
 // News feed aggregation (tin-tuc page) — served from a 2h in-memory cache.
 const { getNews } = require('./lib/news');
 app.get('/api/news', async (req, res) => {
@@ -122,6 +150,7 @@ const PAGES = {
   '/lien-he': 'lien-he',
   '/bao-hanh': 'bao-hanh',
   '/tin-tuc': 'tin-tuc',
+  '/tra-cuu': 'tra-cuu', // trang tra cứu ẨN — chỉ tới qua QR trên giấy bảo hành
   // Section landing pages (placeholder)
   '/quan-ly-chat-luong': 'quan-ly-chat-luong',
   '/he-thong-phap-ly': 'he-thong-phap-ly',

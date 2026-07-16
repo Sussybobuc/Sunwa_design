@@ -1,12 +1,19 @@
-# Cổng tra cứu hồ sơ khách hàng (/bao-hanh) — hướng dẫn quản lý dữ liệu
+# Cổng tra cứu hồ sơ khách hàng (/tra-cuu) — hướng dẫn quản lý dữ liệu
 
-Khách hàng đăng nhập tại **https://\<domain\>/bao-hanh** (tab "Tra cứu hồ sơ") bằng
-**số điện thoại đã đăng ký** (chỉ cần SĐT — không cần mã). Sau khi đăng nhập họ thấy: tài liệu (hợp đồng,
-thiết kế…), nhật ký thi công, và thời hạn bảo hành (kết cấu 5 năm · chống thấm 3 năm ·
-hoàn thiện 1 năm, tính từ ngày bàn giao).
+Khách hàng đăng nhập tại **https://\<domain\>/tra-cuu** — trang ẨN, không có link nào trên site,
+chỉ tới được qua **QR in trên giấy chứng nhận bảo hành** (QR do Sunwa tự in, trỏ về URL trên).
+Đăng nhập bằng **số điện thoại đã đăng ký** (chỉ cần SĐT — không cần mã). Sau khi đăng nhập họ
+thấy: tài liệu (giấy bảo hành, hợp đồng, thiết kế…), nhật ký thi công, và thời hạn bảo hành
+(kết cấu 5 năm · chống thấm 3 năm · hoàn thiện 1 năm, tính từ ngày bàn giao).
+Trang `/bao-hanh` công khai giờ CHỈ hiển thị giấy chứng nhận mẫu.
 
-**Không có trang quản trị (phase 2).** Nhân viên cập nhật dữ liệu bằng cách sửa file trực tiếp
-trên Mac Mini. Server tự nhận thay đổi (không cần restart).
+**Trang quản trị: http://localhost:3000/quan-tri — CHỈ mở được trên chính Mac Mini.**
+Mọi truy cập qua internet/tunnel nhận 404 (middleware `localOnly`, xem `lib/admin.js`) — từ bên
+ngoài trang này coi như không tồn tại. Tại đó có thể: thêm khách (tên + SĐT + ngày bàn giao +
+tải giấy bảo hành lên — mã hồ sơ `HD-<năm>-<số>` tự sinh, hạn bảo hành tự tính), xem danh sách
+kèm hạn còn/hết, và xoá hồ sơ (chỉ gỡ khỏi tra cứu — thư mục tệp được giữ lại).
+
+Sửa file trực tiếp như trước vẫn được — server tự nhận thay đổi (không cần restart).
 
 ## Dữ liệu nằm ở đâu
 

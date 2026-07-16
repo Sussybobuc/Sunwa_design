@@ -485,30 +485,6 @@ function initInsuranceModal() {
   // Esc đã được initModal() xử lý chung (cùng modalEl) — không cần listener trùng ở đây.
 }
 
-/* ==========================================================================
-   TABS — /bao-hanh (Giấy chứng nhận | Tra cứu hồ sơ)
-   ========================================================================== */
-function initTabs() {
-  const bar = document.querySelector('.tab-bar');
-  if (!bar) return;
-  const buttons = Array.from(bar.querySelectorAll('[data-tab]'));
-
-  const activate = (name) => {
-    buttons.forEach((btn) => {
-      const on = btn.getAttribute('data-tab') === name;
-      btn.classList.toggle('is-active', on);
-      btn.setAttribute('aria-selected', on ? 'true' : 'false');
-      const panel = document.getElementById('tab-' + btn.getAttribute('data-tab'));
-      if (panel) panel.classList.toggle('hidden', !on);
-    });
-  };
-
-  buttons.forEach((btn) =>
-    btn.addEventListener('click', () => activate(btn.getAttribute('data-tab'))));
-
-  // Cho phép link thẳng tới tab tra cứu: /bao-hanh#tra-cuu
-  if (location.hash === '#tra-cuu') activate('tra-cuu');
-}
 
 /* ==========================================================================
    TRA CỨU HỒ SƠ — client portal (login + dashboard) on /bao-hanh
@@ -1278,7 +1254,6 @@ document.addEventListener('DOMContentLoaded', () => {
   initSmoothScroll();
   initModal();
   initInsuranceModal();
-  initTabs();
   initTraCuu();
   initForms();
   initCalculator();

@@ -287,18 +287,6 @@
     @apply flex flex-1 min-h-[52px] items-center justify-center gap-2 text-sm font-medium text-text;
   }
 
-  /* Trang Bảo hành — tab bar (Giấy chứng nhận | Tra cứu hồ sơ) */
-  .tab-bar {
-    @apply flex gap-1 border-b border-border;
-  }
-  .tab-btn {
-    @apply -mb-px border-b-2 border-transparent px-4 py-3 text-base font-medium text-text-muted
-           transition duration-fast hover:text-text;
-  }
-  .tab-btn.is-active {
-    @apply border-primary font-semibold text-primary;
-  }
-
   /* Trang Bảo hành — thanh thời hạn bảo hành (meter: fill = primary, track = bậc nhạt cùng tông) */
   .wr-row + .wr-row {
     @apply mt-4;
