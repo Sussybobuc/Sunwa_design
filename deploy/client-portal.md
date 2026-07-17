@@ -4,7 +4,7 @@ Khách hàng đăng nhập tại **https://\<domain\>/tra-cuu** — trang ẨN, 
 chỉ tới được qua **QR in trên giấy chứng nhận bảo hành** (QR do Sunwa tự in, trỏ về URL trên).
 Đăng nhập bằng **số điện thoại đã đăng ký** (chỉ cần SĐT — không cần mã). Sau khi đăng nhập họ
 thấy: tài liệu (giấy bảo hành, hợp đồng, thiết kế…), nhật ký thi công, và thời hạn bảo hành
-(kết cấu 10 năm · chống thấm 3 năm · hoàn thiện 1 năm, tính từ ngày bàn giao).
+(kết cấu 10 năm · chống thấm 5 năm · hoàn thiện 1 năm, tính từ ngày bàn giao).
 Trang `/bao-hanh` công khai giờ CHỈ hiển thị giấy chứng nhận mẫu.
 
 **Trang quản trị: http://localhost:3000/quan-tri — CHỈ mở được trên chính Mac Mini.**
@@ -72,7 +72,7 @@ Ghi chú các trường:
 - **`warranty`** (không bắt buộc): tuỳ chỉnh từng hạng mục (panel quản trị có UI cho việc này —
   tick bật/tắt + số + đơn vị năm/tháng). Mỗi khóa `ketCau`/`chongTham`/`hoanThien` nhận:
   `{ "months": 96 }` (tuỳ chỉnh theo tháng) · `false` (tắt hạng mục — không hiện thanh nào) ·
-  số trần (di sản, hiểu là SỐ NĂM) · vắng mặt (dùng mặc định 120/36/12 tháng).
+  số trần (di sản, hiểu là SỐ NĂM) · vắng mặt (dùng mặc định 120/60/12 tháng).
 - **`docs[].file`** và **`logs[].photos[]`**: đường dẫn tương đối bên trong thư mục của khách đó.
 - **JSON phải hợp lệ** (dấu phẩy, ngoặc). Kiểm tra nhanh:
   `node -e "JSON.parse(require('fs').readFileSync('Private/clients/clients.json'))" && echo OK`

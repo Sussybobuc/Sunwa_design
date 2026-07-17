@@ -741,6 +741,18 @@ function initTraCuu() {
     .catch(() => {});
 }
 
+/* Ảnh tĩnh bấm-phóng-to bất kỳ: gắn data-zoom-image (+ data-caption tuỳ chọn) */
+function initZoomImages() {
+  document.querySelectorAll('[data-zoom-image]').forEach((img) => {
+    const show = () =>
+      openImageModal(img.getAttribute('src'), img.getAttribute('alt') || '', img.getAttribute('data-caption') || '');
+    img.addEventListener('click', show);
+    img.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); show(); }
+    });
+  });
+}
+
 function initModal() {
   const containers = [
     document.getElementById('projects-preview'),
@@ -1324,6 +1336,7 @@ document.addEventListener('DOMContentLoaded', () => {
   renderProjects(); // phải chạy trước initModal / initScrollReveal
   initSmoothScroll();
   initModal();
+  initZoomImages();
   initTraCuu();
   initForms();
   initCalculator();

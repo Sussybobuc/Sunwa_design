@@ -126,7 +126,7 @@ docs stay behind `/ho-so` + cookie). Client lookup lives on **`tra-cuu.html`, a 
 `PAGES` but linked nowhere — customers reach it via the **QR printed on the warranty paper**):
 login with **registered phone number only** (the phone is the whole credential; unique per client)
 → dashboard with docs, construction logs, and a warranty countdown (defaults kết cấu 10 năm ·
-chống thấm 3 năm · hoàn thiện 1 năm from `handover`; per-client override via `warranty` —
+chống thấm 5 năm · hoàn thiện 1 năm from `handover`; per-client override via `warranty` —
 each tier can be disabled or set in months, managed in /quan-tri, legacy plain numbers = years;
 math lives ONCE in `lib/portal.js` `warrantySummary`). Backend: `lib/portal.js` — stateless
 HMAC-signed HttpOnly cookie (`SESSION_SECRET` env, 24h), routes `/api/tra-cuu/login|me|logout`

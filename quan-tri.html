@@ -25,7 +25,7 @@
       <!-- Thêm khách hàng -->
       <section class="card h-fit p-6">
         <h2 class="text-xl font-semibold">Thêm khách hàng</h2>
-        <p class="mt-1 text-sm text-text-muted">Tạo hồ sơ bảo hành mới — hạn bảo hành tự tính từ ngày bàn giao (kết cấu 10 năm · chống thấm 3 năm · hoàn thiện 1 năm).</p>
+        <p class="mt-1 text-sm text-text-muted">Tạo hồ sơ bảo hành mới — hạn bảo hành tự tính từ ngày bàn giao (kết cấu 10 năm · chống thấm 5 năm · hoàn thiện 1 năm).</p>
         <form id="add-form" class="mt-5 space-y-4" novalidate>
           <div>
             <label class="field-label" for="ad-name">Tên khách hàng <span class="text-primary">*</span></label>
@@ -81,7 +81,7 @@
     const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
     const fmtDate = (iso) => iso ? new Date(iso + 'T00:00:00').toLocaleDateString('vi-VN') : '—';
     const W_LABELS = { ketCau: 'Kết cấu', chongTham: 'Chống thấm', hoanThien: 'Hoàn thiện' };
-    const W_DEFAULT_MONTHS = { ketCau: 120, chongTham: 36, hoanThien: 12 };
+    const W_DEFAULT_MONTHS = { ketCau: 120, chongTham: 60, hoanThien: 12 };
     const fmtMonths = (n) => {
       const y = Math.floor(n / 12), m = n % 12;
       return y === 0 ? `${m} tháng` : m === 0 ? `${y} năm` : `${y} năm ${m} tháng`;
