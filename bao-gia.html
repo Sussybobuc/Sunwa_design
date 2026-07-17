@@ -63,8 +63,19 @@
 
         <!-- ===== FORM BÁO GIÁ ===== -->
         <div class="fade-in">
-          <h2 class="text-xl font-semibold">Gửi yêu cầu Tư vấn miễn phí</h2>
-          <form class="lead-form mt-5 space-y-4" novalidate data-success="form-success">
+          <h2 class="text-xl font-semibold" data-quote-heading>Tư vấn Thiết kế Miễn Phí</h2>
+          <!-- Chọn luồng: chỉ hiện khi thanh toán đã cấu hình (GET /api/thanh-toan/config) -->
+          <div data-quote-mode class="mt-4 hidden grid-cols-1 gap-3 sm:grid-cols-2">
+            <button type="button" data-mode="free" class="quote-mode-btn is-active">
+              <span class="block text-base font-semibold">Tư vấn Thiết kế Miễn Phí</span>
+              <span class="mt-0.5 block text-sm text-text-muted">Sunwa liên hệ tư vấn định hướng trong 24 giờ.</span>
+            </button>
+            <button type="button" data-mode="paid" class="quote-mode-btn">
+              <span class="block text-base font-semibold">Báo giá Thi công <span data-fee class="text-primary"></span></span>
+              <span class="mt-0.5 block text-sm text-text-muted">Dự toán chi tiết theo hồ sơ lô đất — thanh toán chuyển khoản để gửi.</span>
+            </button>
+          </div>
+          <form class="lead-form mt-5 space-y-4" novalidate data-success="form-success" data-quote-form>
             <div>
               <label class="field-label" for="name">Họ và tên <span class="text-primary">*</span></label>
               <input class="field-input" type="text" id="name" name="name" required autocomplete="name" placeholder="Nguyễn Văn A">
@@ -106,8 +117,10 @@
               <p class="field-error" data-error="consent"></p>
             </div>
             <p data-form-status role="status" aria-live="polite" class="text-base text-primary-dark"></p>
-            <button type="submit" class="btn-primary w-full">Gửi yêu cầu Tư vấn miễn phí →</button>
+            <button type="submit" class="btn-primary w-full" data-quote-submit>Tư vấn Thiết kế Miễn Phí →</button>
           </form>
+          <!-- Màn thanh toán VietQR (luồng có phí) — JS render vào đây -->
+          <div data-payment-panel class="mt-5 hidden"></div>
 
           <div id="form-success" class="mt-5 hidden rounded-lg border border-success/30 bg-success/10 p-6 text-center">
             <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-success text-white">

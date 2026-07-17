@@ -870,6 +870,89 @@ function attachmentError(fileList) {
   return null;
 }
 
+/* ============================================================
+   BÁO GIÁ THI CÔNG (CÓ PHÍ) — chọn luồng + màn thanh toán VietQR
+   Chỉ kích hoạt khi server đã cấu hình SePay (GET /api/thanh-toan/config).
+   ============================================================ */
+const fmtVND = (n) => Number(n).toLocaleString('vi-VN') + 'đ';
+
+async function initQuoteMode() {
+  const toggle = document.querySelector('[data-quote-mode]');
+  const form = document.querySelector('[data-quote-form]');
+  if (!toggle || !form) return;
+
+  let cfg = null;
+  try {
+    const res = await fetch('/api/thanh-toan/config');
+    const json = await res.json();
+    if (json.ok) cfg = json;
+  } catch { /* thanh toán chưa sẵn sàng — giữ nguyên form miễn phí */ }
+  if (!cfg) return; // không cấu hình → không hiện lựa chọn có phí
+
+  toggle.querySelector('[data-fee]').textContent = `(${fmtVND(cfg.fee)})`;
+  toggle.classList.remove('hidden');
+  toggle.classList.add('grid');
+
+  const heading = document.querySelector('[data-quote-heading]');
+  const submitBtn = form.querySelector('[data-quote-submit]');
+  toggle.querySelectorAll('[data-mode]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      toggle.querySelectorAll('[data-mode]').forEach((b) => b.classList.toggle('is-active', b === btn));
+      const paid = btn.getAttribute('data-mode') === 'paid';
+      form.dataset.mode = paid ? 'paid' : 'free';
+      if (heading) heading.textContent = paid ? 'Gửi yêu cầu Báo giá Thi công' : 'Tư vấn Thiết kế Miễn Phí';
+      if (submitBtn) {
+        submitBtn.textContent = paid
+          ? `Tiếp tục — thanh toán ${fmtVND(cfg.fee)} →`
+          : 'Tư vấn Thiết kế Miễn Phí →';
+      }
+    });
+  });
+}
+
+function renderPaymentPanel(order, form) {
+  const panel = document.querySelector('[data-payment-panel]');
+  if (!panel) return;
+  form.classList.add('hidden');
+  panel.classList.remove('hidden');
+  panel.innerHTML = `
+    <div class="card p-6">
+      <h3 class="text-lg font-semibold">Quét mã để thanh toán ${fmtVND(order.soTien)}</h3>
+      <p class="mt-1 text-sm text-text-muted">Đơn <strong class="font-medium text-text">${escapeHtml(order.ma)}</strong> — mã QR đã kèm đúng số tiền và nội dung chuyển khoản.</p>
+      <img src="${escapeHtml(order.qrUrl)}" alt="Mã VietQR thanh toán" width="360" height="360"
+           class="mx-auto mt-4 w-full max-w-[300px] rounded-lg border border-border">
+      <dl class="mt-4 space-y-1 text-sm">
+        <div class="flex justify-between gap-3"><dt class="text-text-muted">Ngân hàng</dt><dd class="font-medium">${escapeHtml(order.nganHang)}</dd></div>
+        <div class="flex justify-between gap-3"><dt class="text-text-muted">Số tài khoản</dt><dd class="select-all font-medium">${escapeHtml(order.soTaiKhoan)}</dd></div>
+        <div class="flex justify-between gap-3"><dt class="text-text-muted">Chủ tài khoản</dt><dd class="font-medium">${escapeHtml(order.chuTaiKhoan)}</dd></div>
+        <div class="flex justify-between gap-3"><dt class="text-text-muted">Nội dung CK (bắt buộc)</dt><dd class="select-all font-semibold text-primary">${escapeHtml(order.noiDung)}</dd></div>
+      </dl>
+      <p data-pay-status class="mt-4 flex items-center gap-2 rounded-lg bg-bg-secondary px-4 py-3 text-sm text-text-muted">
+        <span class="inline-block h-2 w-2 animate-pulse rounded-full bg-primary"></span>
+        Đang chờ thanh toán… trang sẽ tự cập nhật ngay khi nhận được tiền (đơn giữ trong 30 phút).
+      </p>
+    </div>`;
+
+  const statusEl = panel.querySelector('[data-pay-status]');
+  const timer = setInterval(async () => {
+    try {
+      const res = await fetch('/api/thanh-toan/trang-thai/' + encodeURIComponent(order.ma));
+      const json = await res.json();
+      if (json.status === 'paid') {
+        clearInterval(timer);
+        panel.innerHTML = `
+          <div class="rounded-lg border border-success/30 bg-success/10 p-6 text-center">
+            <h3 class="text-lg font-semibold text-text">Đã nhận thanh toán — yêu cầu đã được gửi!</h3>
+            <p class="mt-1 text-base text-text-muted">Cảm ơn bạn. Sunwa sẽ gửi báo giá thi công chi tiết trong thời gian sớm nhất. Mã đơn của bạn: <strong>${escapeHtml(order.ma)}</strong>.</p>
+          </div>`;
+      } else if (json.status === 'expired') {
+        clearInterval(timer);
+        statusEl.innerHTML = 'Đơn đã hết hạn thanh toán (30 phút). <button type="button" class="font-medium text-primary underline" onclick="location.reload()">Tạo đơn mới</button> hoặc gọi hotline 0916 557 558.';
+      }
+    } catch { /* mạng chập chờn — thử lại ở nhịp sau */ }
+  }, 3000);
+}
+
 function initForms() {
   document.querySelectorAll('form.lead-form').forEach((form) => {
     const status = form.querySelector('[data-form-status]');
@@ -906,14 +989,16 @@ function initForms() {
       }
 
       try {
-        const res = await fetch('/api/submit', { method: 'POST', body: data });
-        if (!res.ok) {
-          // Hiện lỗi cụ thể từ server (VD: tệp quá lớn) thay vì thông báo chung
-          let serverError = '';
-          try { serverError = (await res.json()).error || ''; } catch { /* body không phải JSON */ }
-          throw new Error(serverError);
-        }
+        // Luồng CÓ PHÍ (data-mode="paid"): tạo đơn chờ thanh toán thay vì gửi email ngay
+        const paid = form.dataset.mode === 'paid';
+        const res = await fetch(paid ? '/api/bao-gia-thi-cong' : '/api/submit', { method: 'POST', body: data });
+        const json = await res.json().catch(() => ({}));
+        if (!res.ok) throw new Error(json.error || '');
 
+        if (paid) {
+          renderPaymentPanel(json, form);
+          return;
+        }
         form.classList.add('hidden');
         if (success) success.classList.remove('hidden');
         form.reset();
@@ -1339,6 +1424,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initZoomImages();
   initTraCuu();
   initForms();
+  initQuoteMode();
   initCalculator();
   initScrollReveal();
   initCountUp();

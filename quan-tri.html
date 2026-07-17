@@ -65,6 +65,15 @@
 
       <!-- Danh sách -->
       <section class="lg:col-span-2">
+        <div class="mb-8">
+          <div class="flex items-baseline justify-between">
+            <h2 class="text-xl font-semibold">Đơn báo giá thi công (có phí)</h2>
+            <p class="text-sm text-text-muted">"Khớp tay" khi khách chuyển khoản sai nội dung — tự đối chiếu sao kê trước.</p>
+          </div>
+          <div id="order-list" class="mt-4 space-y-2">
+            <p class="text-base text-text-muted">Đang tải…</p>
+          </div>
+        </div>
         <div class="flex items-baseline justify-between">
           <h2 class="text-xl font-semibold">Khách hàng (<span id="count">…</span>)</h2>
           <p class="text-sm text-text-muted">Xoá chỉ gỡ hồ sơ khỏi tra cứu — thư mục tệp được giữ lại trong Private/clients/.</p>
@@ -378,7 +387,56 @@
       }
     });
 
+    /* ---- Đơn báo giá thi công (có phí) ---- */
+    const O_STATUS = {
+      pending: ['Chờ thanh toán', 'bg-[#FEF3C7] text-[#92400E]'],
+      paid: ['Đã thanh toán', 'bg-[#DCFCE7] text-[#166534]'],
+      expired: ['Hết hạn', 'bg-bg-secondary text-text-muted'],
+    };
+
+    function orderRow(o) {
+      const [label, cls] = O_STATUS[o.status] || [o.status, 'bg-bg-secondary text-text-muted'];
+      const when = new Date(o.createdAt).toLocaleString('vi-VN');
+      const mailWarn = o.status === 'paid' && o.emailSent === false
+        ? ' <span class="rounded-full bg-[#FEE2E2] px-2 py-0.5 text-xs font-medium text-[#991B1B]">email LỖI — xử lý tay</span>' : '';
+      const matchBtn = o.status !== 'paid'
+        ? `<button type="button" class="text-sm text-primary hover:underline" data-mark-paid="${esc(o.code)}">Khớp tay</button>` : '';
+      return `
+        <article class="card flex flex-wrap items-center justify-between gap-2 p-3 text-sm">
+          <div>
+            <span class="font-semibold">${esc(o.code)}</span>
+            <span class="ml-2 inline-block rounded-full px-2 py-0.5 text-xs font-medium ${cls}">${label}</span>${mailWarn}
+            <span class="ml-2 text-text-muted">${esc(o.form.name)} · ${esc(o.form.phone)} · ${Number(o.fee).toLocaleString('vi-VN')}đ · ${when}</span>
+          </div>
+          ${matchBtn}
+        </article>`;
+    }
+
+    async function loadOrders() {
+      const el = document.getElementById('order-list');
+      try {
+        const res = await fetch('/api/admin/orders');
+        const data = await res.json();
+        const orders = data.orders || [];
+        el.innerHTML = orders.length
+          ? orders.map(orderRow).join('')
+          : '<p class="text-sm text-text-muted">Chưa có đơn nào (tính năng hiện khi cấu hình SePay trong .env).</p>';
+      } catch {
+        el.innerHTML = '<p class="text-sm text-[#C2410C]">Không tải được danh sách đơn.</p>';
+      }
+    }
+
+    document.getElementById('order-list').addEventListener('click', async (e) => {
+      const btn = e.target.closest('[data-mark-paid]');
+      if (!btn) return;
+      const code = btn.getAttribute('data-mark-paid');
+      if (!confirm(`Đánh dấu đơn ${code} ĐÃ THANH TOÁN và gửi email yêu cầu?\nChỉ làm sau khi đã thấy tiền trong sao kê.`)) return;
+      const res = await fetch('/api/admin/orders/' + encodeURIComponent(code) + '/mark-paid', { method: 'POST' });
+      if (res.ok) loadOrders();
+    });
+
     loadList();
+    loadOrders();
   </script>
 </body>
 </html>

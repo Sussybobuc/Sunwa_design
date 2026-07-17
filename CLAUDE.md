@@ -145,6 +145,21 @@ format doc: `deploy/client-portal.md`). Demo login: phone `0900000001`. Frontend
 `initTraCuu()` in `js/main.js`; `.wr-*` styles in `css/tailwind.css` (tabs/`initTabs` removed).
 Never commit client PII; `Private/clients/` + `.env` are the two backup-outside-git items.
 
+### Paid quote — "Báo giá Thi công (có phí)" via SePay (`lib/payment.js`)
+`/bao-gia` shows a free/paid mode toggle ONLY when all 4 SePay env vars are set (`SEPAY_API_KEY`,
+`PAID_QUOTE_FEE`, `BANK_ID`, `BANK_ACCOUNT_NUMBER`[, `BANK_ACCOUNT_NAME`] — see `.env.example`);
+unset = the toggle stays hidden and the site is free-form-only. Paid flow: `POST
+/api/bao-gia-thi-cong` (same fields/validation as `/api/submit`, rate-limited 5/15min) stores a
+pending order + attachments in git-ignored `Private/orders/` (30-min TTL, lazy expiry) and returns
+VietQR data (img.vietqr.io, transfer content = order code `BG<8 digits>`); the customer-facing
+panel polls `GET /api/thanh-toan/trang-thai/:ma`. `POST /api/thanh-toan/webhook` accepts ONLY
+`Authorization: Apikey <SEPAY_API_KEY>` (timing-safe; 401 otherwise — the daily health check
+asserts this), matches `BG\d{8}` in the transfer content, requires amount ≥ fee, is idempotent,
+logs unmatched transactions to `Private/orders/unmatched.log`, and on match marks the order paid
+and ONLY THEN emails the request (subject "BÁO GIÁ THI CÔNG (ĐÃ THANH TOÁN)", `emailSent` flag on
+failure). Admin (`/quan-tri`, localhost-only): order list + "Khớp tay" manual match
+(`POST /api/admin/orders/:ma/mark-paid`). Design doc: `deploy/paid-quote-plan.md`.
+
 ### The `/api/submit` contract (shared FE ⇄ BE)
 Fields: `{ name, phone, email, area, address, message, consent, source }` + `files[]` attachments.
 The FE (`initForms()`) posts **multipart FormData**; plain JSON still works for field-only posts

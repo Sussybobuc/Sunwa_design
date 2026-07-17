@@ -97,6 +97,19 @@ const CHECKS = [
     },
   },
   {
+    // Webhook thanh toán phải TỪ CHỐI request thiếu chữ ký (guard sống = 401).
+    name: 'Webhook SePay từ chối request lạ (401)',
+    async run() {
+      const res = await fetchWithTimeout(`${SITE}/api/thanh-toan/webhook`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: '{}',
+      });
+      if (res.status !== 401) throw new Error(`HTTP ${res.status} (mong đợi 401)`);
+      return 'chặn đúng';
+    },
+  },
+  {
     // Hai thứ duy nhất KHÔNG nằm trong git: Private/clients (dữ liệu khách) và
     // .env (bí mật). Snapshot hằng ngày vào ~/Backups/sunwa-clients/, giữ 30 bản.
     // Lưu ý: cùng ổ đĩa — chống xoá nhầm, KHÔNG chống hỏng ổ (dùng Time Machine cho việc đó).

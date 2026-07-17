@@ -126,6 +126,31 @@ app.use('/api/admin', (err, req, res, next) => {
   next(err);
 });
 
+// Báo giá Thi công (có phí) — thanh toán SePay, xem lib/payment.js + deploy/paid-quote-plan.md.
+const payment = require('./lib/payment');
+const orderLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 5,
+  standardHeaders: 'draft-7',
+  legacyHeaders: false,
+  message: { ok: false, error: 'Bạn đã tạo quá nhiều đơn. Vui lòng thử lại sau ít phút.' },
+});
+app.get('/api/thanh-toan/config', payment.handleConfig);
+app.post('/api/bao-gia-thi-cong', orderLimiter, upload.array('files', 3), payment.handleCreateOrder);
+app.get('/api/thanh-toan/trang-thai/:ma', payment.handleStatus);
+app.post('/api/thanh-toan/webhook', payment.handleWebhook);
+app.use('/api/bao-gia-thi-cong', (err, req, res, next) => {
+  if (err instanceof multer.MulterError) {
+    const error = err.code === 'LIMIT_FILE_SIZE'
+      ? 'Tệp đính kèm vượt quá 10 MB. Vui lòng gửi tệp nhỏ hơn.'
+      : 'Chỉ nhận tối đa 3 tệp PDF hoặc ảnh.';
+    return res.status(400).json({ ok: false, error });
+  }
+  next(err);
+});
+app.get('/api/admin/orders', localOnly, payment.handleAdminList);
+app.post('/api/admin/orders/:ma/mark-paid', localOnly, payment.handleAdminMarkPaid);
+
 // News feed aggregation (tin-tuc page) — served from a 2h in-memory cache.
 const { getNews } = require('./lib/news');
 app.get('/api/news', async (req, res) => {

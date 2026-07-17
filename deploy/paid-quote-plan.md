@@ -1,7 +1,8 @@
-# KẾ HOẠCH (chưa triển khai): "Gửi yêu cầu Báo giá Thi công (có phí)" qua banking API
+# "Gửi yêu cầu Báo giá Thi công (có phí)" qua SePay
 
-> Trạng thái: **PLAN ONLY** — đã thống nhất làm sau. Form miễn phí đã đổi tên thành
-> "Gửi yêu cầu Tư vấn miễn phí" (làm rồi). Tài liệu này là thiết kế cho form trả phí.
+> Trạng thái: **ĐÃ TRIỂN KHAI phía code** (lib/payment.js + routes + UI /bao-gia + mục đơn trong
+> /quan-tri + health check guard). Luồng trả phí TỰ ẨN cho tới khi đủ 4 biến SePay trong `.env`
+> (xem `.env.example`). Còn lại: đăng ký SePay, điền `.env`, test chuyển khoản thật số tiền nhỏ.
 
 ## Mục tiêu
 Trang `/bao-gia` sẽ có HAI luồng:

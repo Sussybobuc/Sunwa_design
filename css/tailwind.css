@@ -287,6 +287,27 @@
     @apply flex flex-1 min-h-[52px] items-center justify-center gap-2 text-sm font-medium text-text;
   }
 
+  /* Trang Bảo hành — mini nav trong hero: viền đỏ phát sáng NHẸ (pulse chậm) */
+  .subnav-pill {
+    @apply rounded-full bg-white/10 px-3.5 py-1.5 text-sm text-white/90 transition
+           hover:bg-white/20 hover:text-white;
+    border: 1px solid rgba(248, 113, 113, 0.45); /* red-400, mờ */
+    box-shadow: 0 0 8px rgba(220, 38, 38, 0.3);
+    animation: subnav-glow 2.6s ease-in-out infinite alternate;
+  }
+  .subnav-pill:hover {
+    border-color: rgba(248, 113, 113, 0.7);
+  }
+
+  /* Trang Báo giá — nút chọn luồng miễn phí / có phí */
+  .quote-mode-btn {
+    @apply rounded-lg border border-border bg-bg p-4 text-left transition duration-fast
+           hover:border-primary/50;
+  }
+  .quote-mode-btn.is-active {
+    @apply border-primary bg-primary-light/40 ring-1 ring-primary;
+  }
+
   /* Trang Bảo hành — danh sách phạm vi/điều kiện: ✓ được bảo hành, ✕ loại trừ */
   .policy-list li {
     @apply relative pl-6 text-base text-text;
@@ -597,6 +618,18 @@
 @keyframes trust-scroll {
   from { transform: translateX(0); }
   to   { transform: translateX(-50%); }
+}
+
+/* Mini nav /bao-hanh — nhịp sáng đỏ dịu (alternate nên đổi chiều mượt) */
+@keyframes subnav-glow {
+  from { box-shadow: 0 0 5px rgba(220, 38, 38, 0.2); }
+  to   { box-shadow: 0 0 12px rgba(220, 38, 38, 0.45); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .subnav-pill {
+    animation: none; /* giữ viền + glow tĩnh, bỏ nhấp nháy */
+  }
 }
 
 /* ============================================================
