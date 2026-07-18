@@ -146,8 +146,9 @@ format doc: `deploy/client-portal.md`). Demo login: phone `0900000001`. Frontend
 Never commit client PII; `Private/clients/` + `.env` are the two backup-outside-git items.
 
 ### Paid quote — "Báo giá Thi công (có phí)" via SePay (`lib/payment.js`)
-`/bao-gia` shows a free/paid mode **dropdown** ("Chọn hình thức Tư vấn" — options "Liên hệ Tư vấn"
-/ "Gửi yêu cầu Báo giá Thi công (fee)", `data-quote-select`) ONLY when all 4 SePay env vars are set
+`/bao-gia` shows a free/paid mode **dropdown** ("Chọn hình thức Tư vấn" — static options "Liên hệ
+Tư vấn (miễn phí)" / "Gửi yêu cầu Báo giá Thi công (có thu phí)" — the fee amount appears only on
+the paid submit button, `data-quote-select`) ONLY when all 4 SePay env vars are set
 (`SEPAY_API_KEY`, `PAID_QUOTE_FEE`, `BANK_ID`, `BANK_ACCOUNT_NUMBER`[, `BANK_ACCOUNT_NAME`] — see
 `.env.example`); unset = the dropdown stays hidden and the site is free-form-only. The free flow is
 branded "Liên hệ Tư vấn" everywhere (page title/h1/heading/submit button, index hero CTA, mailer

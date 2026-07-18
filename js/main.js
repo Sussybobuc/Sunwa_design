@@ -891,8 +891,6 @@ async function initQuoteMode() {
 
   const select = toggle.querySelector('[data-quote-select]');
   if (!select) return;
-  const paidOption = select.querySelector('option[value="paid"]');
-  if (paidOption) paidOption.textContent = `Gửi yêu cầu Báo giá Thi công (${fmtVND(cfg.fee)})`;
   toggle.classList.remove('hidden');
 
   const heading = document.querySelector('[data-quote-heading]');
