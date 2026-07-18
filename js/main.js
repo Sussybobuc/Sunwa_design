@@ -889,24 +889,23 @@ async function initQuoteMode() {
   } catch { /* thanh toán chưa sẵn sàng — giữ nguyên form miễn phí */ }
   if (!cfg) return; // không cấu hình → không hiện lựa chọn có phí
 
-  toggle.querySelector('[data-fee]').textContent = `(${fmtVND(cfg.fee)})`;
+  const select = toggle.querySelector('[data-quote-select]');
+  if (!select) return;
+  const paidOption = select.querySelector('option[value="paid"]');
+  if (paidOption) paidOption.textContent = `Gửi yêu cầu Báo giá Thi công (${fmtVND(cfg.fee)})`;
   toggle.classList.remove('hidden');
-  toggle.classList.add('grid');
 
   const heading = document.querySelector('[data-quote-heading]');
   const submitBtn = form.querySelector('[data-quote-submit]');
-  toggle.querySelectorAll('[data-mode]').forEach((btn) => {
-    btn.addEventListener('click', () => {
-      toggle.querySelectorAll('[data-mode]').forEach((b) => b.classList.toggle('is-active', b === btn));
-      const paid = btn.getAttribute('data-mode') === 'paid';
-      form.dataset.mode = paid ? 'paid' : 'free';
-      if (heading) heading.textContent = paid ? 'Gửi yêu cầu Báo giá Thi công' : 'Tư vấn Thiết kế Miễn Phí';
-      if (submitBtn) {
-        submitBtn.textContent = paid
-          ? `Tiếp tục — thanh toán ${fmtVND(cfg.fee)} →`
-          : 'Tư vấn Thiết kế Miễn Phí →';
-      }
-    });
+  select.addEventListener('change', () => {
+    const paid = select.value === 'paid';
+    form.dataset.mode = paid ? 'paid' : 'free';
+    if (heading) heading.textContent = paid ? 'Gửi yêu cầu Báo giá Thi công' : 'Liên hệ Tư vấn';
+    if (submitBtn) {
+      submitBtn.textContent = paid
+        ? `Tiếp tục — thanh toán ${fmtVND(cfg.fee)} →`
+        : 'Liên hệ Tư vấn →';
+    }
   });
 }
 

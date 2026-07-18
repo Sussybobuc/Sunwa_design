@@ -299,15 +299,6 @@
     border-color: rgba(248, 113, 113, 0.7);
   }
 
-  /* Trang Báo giá — nút chọn luồng miễn phí / có phí */
-  .quote-mode-btn {
-    @apply rounded-lg border border-border bg-bg p-4 text-left transition duration-fast
-           hover:border-primary/50;
-  }
-  .quote-mode-btn.is-active {
-    @apply border-primary bg-primary-light/40 ring-1 ring-primary;
-  }
-
   /* Trang Bảo hành — danh sách phạm vi/điều kiện: ✓ được bảo hành, ✕ loại trừ */
   .policy-list li {
     @apply relative pl-6 text-base text-text;

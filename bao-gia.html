@@ -17,7 +17,7 @@
   <meta name="twitter:image" content="/assets/og-image.jpg">
   <link rel="icon" href="/assets/favicon.png?v=2" type="image/png" sizes="48x48">
   <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png?v=2">
-  <title>Liên hệ Tư vấn Miễn phí | Sunwa Design Đà Nẵng</title>
+  <title>Liên hệ Tư vấn | Sunwa Design Đà Nẵng</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -53,7 +53,7 @@
     <section class="page-hero">
       <div class="container-x py-12">
         <p class="eyebrow inline-flex items-center gap-2 text-[#E8A060]"><span class="h-px w-8 bg-[#E8A060]"></span>Báo giá</p>
-        <h1 class="mt-4 text-3xl font-bold leading-tight tracking-tight text-white md:text-4xl">Liên hệ Tư vấn Miễn phí</h1>
+        <h1 class="mt-4 text-3xl font-bold leading-tight tracking-tight text-white md:text-4xl">Liên hệ Tư vấn</h1>
         <p class="mt-4 max-w-2xl text-md text-white/80">Điền thông tin bên dưới — chúng tôi phản hồi trong 24 giờ. Hoặc tự ước tính nhanh chi phí với công cụ tính bên cạnh.</p>
       </div>
     </section>
@@ -63,17 +63,14 @@
 
         <!-- ===== FORM BÁO GIÁ ===== -->
         <div class="fade-in">
-          <h2 class="text-xl font-semibold" data-quote-heading>Tư vấn Thiết kế Miễn Phí</h2>
+          <h2 class="text-xl font-semibold" data-quote-heading>Liên hệ Tư vấn</h2>
           <!-- Chọn luồng: chỉ hiện khi thanh toán đã cấu hình (GET /api/thanh-toan/config) -->
-          <div data-quote-mode class="mt-4 hidden grid-cols-1 gap-3 sm:grid-cols-2">
-            <button type="button" data-mode="free" class="quote-mode-btn is-active">
-              <span class="block text-base font-semibold">Tư vấn Thiết kế Miễn Phí</span>
-              <span class="mt-0.5 block text-sm text-text-muted">Sunwa liên hệ tư vấn định hướng trong 24 giờ.</span>
-            </button>
-            <button type="button" data-mode="paid" class="quote-mode-btn">
-              <span class="block text-base font-semibold">Báo giá Thi công <span data-fee class="text-primary"></span></span>
-              <span class="mt-0.5 block text-sm text-text-muted">Dự toán chi tiết theo hồ sơ lô đất — thanh toán chuyển khoản để gửi.</span>
-            </button>
+          <div data-quote-mode class="mt-4 hidden">
+            <label class="field-label" for="quote-mode">Chọn hình thức Tư vấn</label>
+            <select class="field-input" id="quote-mode" data-quote-select>
+              <option value="free" selected>Liên hệ Tư vấn</option>
+              <option value="paid">Gửi yêu cầu Báo giá Thi công</option>
+            </select>
           </div>
           <form class="lead-form mt-5 space-y-4" novalidate data-success="form-success" data-quote-form>
             <div>
@@ -117,7 +114,7 @@
               <p class="field-error" data-error="consent"></p>
             </div>
             <p data-form-status role="status" aria-live="polite" class="text-base text-primary-dark"></p>
-            <button type="submit" class="btn-primary w-full" data-quote-submit>Tư vấn Thiết kế Miễn Phí →</button>
+            <button type="submit" class="btn-primary w-full" data-quote-submit>Liên hệ Tư vấn →</button>
           </form>
           <!-- Màn thanh toán VietQR (luồng có phí) — JS render vào đây -->
           <div data-payment-panel class="mt-5 hidden"></div>

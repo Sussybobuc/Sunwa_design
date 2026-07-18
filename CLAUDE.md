@@ -146,9 +146,12 @@ format doc: `deploy/client-portal.md`). Demo login: phone `0900000001`. Frontend
 Never commit client PII; `Private/clients/` + `.env` are the two backup-outside-git items.
 
 ### Paid quote — "Báo giá Thi công (có phí)" via SePay (`lib/payment.js`)
-`/bao-gia` shows a free/paid mode toggle ONLY when all 4 SePay env vars are set (`SEPAY_API_KEY`,
-`PAID_QUOTE_FEE`, `BANK_ID`, `BANK_ACCOUNT_NUMBER`[, `BANK_ACCOUNT_NAME`] — see `.env.example`);
-unset = the toggle stays hidden and the site is free-form-only. Paid flow: `POST
+`/bao-gia` shows a free/paid mode **dropdown** ("Chọn hình thức Tư vấn" — options "Liên hệ Tư vấn"
+/ "Gửi yêu cầu Báo giá Thi công (fee)", `data-quote-select`) ONLY when all 4 SePay env vars are set
+(`SEPAY_API_KEY`, `PAID_QUOTE_FEE`, `BANK_ID`, `BANK_ACCOUNT_NUMBER`[, `BANK_ACCOUNT_NAME`] — see
+`.env.example`); unset = the dropdown stays hidden and the site is free-form-only. The free flow is
+branded "Liên hệ Tư vấn" everywhere (page title/h1/heading/submit button, index hero CTA, mailer
+subject) — no "Miễn phí" suffix. Paid flow: `POST
 /api/bao-gia-thi-cong` (same fields/validation as `/api/submit`, rate-limited 5/15min) stores a
 pending order + attachments in git-ignored `Private/orders/` (30-min TTL, lazy expiry) and returns
 VietQR data (img.vietqr.io, transfer content = order code `BG<8 digits>`); the customer-facing
