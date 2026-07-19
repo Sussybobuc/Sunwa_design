@@ -895,9 +895,11 @@ async function initQuoteMode() {
 
   const heading = document.querySelector('[data-quote-heading]');
   const submitBtn = form.querySelector('[data-quote-submit]');
+  const feeNote = toggle.querySelector('[data-quote-fee-note]');
   select.addEventListener('change', () => {
     const paid = select.value === 'paid';
     form.dataset.mode = paid ? 'paid' : 'free';
+    if (feeNote) feeNote.classList.toggle('hidden', !paid);
     if (heading) heading.textContent = paid ? 'Gửi yêu cầu Báo giá Thi công' : 'Liên hệ Tư vấn';
     if (submitBtn) {
       submitBtn.textContent = paid

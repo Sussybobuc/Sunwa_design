@@ -287,16 +287,21 @@
     @apply flex flex-1 min-h-[52px] items-center justify-center gap-2 text-sm font-medium text-text;
   }
 
-  /* Trang Bảo hành — mini nav trong hero: cam thương hiệu (như nút "Báo giá ngay"),
-     gradient nhẹ + glow ấm pulse chậm */
+  /* Trang Bảo hành — mini nav trong hero. Mặc định: pill trong suốt dịu.
+     Riêng nút CTA (.subnav-pill--cta) mới có nền cam + glow ấm pulse chậm. */
   .subnav-pill {
-    @apply rounded-full bg-gradient-to-b from-[#D2691E] to-primary px-3.5 py-1.5 text-sm
-           font-medium text-white transition hover:to-primary-dark hover:brightness-105;
-    border: 1px solid rgba(255, 255, 255, 0.22);
+    @apply rounded-full bg-white/10 px-3.5 py-1.5 text-sm text-white/90 transition
+           hover:bg-white/20 hover:text-white;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+  }
+  .subnav-pill--cta {
+    @apply bg-gradient-to-b from-[#D2691E] to-primary font-medium text-white
+           hover:to-primary-dark hover:brightness-105;
+    border-color: rgba(255, 255, 255, 0.22);
     box-shadow: 0 0 8px rgba(184, 82, 10, 0.35);
     animation: subnav-glow 2.6s ease-in-out infinite alternate;
   }
-  .subnav-pill:hover {
+  .subnav-pill--cta:hover {
     border-color: rgba(255, 255, 255, 0.4);
   }
 
@@ -642,7 +647,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .subnav-pill {
+  .subnav-pill--cta {
     animation: none; /* giữ viền + glow tĩnh, bỏ nhấp nháy */
   }
 }
