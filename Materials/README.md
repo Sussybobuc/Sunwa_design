@@ -93,10 +93,12 @@ với đúng tên dưới đây là banner tự hiện — không cần sửa co
   cũng được (JS thử lần lượt theo thứ tự đó).
 - Ảnh hiển thị **full chiều ngang khung, chiều cao tự co theo đúng tỷ lệ file** — thiết kế tỷ lệ
   nào cũng được, nên làm ngang (ví dụ 1280×400–500 cho banner lớn).
-- **Thay banner cũ bằng file mới:** vì cache 30 ngày (xem dưới), đổi sang đuôi khác hoặc chấp nhận
-  khách cũ thấy bản cũ tối đa 30 ngày. Thả file lần đầu thì không sao — placeholder tự đổi thành banner.
-- Cơ chế: `initBannerSlots()` trong `js/main.js` dò các file trên; muốn thêm chỗ đặt banner mới thì
-  thêm `<div class="banner-slot" data-banner="<tên-file-không-đuôi>">` vào trang.
+- **Thay banner cũ bằng file mới:** cứ ghi đè file cùng tên — server gắn `?v=<thời điểm sửa file>`
+  vào URL ảnh (`GET /api/banners`) nên khách thấy bản mới ngay lần tải trang sau, không vướng cache
+  30 ngày.
+- Cơ chế: `initBannerSlots()` trong `js/main.js` hỏi `/api/banners` (server đọc thư mục này); muốn
+  thêm chỗ đặt banner mới thì thêm `<div class="banner-slot" data-banner="<tên-file-không-đuôi>">`
+  vào trang.
 
 ## Caching / CDN
 - `/materials` is already served with a long cache header (`maxAge: 30d`) — repeat visitors don't

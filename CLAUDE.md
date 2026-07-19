@@ -51,9 +51,11 @@ The navbar has two plain nav links (`<a class="nav-link">`): **"Quản lý chấ
 "Liên hệ". No dropdown — each points to a single landing page (`quan-ly-chat-luong.html` /
 `he-thong-phap-ly.html`) whose content is a **user-designed banner via a drop-in slot**: a
 `.banner-slot` div with `data-banner="<name>"` shows a "Banner đang được cập nhật" placeholder until
-a matching file exists at `Materials/banners/<name>.<ext>` — `initBannerSlots()` in `js/main.js`
-probes `.webp/.avif/.jpg/.jpeg/.png` in order and swaps in an `<img>` that scales to the file's own
-aspect ratio (no code edit needed to import a banner; filenames documented in `Materials/README.md`).
+a matching file exists at `Materials/banners/<name>.<ext>` (`webp` preferred; `avif/jpg/jpeg/png`
+also accepted). `initBannerSlots()` in `js/main.js` fetches `GET /api/banners` (in `server.js`),
+which maps each basename to a `?v=<mtime>`-versioned URL — so overwriting a banner file busts the
+30-day `/materials` cache and swaps in an `<img>` scaling to the file's own aspect ratio (no code
+edit needed to import or replace a banner; filenames documented in `Materials/README.md`).
 The homepage QLCL/HTPL sections each hold a **compact slot** (`<name>-home`, `max-w-3xl`, wrapped in
 a link to the landing page). Routes are in `server.js` `PAGES`.
 

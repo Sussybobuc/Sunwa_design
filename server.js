@@ -4,6 +4,7 @@
 // (e.g. Azure, where config comes from App Service application settings).
 require('dotenv').config();
 
+const fs = require('fs');
 const path = require('path');
 const express = require('express');
 const rateLimit = require('express-rate-limit');
@@ -157,6 +158,31 @@ app.get('/api/news', async (req, res) => {
   const body = await getNews();
   res.set('Cache-Control', 'public, max-age=300');
   res.json(body);
+});
+
+// Banner tự thiết kế (Materials/banners/) — trả map <tên-không-đuôi> → URL kèm ?v=<mtime>
+// để cache-bust: ghi đè file là khách thấy bản mới ngay, dù /materials cache 30 ngày.
+const BANNER_EXTS = ['webp', 'avif', 'jpg', 'jpeg', 'png']; // thứ tự ưu tiên khi trùng tên
+app.get('/api/banners', (req, res) => {
+  const dir = path.join(__dirname, 'Materials', 'banners');
+  const best = {};
+  try {
+    for (const file of fs.readdirSync(dir)) {
+      const ext = path.extname(file).slice(1).toLowerCase();
+      const rank = BANNER_EXTS.indexOf(ext);
+      if (rank === -1) continue;
+      const name = path.basename(file, path.extname(file));
+      if (best[name] && best[name].rank <= rank) continue;
+      const mtime = Math.floor(fs.statSync(path.join(dir, file)).mtimeMs / 1000);
+      best[name] = { rank, url: `/materials/banners/${encodeURIComponent(file)}?v=${mtime}` };
+    }
+  } catch {
+    // thư mục chưa tồn tại / không đọc được — trả map rỗng, trang giữ placeholder
+  }
+  const banners = {};
+  for (const [name, b] of Object.entries(best)) banners[name] = b.url;
+  res.set('Cache-Control', 'no-cache');
+  res.json({ ok: true, banners });
 });
 
 // Health check (for Azure monitoring / uptime probes).
