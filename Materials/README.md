@@ -77,6 +77,27 @@ so the page stays fast and nothing downloads until someone actually watches.
   </video>
   ```
 
+## Banners tự thiết kế (`banners/`)
+Trang **Quản lý chất lượng**, **Hệ thống pháp lý** và 2 khung rút gọn trên trang chủ có sẵn
+chỗ đặt banner (placeholder "Banner đang được cập nhật"). **Chỉ cần thả file vào `Materials/banners/`
+với đúng tên dưới đây là banner tự hiện — không cần sửa code:**
+
+| File | Vị trí |
+|---|---|
+| `quan-ly-chat-luong.webp` | Banner lớn trên trang `/quan-ly-chat-luong` |
+| `he-thong-phap-ly.webp` | Banner lớn trên trang `/he-thong-phap-ly` |
+| `quan-ly-chat-luong-home.webp` | Banner rút gọn trên trang chủ (bấm vào → trang QLCL) |
+| `he-thong-phap-ly-home.webp` | Banner rút gọn trên trang chủ (bấm vào → trang pháp lý) |
+
+- Đuôi file: ưu tiên **`.webp`** (nhẹ nhất — xem quy tắc ở trên); `.avif`, `.jpg`, `.jpeg`, `.png`
+  cũng được (JS thử lần lượt theo thứ tự đó).
+- Ảnh hiển thị **full chiều ngang khung, chiều cao tự co theo đúng tỷ lệ file** — thiết kế tỷ lệ
+  nào cũng được, nên làm ngang (ví dụ 1280×400–500 cho banner lớn).
+- **Thay banner cũ bằng file mới:** vì cache 30 ngày (xem dưới), đổi sang đuôi khác hoặc chấp nhận
+  khách cũ thấy bản cũ tối đa 30 ngày. Thả file lần đầu thì không sao — placeholder tự đổi thành banner.
+- Cơ chế: `initBannerSlots()` trong `js/main.js` dò các file trên; muốn thêm chỗ đặt banner mới thì
+  thêm `<div class="banner-slot" data-banner="<tên-file-không-đuôi>">` vào trang.
+
 ## Caching / CDN
 - `/materials` is already served with a long cache header (`maxAge: 30d`) — repeat visitors don't
   re-download unchanged files. If you replace a file, give it a **new filename** so browsers fetch the

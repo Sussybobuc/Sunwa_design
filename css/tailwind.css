@@ -300,6 +300,29 @@
     border-color: rgba(255, 255, 255, 0.4);
   }
 
+  /* Banner slot — chỗ đặt banner tự thiết kế (QLCL / pháp lý). Chưa có file
+     trong Materials/banners/ thì hiện placeholder; có file thì initBannerSlots()
+     thay bằng <img class="banner-slot-img"> co giãn theo đúng tỷ lệ ảnh gốc. */
+  .banner-slot {
+    @apply overflow-hidden rounded-lg;
+  }
+  .banner-slot-img {
+    @apply block h-auto w-full;
+  }
+  .banner-slot-empty {
+    @apply flex flex-col items-center justify-center gap-3 rounded-lg border-2 border-dashed
+           border-border bg-bg-secondary px-6 py-14 text-center md:py-20;
+  }
+  .banner-slot-empty--compact {
+    @apply py-10 md:py-12;
+  }
+  .banner-slot-empty svg {
+    @apply text-text-muted/60;
+  }
+  .banner-slot-empty p {
+    @apply text-sm text-text-muted;
+  }
+
   /* Trang Bảo hành — danh sách phạm vi/điều kiện: ✓ được bảo hành, ✕ loại trừ */
   .policy-list li {
     @apply relative pl-6 text-base text-text;

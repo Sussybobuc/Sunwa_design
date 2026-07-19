@@ -48,8 +48,14 @@ templating/include system, so shared-markup changes must be applied to all of th
 ### Navbar section links — Quản lý chất lượng & Hệ thống pháp lý
 The navbar has two plain nav links (`<a class="nav-link">`): **"Quản lý chất lượng"**
 (`/quan-ly-chat-luong`) and **"Hệ thống pháp lý"** (`/he-thong-phap-ly`), sitting between "Dự án" and
-"Liên hệ". No dropdown/JS — each points to a single placeholder landing page (`quan-ly-chat-luong.html`
-/ `he-thong-phap-ly.html`) showing "Nội dung đang được cập nhật". Routes are in `server.js` `PAGES`.
+"Liên hệ". No dropdown — each points to a single landing page (`quan-ly-chat-luong.html` /
+`he-thong-phap-ly.html`) whose content is a **user-designed banner via a drop-in slot**: a
+`.banner-slot` div with `data-banner="<name>"` shows a "Banner đang được cập nhật" placeholder until
+a matching file exists at `Materials/banners/<name>.<ext>` — `initBannerSlots()` in `js/main.js`
+probes `.webp/.avif/.jpg/.jpeg/.png` in order and swaps in an `<img>` that scales to the file's own
+aspect ratio (no code edit needed to import a banner; filenames documented in `Materials/README.md`).
+The homepage QLCL/HTPL sections each hold a **compact slot** (`<name>-home`, `max-w-3xl`, wrapped in
+a link to the landing page). Routes are in `server.js` `PAGES`.
 
 > History: these used to be hover/click **dropdowns** (5 + 3 subsection pages, `SECTION_MENUS` +
 > `initSectionDropdowns()` in `js/main.js`, `.nav-dropdown*` CSS). That was removed — the 8 subpages,

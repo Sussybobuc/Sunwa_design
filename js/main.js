@@ -1367,6 +1367,38 @@ function initServiceNav() {
 }
 
 /* ============================================================
+   BANNER SLOTS — banner tự thiết kế, thả file vào
+   Materials/banners/<tên>.<đuôi> là tự hiện, không cần sửa code.
+   Thử lần lượt các đuôi; không thấy file nào thì giữ placeholder.
+   ============================================================ */
+function initBannerSlots() {
+  const slots = document.querySelectorAll('[data-banner]');
+  if (slots.length === 0) return;
+
+  const EXTS = ['webp', 'avif', 'jpg', 'jpeg', 'png'];
+
+  slots.forEach((slot) => {
+    const name = slot.getAttribute('data-banner');
+    if (!name) return;
+    let i = 0;
+    const probe = new Image();
+    probe.onload = () => {
+      const img = document.createElement('img');
+      img.src = probe.src;
+      img.alt = slot.getAttribute('data-banner-alt') || '';
+      img.decoding = 'async';
+      img.className = 'banner-slot-img';
+      slot.replaceChildren(img);
+    };
+    probe.onerror = () => {
+      i += 1;
+      if (i < EXTS.length) probe.src = '/materials/banners/' + name + '.' + EXTS[i];
+    };
+    probe.src = '/materials/banners/' + name + '.' + EXTS[0];
+  });
+}
+
+/* ============================================================
    INIT
    ============================================================ */
 /* ============================================================
@@ -1430,4 +1462,5 @@ document.addEventListener('DOMContentLoaded', () => {
   initServiceNav();
   initNews();
   initCertGallery();
+  initBannerSlots();
 });
