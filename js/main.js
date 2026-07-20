@@ -1450,6 +1450,119 @@ async function initNews() {
   }).join('');
 }
 
+/* ============================================================
+   BÁO LỖI THI CÔNG — popup trên /bao-hanh. Cần SĐT ĐÃ ĐĂNG KÝ,
+   gửi mô tả (+ ảnh tuỳ chọn) qua email cho Sunwa (POST /api/bao-loi).
+   Dùng lại validateForm() (phone/message/files) như các form khác.
+   ============================================================ */
+function initReport() {
+  const openers = document.querySelectorAll('[data-report-open]');
+  if (!openers.length) return;
+
+  const modal = document.createElement('div');
+  modal.id = 'report-modal';
+  modal.className = 'fixed inset-0 z-[500] hidden items-center justify-center bg-black/70 p-4';
+  modal.setAttribute('role', 'dialog');
+  modal.setAttribute('aria-modal', 'true');
+  modal.setAttribute('aria-label', 'Báo lỗi thi công');
+  modal.innerHTML = `
+    <div class="relative max-h-[90vh] w-full max-w-lg overflow-auto rounded-lg bg-bg p-6">
+      <button type="button" data-report-close aria-label="Đóng"
+              class="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-full bg-bg-secondary text-text-muted hover:bg-border">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+      <h2 class="text-xl font-semibold text-text">Báo lỗi thi công</h2>
+      <p class="mt-1 text-sm text-text-muted">Nhập số điện thoại đã đăng ký bảo hành để gửi báo lỗi tới Sunwa.</p>
+      <form class="mt-5 space-y-4" novalidate data-report-form>
+        <div>
+          <label class="field-label" for="report-phone">Số điện thoại đã đăng ký <span class="text-primary">*</span></label>
+          <input class="field-input" type="tel" id="report-phone" name="phone" required inputmode="numeric" autocomplete="tel" placeholder="0916557558">
+          <p class="field-error" data-error="phone"></p>
+        </div>
+        <div>
+          <label class="field-label" for="report-message">Mô tả lỗi <span class="text-primary">*</span></label>
+          <textarea class="field-input" id="report-message" name="message" rows="4" required placeholder="Mô tả hạng mục và tình trạng lỗi…"></textarea>
+          <p class="field-error" data-error="message"></p>
+        </div>
+        <div>
+          <label class="field-label" for="report-files">Ảnh hiện trạng</label>
+          <input class="field-input" type="file" id="report-files" name="files" multiple accept="application/pdf,image/*">
+          <p class="mt-1 text-sm text-text-muted">Tuỳ chọn — ảnh hoặc PDF, tối đa 3 tệp, tổng 10&nbsp;MB.</p>
+          <p class="field-error" data-error="files"></p>
+        </div>
+        <p data-report-status role="status" aria-live="polite" class="text-base text-primary-dark"></p>
+        <button type="submit" class="btn-primary w-full" data-report-submit>Gửi báo lỗi →</button>
+      </form>
+      <div data-report-success class="hidden rounded-lg border border-success/30 bg-success/10 p-6 text-center">
+        <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-success text-white">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
+        </div>
+        <h3 class="mt-3 text-lg font-semibold text-text">Đã gửi báo lỗi!</h3>
+        <p class="mt-1 text-base text-text-muted">Sunwa sẽ liên hệ trong vòng 24 giờ. Cần gấp? Gọi <a href="tel:0916557558" class="font-medium text-primary">0916 557 558</a>.</p>
+      </div>
+    </div>`;
+  document.body.appendChild(modal);
+
+  const form = modal.querySelector('[data-report-form]');
+  const successEl = modal.querySelector('[data-report-success]');
+  const statusEl = modal.querySelector('[data-report-status]');
+  const submitBtn = modal.querySelector('[data-report-submit]');
+  let lastFocused = null;
+
+  const openReport = () => {
+    lastFocused = document.activeElement;
+    // Về lại trạng thái form (phòng khi lần trước đã gửi thành công)
+    form.classList.remove('hidden');
+    successEl.classList.add('hidden');
+    statusEl.textContent = '';
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+    void modal.offsetWidth; // reflow để transition fade+scale chạy
+    modal.classList.add('is-open');
+    document.body.style.overflow = 'hidden';
+    modal.querySelector('[name="phone"]').focus();
+  };
+  const closeReport = () => {
+    modal.classList.remove('is-open');
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+    document.body.style.overflow = '';
+    if (lastFocused && typeof lastFocused.focus === 'function') lastFocused.focus();
+  };
+
+  openers.forEach((btn) => btn.addEventListener('click', openReport));
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal || e.target.closest('[data-report-close]')) closeReport();
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modal.classList.contains('is-open')) closeReport();
+  });
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    statusEl.textContent = '';
+    if (!validateForm(form)) return;
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Đang gửi…';
+    try {
+      const res = await fetch('/api/bao-loi', { method: 'POST', body: new FormData(form) });
+      const json = await res.json().catch(() => ({}));
+      if (res.ok && json.ok) {
+        form.classList.add('hidden');
+        successEl.classList.remove('hidden');
+      } else {
+        statusEl.textContent = json.error || 'Gửi không thành công. Vui lòng thử lại.';
+      }
+    } catch {
+      statusEl.textContent = 'Không kết nối được máy chủ. Vui lòng thử lại.';
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Gửi báo lỗi →';
+    }
+  });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   initNavToggle();
   initHeroReveal();
@@ -1469,4 +1582,5 @@ document.addEventListener('DOMContentLoaded', () => {
   initNews();
   initCertGallery();
   initBannerSlots();
+  initReport();
 });

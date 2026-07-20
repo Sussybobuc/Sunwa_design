@@ -75,6 +75,37 @@ app.use('/api/submit', (err, req, res, next) => {
   next(err);
 });
 
+// Báo lỗi thi công (trang /bao-hanh) — SĐT đã đăng ký + mô tả (+ ảnh tuỳ chọn) → email.
+const report = require('./lib/report');
+const reportLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 5,
+  standardHeaders: 'draft-7',
+  legacyHeaders: false,
+  message: {
+    ok: false,
+    error: 'Bạn đã gửi quá nhiều báo lỗi. Vui lòng thử lại sau ít phút hoặc gọi hotline 0916 557 558.',
+  },
+});
+app.post('/api/bao-loi', reportLimiter, upload.array('files', 3), async (req, res) => {
+  const files = req.files || [];
+  const total = files.reduce((sum, f) => sum + f.size, 0);
+  if (total > MAX_TOTAL_UPLOAD) {
+    return res.status(400).json({ ok: false, error: 'Tệp đính kèm vượt quá 10 MB. Vui lòng gửi tệp nhỏ hơn.' });
+  }
+  const { status, body } = await report.handleReport(req.body || {}, files);
+  res.status(status).json(body);
+});
+app.use('/api/bao-loi', (err, req, res, next) => {
+  if (err instanceof multer.MulterError) {
+    const error = err.code === 'LIMIT_FILE_SIZE'
+      ? 'Tệp đính kèm vượt quá 10 MB. Vui lòng gửi tệp nhỏ hơn.'
+      : 'Chỉ nhận tối đa 3 tệp PDF hoặc ảnh.';
+    return res.status(400).json({ ok: false, error });
+  }
+  next(err);
+});
+
 // Client portal (tra cứu hồ sơ) — see lib/portal.js. Login gets its own, stricter limiter.
 const loginLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,

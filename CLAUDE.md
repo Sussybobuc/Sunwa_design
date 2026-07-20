@@ -153,6 +153,19 @@ format doc: `deploy/client-portal.md`). Demo login: phone `0900000001`. Frontend
 `initTraCuu()` in `js/main.js`; `.wr-*` styles in `css/tailwind.css` (tabs/`initTabs` removed).
 Never commit client PII; `Private/clients/` + `.env` are the two backup-outside-git items.
 
+### Báo lỗi thi công — defect report popup on `/bao-hanh` + `lib/report.js`
+`/bao-hanh` has a **"Báo lỗi thi công"** button (`[data-report-open]` in the hero) that opens a
+self-contained popup (`initReport()` in `js/main.js`, builds `#report-modal`, reuses `validateForm()`
++ the shared modal visual classes). It posts multipart to `POST /api/bao-loi` (rate-limited 5/15min,
+optional ≤3 PDF/image files ≤10 MB via the same `upload` multer): fields `{ phone, message }` +
+`files[]`. `report.handleReport` (`lib/report.js`) requires a **registered phone** —
+`portal.findClientByPhone(phone)` (exported from `lib/portal.js`, the same timing-safe full-scan the
+portal login uses) — else **401** "chưa được đăng ký"; then emails Sunwa with the matched client's
+name/**contract code**/project/handover auto-attached (subject `[Sunwa Design] BÁO LỖI THI CÔNG`).
+Email goes through `mailer.deliver(...)` — the transport/send helper **extracted from `handleSubmit`**
+so contact/quote/report all share ONE Gmail path (change auth/transport in one place). Email-only,
+never stored on disk. Demo phone `0900000001`.
+
 ### Paid quote — "Báo giá Thi công (có phí)" via SePay (`lib/payment.js`)
 `/bao-gia` shows a free/paid mode **dropdown** ("Chọn hình thức Tư vấn" — static options "Liên hệ
 Tư vấn (miễn phí)" / "Gửi yêu cầu Báo giá Thi công (có thu phí)" — the fee amount appears only on
