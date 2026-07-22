@@ -3,6 +3,9 @@
 The site runs on a Mac Mini M4 (24 GB, macOS, `arm64`) at the office/home — the ONLY production
 environment (Azure App Service was decommissioned 2026-07-16).
 
+> **In a hurry / not a developer?** Run `npm run doctor` (checks everything and prints what to do,
+> in Vietnamese) and see **[`deploy/SU-CO.md`](SU-CO.md)** — the plain-language incident one-pager.
+
 ## Architecture
 
 ```
@@ -12,8 +15,9 @@ Internet → Cloudflare edge (TLS, DDoS) → outbound-only tunnel (cloudflared)
 
 - **No inbound ports are open** on the router. `cloudflared` and Tailscale both connect outbound.
 - Admin access from outside: **Tailscale** (SSH over the tailnet only — never port-forward SSH).
-- **Back up `~/Projects/Sunwa_Design/.env` AND `Private/clients/`** — the only two things not in git
-  (mail/session secrets and client-portal data; see `deploy/client-portal.md`).
+- **Back up `~/Projects/Sunwa_Design/.env` AND `Private/`** — the only things not in git
+  (mail/session secrets, client-portal data, and the editable project list; see
+  `deploy/client-portal.md`).
 
 ## What's installed where
 

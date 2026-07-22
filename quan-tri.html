@@ -61,6 +61,31 @@
           <p class="mt-1 select-all font-medium text-primary">https://sunwadesign.com/tra-cuu</p>
           <p class="mt-1">Khách quét QR rồi nhập SĐT đã đăng ký để xem hồ sơ.</p>
         </div>
+
+        <!-- Dự án hiển thị trên /du-an + 3 thẻ đầu ở trang chủ -->
+        <div class="mt-8 border-t border-border pt-6">
+          <h2 class="text-xl font-semibold">Dự án</h2>
+          <p class="mt-1 text-sm text-text-muted">Dán link YouTube là xong — ảnh đại diện lấy tự động từ video. Thứ tự ở đây chính là thứ tự hiển thị trên trang <a href="/du-an" class="text-primary hover:underline">Dự án</a>; 3 dự án đầu hiện ở trang chủ.</p>
+          <form id="proj-form" class="mt-4 space-y-3" novalidate>
+            <div>
+              <label class="field-label" for="pj-url">Link YouTube <span class="text-primary">*</span></label>
+              <input class="field-input" type="text" id="pj-url" name="url" required placeholder="https://youtu.be/xxxxxxxxxxx">
+            </div>
+            <div>
+              <label class="field-label" for="pj-name">Tên dự án <span class="text-primary">*</span></label>
+              <input class="field-input" type="text" id="pj-name" name="name" required placeholder="Vỹ HOUSE Cẩm Lệ">
+            </div>
+            <div>
+              <label class="field-label" for="pj-location">Địa điểm (tuỳ chọn)</label>
+              <input class="field-input" type="text" id="pj-location" name="location" placeholder="Cẩm Lệ, Đà Nẵng">
+            </div>
+            <p id="proj-error" class="hidden text-base text-[#C2410C]" role="alert"></p>
+            <button type="submit" class="btn-primary w-full">Thêm dự án</button>
+          </form>
+          <div id="proj-list" class="mt-5 space-y-2">
+            <p class="text-base text-text-muted">Đang tải…</p>
+          </div>
+        </div>
       </section>
 
       <!-- Danh sách -->
@@ -435,8 +460,94 @@
       if (res.ok) loadOrders();
     });
 
+    /* ---------- Dự án ---------- */
+    function projRow(p, i, total) {
+      const up = i > 0
+        ? `<button type="button" class="rounded border border-border px-2 py-1 text-sm hover:bg-bg-secondary" data-move="up" data-id="${p.id}" aria-label="Lên trên">↑</button>`
+        : '<span class="inline-block w-[30px]"></span>';
+      const down = i < total - 1
+        ? `<button type="button" class="rounded border border-border px-2 py-1 text-sm hover:bg-bg-secondary" data-move="down" data-id="${p.id}" aria-label="Xuống dưới">↓</button>`
+        : '<span class="inline-block w-[30px]"></span>';
+      return `
+        <article class="flex items-center gap-3 rounded-lg border border-border bg-bg p-2">
+          <img src="${esc(p.image)}" alt="" width="64" height="48" class="h-12 w-16 shrink-0 rounded object-cover" loading="lazy">
+          <div class="min-w-0 flex-1">
+            <p class="truncate text-base font-medium">${esc(p.name)}</p>
+            <p class="truncate text-sm text-text-muted">${esc(p.location || '—')}</p>
+          </div>
+          <div class="flex shrink-0 items-center gap-1">
+            ${up}${down}
+            <button type="button" class="rounded border border-border px-2 py-1 text-sm text-[#C2410C] hover:bg-bg-secondary" data-del-proj="${p.id}" aria-label="Xoá">Xoá</button>
+          </div>
+        </article>`;
+    }
+
+    function renderProjList(list) {
+      const el = document.getElementById('proj-list');
+      el.innerHTML = list.length
+        ? list.map((p, i) => projRow(p, i, list.length)).join('')
+        : '<p class="text-sm text-text-muted">Chưa có dự án nào.</p>';
+    }
+
+    async function loadProjects() {
+      const el = document.getElementById('proj-list');
+      try {
+        const res = await fetch('/api/admin/du-an');
+        const data = await res.json();
+        renderProjList(data.projects || []);
+      } catch {
+        el.innerHTML = '<p class="text-sm text-[#C2410C]">Không tải được danh sách dự án.</p>';
+      }
+    }
+
+    document.getElementById('proj-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const form = e.target;
+      const err = document.getElementById('proj-error');
+      err.classList.add('hidden');
+      const body = {
+        url: form.url.value.trim(),
+        name: form.name.value.trim(),
+        location: form.location.value.trim(),
+      };
+      const res = await fetch('/api/admin/du-an', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.ok) {
+        err.textContent = data.error || 'Không thêm được dự án.';
+        err.classList.remove('hidden');
+        return;
+      }
+      form.reset();
+      renderProjList(data.projects);
+    });
+
+    document.getElementById('proj-list').addEventListener('click', async (e) => {
+      const move = e.target.closest('[data-move]');
+      const del = e.target.closest('[data-del-proj]');
+      if (!move && !del) return;
+
+      let res;
+      if (move) {
+        res = await fetch('/api/admin/du-an/' + move.getAttribute('data-id') + '/move', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ dir: move.getAttribute('data-move') }),
+        });
+      } else {
+        if (!confirm('Xoá dự án này khỏi trang Dự án? (video trên YouTube không bị ảnh hưởng)')) return;
+        res = await fetch('/api/admin/du-an/' + del.getAttribute('data-del-proj'), { method: 'DELETE' });
+      }
+      const data = await res.json().catch(() => ({}));
+      if (data.ok) renderProjList(data.projects);
+    });
+
     loadList();
     loadOrders();
+    loadProjects();
   </script>
 </body>
 </html>

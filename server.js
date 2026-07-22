@@ -131,7 +131,7 @@ app.get('/giay-bao-hanh/:code/:file', portal.handleCertFile);
 const admin = require('./lib/admin');
 const localOnly = (req, res, next) => {
   if (admin.isLocalRequest(req)) return next();
-  res.status(404).sendFile(path.join(__dirname, '404.html'));
+  sendPage(res, '404', 404);
 };
 const adminUpload = multer({
   storage: multer.memoryStorage(),
@@ -141,8 +141,8 @@ const adminUpload = multer({
     cb(ok ? null : new multer.MulterError('LIMIT_UNEXPECTED_FILE', file.fieldname), ok);
   },
 });
-app.get('/quan-tri', localOnly, (req, res) => res.sendFile(path.join(__dirname, 'quan-tri.html')));
-app.get('/quan-tri.html', localOnly, (req, res) => res.sendFile(path.join(__dirname, 'quan-tri.html')));
+app.get('/quan-tri', localOnly, (req, res) => sendPage(res, 'quan-tri'));
+app.get('/quan-tri.html', localOnly, (req, res) => sendPage(res, 'quan-tri'));
 app.get('/api/admin/clients', localOnly, admin.handleList);
 app.post('/api/admin/clients', localOnly, adminUpload.array('file', 1), admin.handleCreate);
 app.put('/api/admin/clients/:code', localOnly, admin.handleUpdate);
@@ -182,6 +182,14 @@ app.use('/api/bao-gia-thi-cong', (err, req, res, next) => {
 });
 app.get('/api/admin/orders', localOnly, payment.handleAdminList);
 app.post('/api/admin/orders/:ma/mark-paid', localOnly, payment.handleAdminMarkPaid);
+
+// Dự án (/du-an + 3 thẻ trang chủ) — thêm/xoá/sắp xếp trong /quan-tri, xem lib/projects.js.
+const projects = require('./lib/projects');
+app.get('/api/du-an', projects.handlePublic);
+app.get('/api/admin/du-an', localOnly, projects.handleAdminList);
+app.post('/api/admin/du-an', localOnly, projects.handleAdminCreate);
+app.delete('/api/admin/du-an/:id', localOnly, projects.handleAdminDelete);
+app.post('/api/admin/du-an/:id/move', localOnly, projects.handleAdminMove);
 
 // News feed aggregation (tin-tuc page) — served from a 2h in-memory cache.
 const { getNews } = require('./lib/news');
@@ -224,12 +232,47 @@ app.get('/robots.txt', (req, res) => res.sendFile(path.join(__dirname, 'robots.t
 app.get('/sitemap.xml', (req, res) => res.sendFile(path.join(__dirname, 'sitemap.xml')));
 
 // Static asset directories (only these dirs are public — not the repo root).
-// /css and /js are intentionally uncached: filenames aren't content-hashed, so a long
-// cache would serve stale styles/scripts after a deploy.
-app.use('/css', express.static(path.join(__dirname, 'css')));
-app.use('/js', express.static(path.join(__dirname, 'js')));
+// URL có ?v= (do sendPage chèn) là bản đã đánh phiên bản → cache 1 năm thoải mái.
+// URL trần (không ?v=) phải luôn tươi, vì tên file không băm nội dung.
+const versionedStatic = (dir) => express.static(path.join(__dirname, dir), {
+  setHeaders: (res, filePath, stat) => {
+    const versioned = Boolean(res.req && res.req.query && res.req.query.v);
+    res.set('Cache-Control', versioned ? 'public, max-age=31536000, immutable' : 'public, max-age=0');
+  },
+});
+app.use('/css', versionedStatic('css'));
+app.use('/js', versionedStatic('js'));
 app.use('/assets', express.static(path.join(__dirname, 'assets'), { maxAge: '30d' }));
 app.use('/materials', express.static(path.join(__dirname, 'Materials'), { maxAge: '30d' }));
+
+// ---- Cache-bust CSS/JS -------------------------------------------------
+// Chèn ?v=<mtime> vào /css/style.css và /js/main.js khi trả HTML, để sau mỗi lần
+// deploy trình duyệt (và Cloudflare, vốn ép cache 4 giờ) lấy ngay bản mới —
+// không cần hard-refresh hay purge. Tính MỘT LẦN lúc khởi động: workflow deploy
+// kết thúc bằng `pm2 reload sunwa` nên tiến trình luôn khởi động lại sau khi build.
+const mtimeMs = (rel) => {
+  try { return fs.statSync(path.join(__dirname, rel)).mtimeMs; } catch { return 0; }
+};
+const ASSET_V = String(Math.round(Math.max(mtimeMs('css/style.css'), mtimeMs('js/main.js'))));
+
+// Memo theo mtime của chính file HTML: mỗi file chỉ đọc + thay chuỗi 1 lần/deploy.
+const pageCache = new Map();
+
+function renderPage(file) {
+  const abs = path.join(__dirname, file + '.html');
+  const key = String(mtimeMs(file + '.html'));
+  const hit = pageCache.get(file);
+  if (hit && hit.key === key) return hit.html;
+  const html = fs.readFileSync(abs, 'utf8')
+    .split('/css/style.css').join('/css/style.css?v=' + ASSET_V)
+    .split('/js/main.js').join('/js/main.js?v=' + ASSET_V);
+  pageCache.set(file, { key, html });
+  return html;
+}
+
+function sendPage(res, file, status) {
+  res.status(status || 200).type('html').send(renderPage(file));
+}
 
 // Pretty URLs + their /<file>.html forms.
 const PAGES = {
@@ -247,14 +290,14 @@ const PAGES = {
 };
 
 Object.entries(PAGES).forEach(([route, file]) => {
-  const send = (req, res) => res.sendFile(path.join(__dirname, file + '.html'));
+  const send = (req, res) => sendPage(res, file);
   app.get(route, send);
   app.get('/' + file + '.html', send);
 });
 
 // Real 404 for unknown paths (pretty URLs are explicit routes above).
 app.use((req, res) => {
-  res.status(404).sendFile(path.join(__dirname, '404.html'));
+  sendPage(res, '404', 404);
 });
 
 const PORT = process.env.PORT || 3000;

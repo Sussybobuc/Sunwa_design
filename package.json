@@ -9,6 +9,7 @@
   },
   "scripts": {
     "start": "node server.js",
+    "doctor": "node deploy/doctor.js",
     "build": "npm run build:css",
     "build:css": "tailwindcss -i css/tailwind.css -o css/style.css --minify",
     "watch:css": "tailwindcss -i css/tailwind.css -o css/style.css --watch"

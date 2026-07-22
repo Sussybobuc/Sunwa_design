@@ -28,6 +28,7 @@ function fetchWithTimeout(url, opts = {}) {
 const CHECKS = [
   {
     name: 'Site qua Cloudflare (/healthz)',
+    fix: 'Chạy: pm2 restart sunwa — nếu vẫn lỗi, kiểm tra Cloudflare Tunnel: sudo launchctl list | grep cloudflared',
     async run() {
       const res = await fetchWithTimeout(`${SITE}/healthz`);
       const body = await res.json();
@@ -37,6 +38,7 @@ const CHECKS = [
   },
   {
     name: 'www.sunwadesign.com',
+    fix: 'Bản ghi www trên Cloudflare có thể sai — vào dash.cloudflare.com → DNS, kiểm tra CNAME www.',
     async run() {
       const res = await fetchWithTimeout('https://www.sunwadesign.com/');
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -45,6 +47,7 @@ const CHECKS = [
   },
   {
     name: 'Tin tức (/api/news)',
+    fix: 'Thường do báo mạng lỗi tạm thời, tự khỏi sau vài giờ. Trang tin vẫn hiện bản cũ.',
     async run() {
       const res = await fetchWithTimeout(`${SITE}/api/news`);
       const body = await res.json();
@@ -56,6 +59,7 @@ const CHECKS = [
   },
   {
     name: 'Form API (validation trả 400)',
+    fix: 'Chạy: pm2 restart sunwa, rồi thử gửi form ở /lien-he.',
     async run() {
       const res = await fetchWithTimeout(`${SITE}/api/submit`, {
         method: 'POST',
@@ -68,6 +72,7 @@ const CHECKS = [
   },
   {
     name: 'Dịch vụ local (statusboard :8787)',
+    fix: 'Xem dịch vụ nào DOWN ở dòng trên, rồi: pm2 restart <tên-dịch-vụ>.',
     async run() {
       const res = await fetchWithTimeout('http://127.0.0.1:8787/api/stats');
       const body = await res.json();
@@ -80,6 +85,7 @@ const CHECKS = [
   },
   {
     name: 'Gmail OAuth2 (SMTP verify)',
+    fix: 'Refresh token Gmail có thể đã hết hạn — lấy token mới theo docs/run-and-deploy.md §2.3 rồi sửa .env.',
     async run() {
       const transporter = buildTransport();
       if (!transporter) throw new Error('thiếu cấu hình SMTP trong .env');
@@ -89,6 +95,7 @@ const CHECKS = [
   },
   {
     name: `Dung lượng đĩa (>${MIN_FREE_DISK_GB} GB trống)`,
+    fix: 'Ổ đĩa sắp đầy — xoá bớt bản sao lưu cũ trong ~/Backups/sunwa-clients/.',
     async run() {
       const st = fs.statfsSync('/');
       const freeGb = (st.bavail * st.bsize) / 2 ** 30;
@@ -99,6 +106,7 @@ const CHECKS = [
   {
     // Webhook thanh toán phải TỪ CHỐI request thiếu chữ ký (guard sống = 401).
     name: 'Webhook SePay từ chối request lạ (401)',
+    fix: 'SEPAY_API_KEY trong .env có thể bị thiếu/sai — kiểm tra rồi: pm2 reload sunwa --update-env.',
     async run() {
       const res = await fetchWithTimeout(`${SITE}/api/thanh-toan/webhook`, {
         method: 'POST',
@@ -110,10 +118,27 @@ const CHECKS = [
     },
   },
   {
-    // Hai thứ duy nhất KHÔNG nằm trong git: Private/clients (dữ liệu khách) và
-    // .env (bí mật). Snapshot hằng ngày vào ~/Backups/sunwa-clients/, giữ 30 bản.
-    // Lưu ý: cùng ổ đĩa — chống xoá nhầm, KHÔNG chống hỏng ổ (dùng Time Machine cho việc đó).
-    name: 'Sao lưu Private/clients + .env',
+    // Yêu cầu của khách mà Gmail không gửi được sẽ được lib/mailer.js ghi ra đĩa.
+    // Có tệp ở đây = có khách đang chờ mà Sunwa chưa biết → phải báo động.
+    name: 'Không có email tồn đọng (Private/failed-mail)',
+    fix: 'Mở thư mục Private/failed-mail/, đọc mail.json để biết khách nào rồi GỌI LẠI cho khách. Xử lý xong thì xoá thư mục đó.',
+    async run() {
+      const dir = path.join(__dirname, '..', 'Private', 'failed-mail');
+      if (!fs.existsSync(dir)) return 'không có';
+      const stuck = fs.readdirSync(dir).filter((f) => !f.startsWith('.'));
+      if (stuck.length > 0) {
+        throw new Error(`${stuck.length} email chưa gửi được: ${stuck.slice(0, 5).join(', ')}`);
+      }
+      return 'không có';
+    },
+  },
+  {
+    // Ba thứ KHÔNG nằm trong git: Private/clients (dữ liệu khách), Private/projects.json
+    // (danh sách dự án) và .env (bí mật). Snapshot hằng ngày vào ~/Backups/sunwa-clients/,
+    // giữ 30 bản. Lưu ý: cùng ổ đĩa — chống xoá nhầm, KHÔNG chống hỏng ổ (Time Machine lo việc đó).
+    name: 'Sao lưu Private/ + .env',
+    fix: 'Kiểm tra quyền ghi vào ~/Backups/sunwa-clients/ và dung lượng đĩa còn trống.',
+    sideEffect: true, // tạo file .tar.gz — npm run doctor bỏ qua
     async run() {
       const repo = path.join(__dirname, '..');
       const backupDir = path.join(os.homedir(), 'Backups', 'sunwa-clients');
@@ -121,7 +146,7 @@ const CHECKS = [
       const pad = (n) => String(n).padStart(2, '0');
       const now = new Date();
       const target = path.join(backupDir, `sunwa-${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}.tar.gz`);
-      const items = ['Private/clients', '.env'].filter((p) => fs.existsSync(path.join(repo, p)));
+      const items = ['Private/clients', 'Private/projects.json', '.env'].filter((p) => fs.existsSync(path.join(repo, p)));
       if (items.length === 0) throw new Error('không thấy Private/clients lẫn .env để sao lưu');
       execFileSync('/usr/bin/tar', ['-czf', target, '-C', repo, ...items]);
       fs.chmodSync(target, 0o600);
@@ -209,4 +234,8 @@ async function main() {
   process.exitCode = failures.length > 0 ? 1 : 0;
 }
 
-main();
+// Chạy trực tiếp = chế độ health check (có gửi email). Khi được require từ
+// deploy/doctor.js thì chỉ lấy CHECKS, không tự chạy và không gửi email.
+if (require.main === module) main();
+
+module.exports = { CHECKS };

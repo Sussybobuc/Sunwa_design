@@ -1,187 +1,15 @@
 'use strict';
 
 /* ============================================================
-   DATA — 21 công trình thực tế (video trên kênh YouTube của Sunwa,
-   thứ tự = thứ tự đăng). Thẻ hiển thị thumbnail YouTube + huy hiệu Play;
-   bấm thẻ → mở modal chi tiết và video phát TO trong modal
-   (youtube-nocookie, chỉ tải khi mở) — trang luôn nhẹ.
-   Cách cập nhật — chỉ cần sửa mảng này, không đụng chỗ khác:
-   - name/location: hiện trên thẻ + modal chi tiết.
-   - typeLabel/area/cost/duration/description: đang để trống, điền dần
-     khi có số liệu — thẻ và modal tự ẩn các trường trống.
-   - youtubeId: ID video (phần sau "v=" hoặc "youtu.be/" trong URL);
-     image: thumbnail YouTube của chính video đó (i.ytimg.com).
+   DATA — các công trình thực tế (video trên kênh YouTube của Sunwa).
+   KHÔNG còn hardcode ở đây: danh sách nạp từ GET /api/du-an, nguồn là
+   Private/projects.json (bản gốc trong git: data/projects.json).
+   Thêm / xoá / sắp xếp dự án ngay trong trang /quan-tri — không sửa file này.
+   Thẻ hiển thị thumbnail YouTube + huy hiệu Play; bấm thẻ → mở modal chi tiết
+   và video phát TO trong modal (youtube-nocookie, chỉ tải khi mở).
+   typeLabel/area/cost/duration/description để trống — thẻ và modal tự ẩn.
    ============================================================ */
-const PROJECTS = [
-  {
-    id: 1,
-    name: 'Vỹ HOUSE Cẩm Lệ',
-    location: 'Cẩm Lệ, Đà Nẵng',
-    youtubeId: '1J7vnAMqagU',
-    image: 'https://i.ytimg.com/vi/1J7vnAMqagU/hqdefault.jpg',
-    type: '', typeLabel: '', area: '', cost: '', duration: '', year: '', query: '', description: '',
-  },
-  {
-    id: 2,
-    name: 'Bình HOUSE Sơn Trà',
-    location: 'Sơn Trà, Đà Nẵng',
-    youtubeId: 'LlCo5vPOFw0',
-    image: 'https://i.ytimg.com/vi/LlCo5vPOFw0/hqdefault.jpg',
-    type: '', typeLabel: '', area: '', cost: '', duration: '', year: '', query: '', description: '',
-  },
-  {
-    id: 3,
-    name: 'MS Thu Ngũ Hành Sơn',
-    location: 'Ngũ Hành Sơn, Đà Nẵng',
-    youtubeId: 'cjbbqwBTCI0',
-    image: 'https://i.ytimg.com/vi/cjbbqwBTCI0/hqdefault.jpg',
-    type: '', typeLabel: '', area: '', cost: '', duration: '', year: '', query: '', description: '',
-  },
-  {
-    id: 4,
-    name: 'MS HOA Ngũ Hành Sơn',
-    location: 'Ngũ Hành Sơn, Đà Nẵng',
-    youtubeId: 'Zbl7Rj70bAA',
-    image: 'https://i.ytimg.com/vi/Zbl7Rj70bAA/hqdefault.jpg',
-    type: '', typeLabel: '', area: '', cost: '', duration: '', year: '', query: '', description: '',
-  },
-  {
-    id: 5,
-    name: 'Villa CHÂU THẠNH Cẩm Lệ',
-    location: 'Cẩm Lệ, Đà Nẵng',
-    youtubeId: '4EduK8Jl9zY',
-    image: 'https://i.ytimg.com/vi/4EduK8Jl9zY/hqdefault.jpg',
-    type: '', typeLabel: '', area: '', cost: '', duration: '', year: '', query: '', description: '',
-  },
-  {
-    id: 6,
-    name: 'Villa QUÝ HÀ Hòa Xuân',
-    location: 'Hòa Xuân, Đà Nẵng',
-    youtubeId: 'gCk1mE6lrBE',
-    image: 'https://i.ytimg.com/vi/gCk1mE6lrBE/hqdefault.jpg',
-    type: '', typeLabel: '', area: '', cost: '', duration: '', year: '', query: '', description: '',
-  },
-  {
-    id: 7,
-    name: 'Mr Truyền Sơn Trà',
-    location: 'Sơn Trà, Đà Nẵng',
-    youtubeId: 'xu06CrwjZ1U',
-    image: 'https://i.ytimg.com/vi/xu06CrwjZ1U/hqdefault.jpg',
-    type: '', typeLabel: '', area: '', cost: '', duration: '', year: '', query: '', description: '',
-  },
-  {
-    id: 8,
-    name: 'ANH THƯ Villa Ngũ Hành Sơn',
-    location: 'Ngũ Hành Sơn, Đà Nẵng',
-    youtubeId: 'R9y4x-HwbPM',
-    image: 'https://i.ytimg.com/vi/R9y4x-HwbPM/hqdefault.jpg',
-    type: '', typeLabel: '', area: '', cost: '', duration: '', year: '', query: '', description: '',
-  },
-  {
-    id: 9,
-    name: 'Hiền Villa Hòa Xuân',
-    location: 'Hòa Xuân, Đà Nẵng',
-    youtubeId: 'A8Mx8C1FgBg',
-    image: 'https://i.ytimg.com/vi/A8Mx8C1FgBg/hqdefault.jpg',
-    type: '', typeLabel: '', area: '', cost: '', duration: '', year: '', query: '', description: '',
-  },
-  {
-    id: 10,
-    name: 'Shop ME&BE Đà Nẵng',
-    location: 'Đà Nẵng',
-    youtubeId: 'jlZF6C9FJzk',
-    image: 'https://i.ytimg.com/vi/jlZF6C9FJzk/hqdefault.jpg',
-    type: '', typeLabel: '', area: '', cost: '', duration: '', year: '', query: '', description: '',
-  },
-  {
-    id: 11,
-    name: 'Nhà ở Quê Điện Tiến',
-    location: 'Điện Tiến, Quảng Nam',
-    youtubeId: 'i34Ec9STXrg',
-    image: 'https://i.ytimg.com/vi/i34Ec9STXrg/hqdefault.jpg',
-    type: '', typeLabel: '', area: '', cost: '', duration: '', year: '', query: '', description: '',
-  },
-  {
-    id: 12,
-    name: 'Dự Án Quy Nhơn',
-    location: 'Quy Nhơn',
-    youtubeId: 'patqYg09Dz0',
-    image: 'https://i.ytimg.com/vi/patqYg09Dz0/hqdefault.jpg',
-    type: '', typeLabel: '', area: '', cost: '', duration: '', year: '', query: '', description: '',
-  },
-  {
-    id: 13,
-    name: 'Huyện Ủy Hòa Vang',
-    location: 'Hòa Vang, Đà Nẵng',
-    youtubeId: 'XLcdn4L_EOg',
-    image: 'https://i.ytimg.com/vi/XLcdn4L_EOg/hqdefault.jpg',
-    type: '', typeLabel: '', area: '', cost: '', duration: '', year: '', query: '', description: '',
-  },
-  {
-    id: 14,
-    name: 'Nhà hàng Tiệc Cưới QUY NHƠN',
-    location: 'Quy Nhơn',
-    youtubeId: '7jllfCQN3S0',
-    image: 'https://i.ytimg.com/vi/7jllfCQN3S0/hqdefault.jpg',
-    type: '', typeLabel: '', area: '', cost: '', duration: '', year: '', query: '', description: '',
-  },
-  {
-    id: 15,
-    name: 'KS MERIA QUY NHƠN',
-    location: 'Quy Nhơn',
-    youtubeId: 'sXw9MkffAyQ',
-    image: 'https://i.ytimg.com/vi/sXw9MkffAyQ/hqdefault.jpg',
-    type: '', typeLabel: '', area: '', cost: '', duration: '', year: '', query: '', description: '',
-  },
-  {
-    id: 16,
-    name: 'Nhà thờ Hà Thanh ĐIỆN BÀN',
-    location: 'Điện Bàn, Quảng Nam',
-    youtubeId: 'FNPIV7MQtfU',
-    image: 'https://i.ytimg.com/vi/FNPIV7MQtfU/hqdefault.jpg',
-    type: '', typeLabel: '', area: '', cost: '', duration: '', year: '', query: '', description: '',
-  },
-  {
-    id: 17,
-    name: 'Chùa AN LONG QUY NHƠN',
-    location: 'Quy Nhơn',
-    youtubeId: 'tvjAHtp1zHw',
-    image: 'https://i.ytimg.com/vi/tvjAHtp1zHw/hqdefault.jpg',
-    type: '', typeLabel: '', area: '', cost: '', duration: '', year: '', query: '', description: '',
-  },
-  {
-    id: 18,
-    name: 'Di Tich Đồi Trung Sơn Hòa Liên',
-    location: 'Hòa Liên, Đà Nẵng',
-    youtubeId: 'U8hv7I3XRL8',
-    image: 'https://i.ytimg.com/vi/U8hv7I3XRL8/hqdefault.jpg',
-    type: '', typeLabel: '', area: '', cost: '', duration: '', year: '', query: '', description: '',
-  },
-  {
-    id: 19,
-    name: 'Đài Liệt Sĩ Hòa Vang',
-    location: 'Hòa Vang, Đà Nẵng',
-    youtubeId: '6IGLrQ4K56E',
-    image: 'https://i.ytimg.com/vi/6IGLrQ4K56E/hqdefault.jpg',
-    type: '', typeLabel: '', area: '', cost: '', duration: '', year: '', query: '', description: '',
-  },
-  {
-    id: 20,
-    name: 'Trụ sở LĐLĐ Đà Nẵng',
-    location: 'Đà Nẵng',
-    youtubeId: 'KIAVZn_IQHQ',
-    image: 'https://i.ytimg.com/vi/KIAVZn_IQHQ/hqdefault.jpg',
-    type: '', typeLabel: '', area: '', cost: '', duration: '', year: '', query: '', description: '',
-  },
-  {
-    id: 21,
-    name: 'Dương Bình House - Hội An, Đà Nẵng',
-    location: 'Hội An',
-    youtubeId: 'V82ZtpQor7o',
-    image: 'https://i.ytimg.com/vi/V82ZtpQor7o/hqdefault.jpg',
-    type: '', typeLabel: '', area: '', cost: '', duration: '', year: '', query: '', description: '',
-  },
-];
+let PROJECTS = [];
 
 /* Đơn giá tham khảo (VNĐ/m²) cho calculator */
 const PRICE_PER_M2 = {
@@ -352,15 +180,32 @@ function projectCardHtml(p) {
 }
 
 
-function renderProjects() {
+async function renderProjects() {
   const preview = document.getElementById('projects-preview');
-  const grid = document.getElementById('projects-grid');
+  // Tên biến KHÔNG được đặt là "grid": Tailwind quét cả chuỗi lẫn chú thích trong
+  // JS, nên phép phủ định của biến tên đó bị hiểu là class và sinh ra
+  // display:grid + important trong style.css.
+  const gridEl = document.getElementById('projects-grid');
+  if (!preview && !gridEl) return; // trang không có khu dự án
+
+  try {
+    const res = await fetch('/api/du-an');
+    const data = await res.json();
+    if (!data || !Array.isArray(data.projects)) throw new Error('dữ liệu không hợp lệ');
+    PROJECTS = data.projects;
+  } catch (err) {
+    // Không xoá trắng lưới — giữ nguyên những gì đang hiện, chỉ ghi log.
+    console.warn('Không tải được danh sách dự án:', err);
+    return;
+  }
 
   if (preview) {
     preview.innerHTML = PROJECTS.slice(0, 3).map(projectCardHtml).join('');
+    revealAll(preview);
   }
-  if (grid) {
-    grid.innerHTML = PROJECTS.map(projectCardHtml).join('');
+  if (gridEl) {
+    gridEl.innerHTML = PROJECTS.map(projectCardHtml).join('');
+    revealAll(gridEl);
   }
 }
 
@@ -1049,9 +894,23 @@ function initCalculator() {
 /* ============================================================
    8. SCROLL FADE-IN (IntersectionObserver)
    ============================================================ */
+// Observer dùng chung: thẻ dự án nạp bằng fetch nên chèn vào DOM SAU khi
+// initScrollReveal() chạy — revealAll() cho phép đăng ký thêm phần tử về sau,
+// nếu không những thẻ đó sẽ kẹt ở opacity 0.
+let revealObserver = null;
+
+function revealAll(root) {
+  const els = (root || document).querySelectorAll('.fade-in');
+  if (!els.length) return;
+  if (!revealObserver) {
+    els.forEach((el) => el.classList.add('visible'));
+    return;
+  }
+  els.forEach((el) => revealObserver.observe(el));
+}
+
 function initScrollReveal() {
   const els = document.querySelectorAll('.fade-in');
-  if (!els.length) return;
 
   if (!('IntersectionObserver' in window)) {
     els.forEach((el) => el.classList.add('visible'));
@@ -1081,6 +940,7 @@ function initScrollReveal() {
     { threshold: 0.1 }
   );
 
+  revealObserver = observer;
   els.forEach((el) => observer.observe(el));
 }
 
@@ -1566,7 +1426,7 @@ function initReport() {
 document.addEventListener('DOMContentLoaded', () => {
   initNavToggle();
   initHeroReveal();
-  renderProjects(); // phải chạy trước initModal / initScrollReveal
+  renderProjects(); // async (fetch /api/du-an) — tự gọi revealAll() sau khi chèn thẻ
   initSmoothScroll();
   initModal();
   initZoomImages();

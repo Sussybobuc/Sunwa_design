@@ -17,6 +17,7 @@ npm install            # root deps: express, nodemailer (runtime) + tailwindcss 
 npm run build:css      # compile css/tailwind.css -> css/style.css (REQUIRED after any class/markup change)
 npm run watch:css      # recompile on change (run alongside the server)
 npm start              # node server.js -> serves site + API at http://localhost:3000
+npm run doctor         # health checks + Vietnamese fix hints; no email, no side effects
 ```
 
 First-time local run: `npm install`, then `npm run build:css`, then `npm start`.
@@ -27,9 +28,12 @@ There is no test suite, linter, or framework build step — Tailwind compilation
 - **Always run `npm run build:css` after editing any HTML, JS, or `tailwind.css`.** The committed
   `css/style.css` is the build output; if you change classes without rebuilding, the live styles
   won't match. Tailwind scans `./*.html` and `./js/**/*.js` (see `tailwind.config.js` `content`).
-- **Tailwind scans JS string literals too.** A JS expression like `!grid` or a negation can be
-  misread as a class and inject `!important` into the output. Keep local variable names from
-  colliding with utility class names (this bit us before — `grid` was renamed to `gridEl`).
+- **Tailwind scans JS string literals *and comments* too.** A JS expression like `!grid` or a
+  negation can be misread as a class and inject `!important` into the output. Keep local variable
+  names from colliding with utility class names (this bit us twice — `grid` was renamed to `gridEl`
+  in both `initFilter`-era code and `renderProjects()`; the second time the offending token was
+  inside a *code comment* explaining the rule). Always verify with
+  `grep -c '!important' css/style.css` → **0**.
 - **The site requires a web server — `file://` breaks it.** Pages use root-absolute asset paths
   (`/css/style.css`, `/js/main.js`) and pretty URLs (`/du-an`). Use `npm start`, not double-click.
 - **Node version.** `package.json` `engines` requires `node >= 20`; production is the Mac Mini's
@@ -92,17 +96,21 @@ reset in `initNavToggle()` matches with `matchMedia('(min-width: 1024px)')`.
 
 ### Client logic — `js/main.js` (single file, no modules/bundler)
 `'use strict'`, IIFE-style `initX()` functions wired up on `DOMContentLoaded`. Key pieces:
-- `PROJECTS` — hardcoded array of the **21 real projects** (YouTube videos on Sunwa's channel, in
-  upload order). Each has `name` (the video title), `location`, `youtubeId`, and `image` (the
-  video's own `i.ytimg.com` thumbnail); `typeLabel/area/cost/duration/description` are empty until
-  real data exists — card meta and modal rows auto-hide empty fields. `renderProjects()` injects
-  cards; the in-card Play badge is decorative (`pointer-events:none`) — clicking anywhere on a card
-  opens the detail modal where the video plays BIG (`openModal()` renders an autoplaying
-  `youtube-nocookie` iframe; `closeModal()` removes it so audio stops). No in-card playback.
-  There is **no type filter** (removed by request — don't reintroduce `initFilter`).
+- `PROJECTS` — **no longer hardcoded**: `let PROJECTS = []`, filled by `renderProjects()` from
+  `GET /api/du-an` (see the project-list section below). Each entry has `name` (the video title),
+  `location`, `youtubeId`, and `image` (the video's own `i.ytimg.com` thumbnail);
+  `typeLabel/area/cost/duration/description` are empty until real data exists — card meta and modal
+  rows auto-hide empty fields. The in-card Play badge is decorative (`pointer-events:none`) —
+  clicking anywhere on a card opens the detail modal where the video plays BIG (`openModal()`
+  renders an autoplaying `youtube-nocookie` iframe; `closeModal()` removes it so audio stops). No
+  in-card playback. There is **no type filter** (removed by request — don't reintroduce
+  `initFilter`).
 - `PRICE_PER_M2` — lookup table driving `initCalculator()` (the cost estimator on the quote page).
 - `initModal()` (project detail lightbox), `initNavToggle()`,
   `initSmoothScroll()`, `initScrollReveal()` (IntersectionObserver), `initActiveNav()`.
+- `revealAll(root)` — because project cards are injected **after** `initScrollReveal()` has run,
+  the IntersectionObserver is kept in a module-level `revealObserver` and `renderProjects()` calls
+  `revealAll()` on the containers it just filled. Without it the cards stay stuck at `opacity: 0`.
 - `initForms()` — client-side validation then `fetch` POST to `/api/submit`. The VN phone regex is
   `/^(0[3|5|7|8|9])+([0-9]{8})$/` and must stay in sync with the server copy.
 
@@ -117,6 +125,13 @@ reset in `initNavToggle()` matches with `matchMedia('(min-width: 1024px)')`.
    via `SMTP_PASS` (Gmail App Password). Also reads `SMTP_USER` (sending address, required),
    `TO_EMAIL`, `SMTP_HOST` (default `smtp.gmail.com`), `SMTP_PORT` (465).
 3. Returns JSON `{ ok: true }` or `{ ok: false, error }` (Vietnamese error strings).
+
+**A failed send is never silently lost.** `deliver()`'s catch calls `spoolFailedMail()`, which
+writes `Private/failed-mail/<timestamp>-<slug>/` containing `mail.json` (subject, text, replyTo,
+error, attachment names) plus each attachment as a real file — wrapped in its own try/catch so a
+spool failure can't mask the send error. The daily health check **fails** while that folder is
+non-empty, so a stuck customer request surfaces within a day; clearing it is manual (read
+`mail.json`, phone the customer, delete the folder).
 
 Config comes from **`.env`** next to `server.js` (loaded by `dotenv` at startup; keys documented in
 `.env.example`; the real file is git-ignored, chmod 600, on the Mac Mini). Leave it absent and the
@@ -201,6 +216,31 @@ input, no `source`) is exempt. When changing form fields, update the HTML forms 
 `main.js` (`validateForm`/`attachmentError`), and `lib/mailer.js` together — client and server
 limits must stay in sync.
 
+### Project list — `/du-an` + `lib/projects.js` (editable from `/quan-tri`)
+The 21 projects moved out of `js/main.js` so Sunwa can add a new YouTube video **without a
+developer**. Two files, deliberately: **`data/projects.json`** is the git-tracked seed (a fresh
+clone works with no `Private/`), **`Private/projects.json`** is the git-ignored live copy the admin
+panel writes. The live copy must stay out of git — the deploy workflow runs `git pull` on the Mac,
+and a tracked file edited by the panel would leave the tree dirty and break every future deploy.
+`lib/projects.js` reads live-then-seed with an mtime cache (hand-editing still works), and exposes
+`GET /api/du-an` (public, `max-age=300`) plus localhost-only
+`GET|POST /api/admin/du-an`, `DELETE /api/admin/du-an/:id`, `POST /api/admin/du-an/:id/move`.
+`youtubeId()` accepts `youtu.be/`, `watch?v=`, `/shorts/`, `/embed/`, `/live/` or a bare 11-char id
+and derives `image` as `https://i.ytimg.com/vi/<id>/hqdefault.jpg`. The `/quan-tri` "Dự án" card
+(inline JS, as with the rest of that page) adds by URL, reorders with **↑/↓** buttons (no drag-drop)
+and deletes. Ordering in the file IS the display order; the first 3 show on the homepage. The daily
+backup covers `Private/projects.json`.
+
+### Asset cache-busting — `sendPage()` in `server.js`
+HTML is **never** sent with `res.sendFile`; `sendPage(res, file, status)` reads it (memoized by
+mtime), rewrites `/css/style.css` and `/js/main.js` to carry `?v=<ASSET_V>`, and sends it. `ASSET_V`
+is the max mtime of those two files computed **once at startup** — correct because every deploy ends
+in `pm2 reload sunwa`. `/css` and `/js` then serve `max-age=31536000, immutable` **only** when
+`?v=` is present, and `max-age=0` for bare URLs. This exists because Cloudflare overrides the
+origin's `max-age=0` to a **4-hour browser cache**, which once made a deployed JS change look
+broken for hours. Every page route, `/quan-tri`, and the 404 handler go through `sendPage` — if you
+add a page route, use it, or that page will serve stale CSS/JS.
+
 ### Media — the `Materials/` folder
 Real photos/videos for the site live in `Materials/`, served publicly at `/materials/...` (static
 route in `server.js`, 30-day cache). To keep the site light, **every upload must follow the
@@ -227,6 +267,13 @@ Push to `main` → `.github/workflows/selfhost-deploy.yml` runs on the Mac's own
 **pm2** (`ecosystem.config.js`), boots pre-login via LaunchDaemons. Secrets live in the git-ignored
 `.env`. A daily 08:00 health check (`deploy/healthcheck.js`, LaunchDaemon) emails
 `HEALTH_ALERT_EMAIL` on failure. Full runbook: **`deploy/README.md`**.
+
+`deploy/healthcheck.js` exports its `CHECKS` array (it only self-runs under `require.main === module`)
+so **`npm run doctor`** (`deploy/doctor.js`) can reuse the same checks interactively — printing
+`✓/✗` with each check's Vietnamese `fix` hint, sending no email, and skipping entries flagged
+`sideEffect: true` (the backup check, which writes a tar). Add a new check once, in `CHECKS`, and
+both the daily alert and the doctor pick it up. The non-developer incident one-pager is
+**`deploy/SU-CO.md`**.
 
 > Azure App Service (the previous host) was fully decommissioned on 2026-07-16 — workflow and
 > GitHub secrets removed; the Mac is the only production environment.
